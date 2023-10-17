@@ -57,7 +57,10 @@ const removeItem = (item) => {
   background-color: #fff;
 }
 .history-record{
-  color: #5a5a5a;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 14px;
+  color: #a1a1a8;
   background-color: #fff;
 }
 .history-item:hover {

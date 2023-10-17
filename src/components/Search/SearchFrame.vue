@@ -11,7 +11,7 @@
     </select>
     <div class="search-divider"></div>
     <input v-model="searchValue" @focus="onFocusHandler" class="search-input" type="text" placeholder="搜索一下...">
-    <button class="delete-btn" @click="clearSearchValue"><el-icon v-show="searchValue"><Close /></el-icon></button>
+    <button class="delete-btn" @click="clearSearchValue"><keep-alive> <el-icon v-show="searchValue"><Close /></el-icon></keep-alive></button>
     <button class="search-btn" @click="search">
       <el-icon class="search-icon"><Search /></el-icon>
     </button>
