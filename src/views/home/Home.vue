@@ -1,35 +1,34 @@
 <template>
-    <Background />
-    <div class="login-container">
-        <img src="/person.png" class="earth-img" />
-        <div class="login-box">
-            <div class="slogen">
-                <div class="slogen-title">Make Academia Visible</div>
-                <div class="slogen-dis">
-                    上亿级数据，毫秒级响应<br />
-                    从引用图表到专家关系网络，构建专业可视化的学术成果分享平台
-                </div>
-            </div>
-            <div class="login-form">
-                <div class="login-logo">
-                    <img class="login-icon" src="../../assets/vue.svg" alt="" />
-                </div>
-                <router-view v-slot="{ route, Component }">
-                    <transition name="fade" mode="out-in">
-                        <keep-alive>
-                            <component :is="Component"></component>
-                        </keep-alive>
-                    </transition>
-                </router-view>
-            </div>
-        </div>
+  <Background></Background>
+  <LoginNavBar></LoginNavBar>
+  <SearchBar class="search"></SearchBar>
+  <div class="main">
+    <div class="slogen">
+      <div class="slogen-title">Make Academia Visible</div>
+      <div class="slogen-dis">
+        创新思想，共享智慧，启迪未来<br/>
+        海量数据构建智慧网络，构建专业可视化的学术成果分享平台
+      </div>
     </div>
+    <div class="right">
+      <AcademicField></AcademicField>
+    </div>
+  </div>
+
 </template>
 <script setup>
 import Background from '../../components/Background/Background.vue';
+import SearchBar from "../../components/Search/SearchBar.vue";
+import AcademicField from "@/components/visual/AcademicField.vue";
+import NavBar from "@/components/NavBar/NavBar.vue";
+import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 // const { width, height } = useWindowSize();
 </script>
 <style lang="scss">
+.main{
+  justify-content: space-between;
+}
+
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.5s ease;
@@ -79,7 +78,7 @@ import Background from '../../components/Background/Background.vue';
 .slogen {
     position: absolute;
     left: 5%;
-    top: calc(50% - 40px);
+    top: calc(50%);
 
     &-title {
         font-size: 40px;
@@ -95,7 +94,12 @@ import Background from '../../components/Background/Background.vue';
         line-height: 30px;
     }
 }
-
+.search {
+  position: absolute;
+  left: 5vw;
+  top: 40vh;
+  width: 45vw;
+}
 .login-register {
     font-size: 12px;
     color: #409eff;

@@ -1,5 +1,4 @@
 <template>
-  学术成果共享平台
   <el-config-provider :locale="i18nLocale" :button="noSpace">
     <router-view></router-view>
   </el-config-provider>
@@ -17,9 +16,14 @@ const noSpace = reactive({
   autoInsertSpace: false,
 })
 const i18nLocale = computed(() => {
-  if (globalStore.language && globalStore.language == "zh") return zhCn;
-  if (globalStore.language == "en") return en;
+  if (globalStore.language && globalStore.language === "zh") return zhCn;
+  if (globalStore.language === "en") return en;
   return {};
 });
 </script>
-<style scoped></style>
+<style scoped>
+*{
+  width: 100%;
+  height: 100%;
+}
+</style>
