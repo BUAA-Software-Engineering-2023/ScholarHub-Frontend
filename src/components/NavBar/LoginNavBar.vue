@@ -179,6 +179,7 @@ a{
   line-height: 48px;
   text-align: center;
   border-radius: 20px;
+  transition:all 0.2s linear 0s;
 }
 .userPhoto:hover{
   background-color: black;

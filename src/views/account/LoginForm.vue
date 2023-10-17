@@ -189,12 +189,13 @@ const toggleClasses = () => {
 }
 
 .form_span {
+  color: black;
   margin-top: 30px;
   margin-bottom: 12px;
 }
 
 .form_link {
-  color: #f9f9f9;
+  color: #5a5a5a;
   font-size: 15px;
   margin-top: 25px;
   border-bottom: 1px solid #a0a5a8;
@@ -211,6 +212,7 @@ const toggleClasses = () => {
 
 .description {
   font-size: 14px;
+  color: black;
   letter-spacing: 0.25px;
   text-align: center;
   line-height: 1.6;

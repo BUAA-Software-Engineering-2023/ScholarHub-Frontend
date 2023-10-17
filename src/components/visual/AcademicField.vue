@@ -17,15 +17,15 @@ function init() {
     legend: {
       top: 'bottom'
     },
-    toolbox: {
-      show: true,
-      feature: {
-        mark: { show: true },
-        dataView: { show: true, readOnly: false },
-        restore: { show: true },
-        saveAsImage: { show: true }
-      }
-    },
+    // toolbox: {
+    //   show: true,
+    //   feature: {
+    //     mark: { show: true },
+    //     dataView: { show: true, readOnly: false },
+    //     restore: { show: true },
+    //     saveAsImage: { show: true }
+    //   }
+    // },
     series: [
       {
         name: 'Nightingale Chart',
@@ -33,8 +33,12 @@ function init() {
         radius: [50, 250],
         center: ['50%', '50%'],
         roseType: 'area',
+        areaStyle:{
+          opacity:0.5
+        },
         itemStyle: {
-          borderRadius: 8
+          borderRadius: 8,
+          opacity:0.8
         },
         data: [
           { value: 40, name: '科研' },
