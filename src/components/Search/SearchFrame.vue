@@ -28,7 +28,10 @@ import { Search } from "@element-plus/icons-vue";
   background-color: #f4f4f5;
   padding: 5px;
   border-radius: 30px;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
+}
+.search-container:hover{
+  box-shadow: 10px 10px #4B70E2;
 }
 
 .search-type {
