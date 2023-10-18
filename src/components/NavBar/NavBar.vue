@@ -1,7 +1,7 @@
 <script setup>
 
 </script>
-
+<!--登录之后的导航栏-->
 <template>
   <div>
     <div class="navbarBox" style="min-height: 48px;">
@@ -13,7 +13,7 @@
 
             <!-- 网页logo -->
             <div class="logo">
-              <img src="https://img-home.csdnimg.cn/images/20201124032511.png" alt="">
+              <img src="@/assets/imgs/scholarHub.png" alt="">
             </div>
 
             <!-- 左侧导航栏 -->

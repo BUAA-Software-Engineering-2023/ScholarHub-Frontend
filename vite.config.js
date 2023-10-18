@@ -61,7 +61,7 @@ export default defineConfig({
             iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
             // 指定 symbolId 格式，匹配 src/libs/svg-icon/index.vue 中的格式 `#icon-${props.svgName}`
             symbolId: 'icon-[name]'
-        })
+        }),
     ],
     resolve: {
         // 定义别名
@@ -81,5 +81,7 @@ export default defineConfig({
                 drop_debugger:true,
             }
         }
-    }
+    },
+
+
 })

@@ -3,7 +3,7 @@
         <div ref="vantaRef" style="width:100%;height:100vh"></div>
     </div>
 </template>
-
+<!--背景图可以直接组件调用-->
 <script>
 import * as THREE from 'three'
 import Net from 'vanta/src/vanta.net'

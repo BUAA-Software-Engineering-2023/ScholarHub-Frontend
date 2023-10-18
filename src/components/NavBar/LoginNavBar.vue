@@ -1,3 +1,4 @@
+<!--登录之前的导航栏-->
 <template>
   <div>
     <div class="navbarBox" style="min-height: 48px;">
@@ -8,7 +9,7 @@
           <div class="navbar-container-left">
             <!-- 网页logo -->
             <div class="logo">
-              <img src="@/assets/vue.svg" alt="">
+              <img src="@/assets/imgs/scholarHub.png" alt="">
             </div>
           </div>
 
@@ -68,15 +69,16 @@ function login() {
   position: relative;
   float: left;
   margin-right: 8px;
+  margin-top: -10px;
   /* 当箭头鼠标移到会变成手式鼠标 */
   cursor: pointer;
 }
 .logo img{
-  width: 80px;
-  max-width: 80px;
-  height: 44px;
+  width: 180px;
+  max-width: 180px;
+  height: 100px;
   display: block;
-  margin-top: calc((48px - 44px)/ 2);
+  //margin-top: calc((48px - 44px)/ 2);
 }
 .left-ul{
   width: auto;
