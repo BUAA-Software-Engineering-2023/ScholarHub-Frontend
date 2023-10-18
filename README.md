@@ -1,2 +1,2 @@
 # ScholarHub-Frontend
-BUAA Software Analysis Course Assignments
+BUAA2121软工二项目——学术分享平台（前端）
