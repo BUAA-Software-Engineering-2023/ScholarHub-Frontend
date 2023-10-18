@@ -1,41 +1,57 @@
 <template>
   <div class="shell">
     <div class="container a-container"  id="a-container">
-      <form v-if="!showRegister" action="" method="" class="form" :class="{ 'is-txl': activeForm === 'a', 'is-z': activeForm === 'a' }" id="a-form">
+      <el-form v-if="!showRegister" ref="loginFormRef" :model="registerForm" :rules="registerRules"  action="" method="" class="form" :class="{ 'is-txl': activeForm === 'a', 'is-z': activeForm === 'a' }" id="a-form">
         <h2 class="form_title title">创建账号</h2>
         <div class="form_icons">
         </div>
         <span class="form_span">选择注册方式活电子邮箱注册</span>
-        <input type="text" class="form_input" placeholder="Name">
-        <input type="text" class="form_input" placeholder="Email">
-        <input type="text" class="form_input" placeholder="Password">
-        <button @click="changeForm('b')" class="form_button button submit">SIGN UP</button>
-      </form>
+        <el-form-item prop="username">
+          <el-input v-model="registerForm.username" type="text" class="form_input" placeholder="用户名"></el-input>
+        </el-form-item>
+        <el-form-item prop="email">
+          <el-input v-model="registerForm.email" type="text" class="form_input" placeholder="邮箱"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="registerForm.password" type="text" class="form_input" placeholder="密码"></el-input>
+        </el-form-item>
+        <button @click.prevent="Register" class="form_button button submit">SIGN UP</button>
+      </el-form>
     </div>
 
     <div class="container b-container" id="b-container">
-      <form v-if="showRegister" action="" method="" class="form" :class="{ 'is-txl': activeForm === 'b', 'is-z': activeForm === 'b' }" id="b-form">
+      <el-form v-if="showRegister" ref="registerFormRef" :model="loginForm" :rules="loginRules" action="" method="" class="form" :class="{ 'is-txl': activeForm === 'b', 'is-z': activeForm === 'b' }" id="b-form">
         <h2 class="form_title title">登入账号</h2>
         <div class="form_icons">
         </div>
-        <span class="form_span">选择登录方式活电子邮箱登录</span>
-        <input type="text" class="form_input" placeholder="Email">
-        <input type="text" class="form_input" placeholder="Password">
+        <span class="form_span">选择登录方式或电子邮箱登录</span>
+        <el-form-item prop="email">
+          <el-input v-model="loginForm.email" type="text" class="form_input" placeholder="邮箱"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" type="text" class="form_input" placeholder="密码"></el-input>
+        </el-form-item>
         <a class="form_link">忘记密码？</a>
-        <button @click="changeForm('a')" class="form_button button submit">SIGN IN</button>
-      </form>
+        <button @click.prevent="login" class="form_button button submit">SIGN IN</button>
+      </el-form>
     </div>
 
     <div class="switch" id="switch-cnt">
       <div class="switch_circle"></div>
       <div class="switch_circle switch_circle-t"></div>
       <div class="switch_container" id="switch-c1">
+        <div class="login-logo">
+          <img width="150" class="login-icon" src="@/assets/imgs/scholarHub.png" alt="" />
+        </div>
         <h2 class="switch_title title" style="letter-spacing: 0;">Welcome Back！</h2>
         <p class="switch_description description">已经有账号了嘛，去登入账号来进入奇妙世界吧！！！</p>
         <button class="switch_button button switch-btn" @click="changeForm('b')">SIGN IN</button>
       </div>
 
       <div class="switch_container is-hidden" id="switch-c2">
+        <div class="login-logo">
+          <img width="150" class="login-icon" src="@/assets/imgs/scholarHub.png" alt="" />
+        </div>
         <h2 class="switch_title title" style="letter-spacing: 0;">Hello Friend！</h2>
         <p class="switch_description description">去注册一个账号，成为尊贵的粉丝会员，让我们踏入奇妙的旅途！</p>
         <button class="switch_button button switch-btn" @click="changeForm('a')">SIGN UP</button>
@@ -46,6 +62,47 @@
 
 <script setup>
 import { ref, nextTick } from 'vue';
+import Swal from 'sweetalert2';
+const validateName = (rule,value,callback)=>{
+  if(!value.length){
+    callback(new Error("请输入用户名"))
+  }else{
+    callback();
+  }
+}
+const validatePassword = (rule,value,callback)=>{
+  if(!value.length){
+    callback(new Error("请输入密码"))
+  }else{
+    callback();
+  }
+}
+const validateEmail = (rule,value,callback)=>{
+  if (!value.length){
+    callback(new Error("请输入邮箱"))
+  }else{
+    callback();
+  }
+}
+// 校验表单
+const loginRules = ref({
+  email: [{validator:validateEmail, trigger: "blur" }],
+  password: [{validator:validatePassword, trigger: "blur" }]
+});
+const loginForm = ref({
+  email:"",
+  password:""
+})
+const registerForm = ref({
+  username:"",
+  email:"",
+  password:""
+})
+const registerRules = ref({
+  username: [{validator:validateName, trigger: "blur" }],
+  password: [{validator:validatePassword, trigger: "blur" }],
+  email:[{validator:validateEmail,trigger:"blur"}]
+})
 const showRegister = ref(false)
 const activeForm = ref('a');
 
@@ -84,6 +141,21 @@ const toggleClasses = () => {
   bContainer.classList.toggle("is-txl");
   bContainer.classList.toggle("is-z");
 };
+const Register = () => {
+  Swal.fire({
+    icon: 'success', //error\warning\info\question
+    title: '注册成功',
+    text: '即将跳转至登录界面',
+  })
+  changeForm('b')
+};
+const login = () =>{
+  Swal.fire({
+    icon: 'success', //error\warning\info\question
+    title: '登录成功'
+  })
+}
+
 </script>
 <style scoped>
 * {
@@ -173,7 +245,6 @@ const toggleClasses = () => {
   width: 350px;
   height: 40px;
   margin: 4px 0;
-  padding-left: 25px;
   font-size: 13px;
   letter-spacing: 0.15px;
   border: none;
@@ -286,7 +357,7 @@ const toggleClasses = () => {
   flex-direction: column;
   position: absolute;
   width: 400px;
-  padding: 50px 55px;
+  //padding: 50px 55px;
   transition: 1.25s;
 }
 
@@ -348,5 +419,8 @@ const toggleClasses = () => {
   50% {
     width: 500px;
   }
+}
+.el-form-item{
+  margin-top: 15px;
 }
 </style>

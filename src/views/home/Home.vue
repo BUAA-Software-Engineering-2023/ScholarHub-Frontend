@@ -24,7 +24,7 @@ import NavBar from "@/components/NavBar/NavBar.vue";
 import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 // const { width, height } = useWindowSize();
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .main{
   justify-content: space-between;
 }
