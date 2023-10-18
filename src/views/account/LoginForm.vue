@@ -5,7 +5,7 @@
         <h2 class="form_title title">创建账号</h2>
         <div class="form_icons">
         </div>
-        <span class="form_span">选择注册方式活电子邮箱注册</span>
+        <span class="form_span">在这里，有无数可能</span>
         <el-form-item prop="username">
           <el-input v-model="registerForm.username" type="text" class="form_input" placeholder="用户名"></el-input>
         </el-form-item>
@@ -14,6 +14,21 @@
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="registerForm.password" type="text" class="form_input" placeholder="密码"></el-input>
+        </el-form-item>
+        <el-form-item prop="confirm_password">
+          <el-input v-model="registerForm.confirm_password" type="text" class="form_input" placeholder="确认密码"></el-input>
+        </el-form-item>
+        <el-form-item prop="code">
+          <el-input v-model="registerForm.code" type="text" class="code form_input" placeholder="验证码"> </el-input>
+          <el-button
+              @click.prevent="sendVerificationCode"
+              class="send-code-btn"
+              type="primary"
+              size="small"
+              :disabled="sendCodeDisabled"
+          >
+            {{ sendCodeDisabled ? `${countdown} 秒后重新发送` : '发送验证码' }}
+          </el-button>
         </el-form-item>
         <button @click.prevent="Register" class="form_button button submit">SIGN UP</button>
       </el-form>
@@ -24,7 +39,7 @@
         <h2 class="form_title title">登入账号</h2>
         <div class="form_icons">
         </div>
-        <span class="form_span">选择登录方式或电子邮箱登录</span>
+        <span class="form_span">知识让一切不可能变为可能</span>
         <el-form-item prop="email">
           <el-input v-model="loginForm.email" type="text" class="form_input" placeholder="邮箱"></el-input>
         </el-form-item>
@@ -63,6 +78,8 @@
 <script setup>
 import { ref, nextTick } from 'vue';
 import Swal from 'sweetalert2';
+import accountRequest from '@/api/account'
+
 const validateName = (rule,value,callback)=>{
   if(!value.length){
     callback(new Error("请输入用户名"))
@@ -84,6 +101,20 @@ const validateEmail = (rule,value,callback)=>{
     callback();
   }
 }
+const validateConfirmPassword = (rule,value,callback)=>{
+  if (!value.length){
+    callback(new Error("请再次输入密码"))
+  }else{
+    callback();
+  }
+}
+const validateCode = (rule,value,callback)=>{
+  if (!value.length){
+    callback(new Error("请输入验证码"))
+  }else{
+    callback();
+  }
+}
 // 校验表单
 const loginRules = ref({
   email: [{validator:validateEmail, trigger: "blur" }],
@@ -96,12 +127,17 @@ const loginForm = ref({
 const registerForm = ref({
   username:"",
   email:"",
-  password:""
+  code:"",
+  password:"",
+  confirm_password:""
 })
 const registerRules = ref({
   username: [{validator:validateName, trigger: "blur" }],
   password: [{validator:validatePassword, trigger: "blur" }],
-  email:[{validator:validateEmail,trigger:"blur"}]
+  confirm_password:[{validator:validateConfirmPassword,trigger:"blur"}],
+  email:[{validator:validateEmail,trigger:"blur"}],
+  code:[{validator:validateCode,trigger:"blur"}],
+
 })
 const showRegister = ref(false)
 const activeForm = ref('a');
@@ -141,14 +177,42 @@ const toggleClasses = () => {
   bContainer.classList.toggle("is-txl");
   bContainer.classList.toggle("is-z");
 };
-const Register = () => {
-  Swal.fire({
+async function Register () {
+  await accountRequest.register(registerForm.value.username,registerForm.value.email,registerForm.value.code,registerForm.value.password,registerForm.value.confirm_password)
+  await Swal.fire({
     icon: 'success', //error\warning\info\question
     title: '注册成功',
     text: '即将跳转至登录界面',
   })
   changeForm('b')
+}
+const countdown = ref(60);
+let countdownInterval;
+const sendCodeDisabled = ref(false)
+const startCountdown = () => {
+  sendCodeDisabled.value = true;
+  countdown.value = 60;
+
+  countdownInterval = setInterval(() => {
+    countdown.value--;
+    if (countdown.value === 0) {
+      clearInterval(countdownInterval);
+      sendCodeDisabled.value = false;
+    }
+  }, 1000);
 };
+
+async function sendVerificationCode() {
+  if (!sendCodeDisabled.value) {
+    await accountRequest.send_code(registerForm.value.email)
+    await Swal.fire({
+      icon: 'success',
+      title: '验证码发送成功',
+      text: '请登录邮箱查收',
+    });
+    startCountdown();
+  }
+}
 const login = () =>{
   Swal.fire({
     icon: 'success', //error\warning\info\question
@@ -240,7 +304,6 @@ const login = () =>{
   transition: 0.15s;
   cursor: pointer;
 }
-
 .form_input {
   width: 350px;
   height: 40px;
@@ -254,14 +317,15 @@ const login = () =>{
   border-radius: 8px;
   box-shadow: inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #f9f9f9;
 }
-
+.code{
+  width: 200px;
+}
 .form_input:focus {
   box-shadow: inset 4px 4px 4px #d1d9e6, inset -4px -4px 4px #f9f9f9;
 }
 
 .form_span {
   color: black;
-  margin-top: 30px;
   margin-bottom: 12px;
 }
 
@@ -293,7 +357,7 @@ const login = () =>{
   width: 180px;
   height: 50px;
   border-radius: 25px;
-  margin-top: 50px;
+  margin-top: 30px;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 1.15px;
@@ -422,5 +486,20 @@ const login = () =>{
 }
 .el-form-item{
   margin-top: 15px;
+}
+.send-code-btn {
+  //background-color: white;
+  color: #409eff;
+  background-color: #ecf0f3;
+  width: 140px;
+  border:none;
+  margin-left: 10px;
+  font-size: 14px;
+  transition: 1.25s;
+}
+.send-code-btn:hover{
+  height: 45px;
+  box-shadow: 2px 2px 6px #d1d9e6, -2px -2px 6px #f9f9f9;
+  background-color: #e3e0e0;
 }
 </style>
