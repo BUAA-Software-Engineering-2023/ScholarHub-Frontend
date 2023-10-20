@@ -1,26 +1,39 @@
 <template>
-    <Background />
-    <div class="login-container">
-<!--        <img src="/person.png" class="earth-img" />-->
-        <div class="login-box">
-          <LoginForm></LoginForm>
-        </div>
+  <Background></Background>
+  <LoginNavBar></LoginNavBar>
+  <SearchBar class="search"></SearchBar>
+  <div class="main">
+    <div class="slogen">
+      <div class="slogen-title">Make Academia Visible</div>
+      <div class="slogen-dis">
+        创新思想，共享智慧，启迪未来<br/>
+        海量数据构建智慧网络，构建专业可视化的学术成果分享平台
+      </div>
     </div>
+    <div class="right">
+      <AcademicField></AcademicField>
+    </div>
+  </div>
+
 </template>
 <script setup>
 import Background from '../../components/Background/Background.vue';
-import LoginForm from "@/views/account/LoginForm.vue";
+import SearchBar from "../../components/Search/SearchBar.vue";
+import AcademicField from "@/components/visual/AcademicField.vue";
+import NavBar from "@/components/NavBar/NavBar.vue";
+import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 // const { width, height } = useWindowSize();
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.main{
+  justify-content: space-between;
+}
+
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.5s ease;
 }
-.right{
-  top: calc(50% - 40px);
-  left: calc(50% - 40px);
-}
+
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
@@ -32,8 +45,8 @@ import LoginForm from "@/views/account/LoginForm.vue";
     .login-box {
         z-index: 2;
         position: absolute;
-        width: 60%;
-        height: 60%;
+        width: 80%;
+        height: 80%;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -65,7 +78,7 @@ import LoginForm from "@/views/account/LoginForm.vue";
 .slogen {
     position: absolute;
     left: 5%;
-    top: calc(50% - 40px);
+    top: calc(50%);
 
     &-title {
         font-size: 40px;
@@ -81,7 +94,12 @@ import LoginForm from "@/views/account/LoginForm.vue";
         line-height: 30px;
     }
 }
-
+.search {
+  position: absolute;
+  left: 5vw;
+  top: 40vh;
+  width: 45vw;
+}
 .login-register {
     font-size: 12px;
     color: #409eff;
@@ -166,4 +184,5 @@ import LoginForm from "@/views/account/LoginForm.vue";
 
 .el-input__wrapper {
     background-color: transparent !important;
-}</style>
+}
+</style>

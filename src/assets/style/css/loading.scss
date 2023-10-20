@@ -1,0 +1,18 @@
+.el-loading-mask {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7); /* 背景颜色及透明度 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.el-loading-spinner {
+  text-align: center;
+  width: 200px;
+  height: 200px;
+  background: url('./Bars-1.3s-237px.svg') no-repeat;
+}
