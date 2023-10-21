@@ -79,7 +79,18 @@
 import { ref, nextTick } from 'vue';
 import Swal from 'sweetalert2';
 import {useAccountStore} from '@/stores/account'
-import router from "@/router/index.js";
+import {getLogin} from "@/utils/token.js";
+
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  if (getLogin()==='true'){
+    console.log(getLogin())
+    showRegister.value = true;
+    activeForm.value = 'b';
+    toggleClasses();
+  }
+});
 
 const accountStore = useAccountStore();
 const validateName = (rule,value,callback)=>{
@@ -145,11 +156,14 @@ const showRegister = ref(false)
 const activeForm = ref('a');
 
 const changeForm = (form) => {
+  console.log(form+" "+activeForm.value)
   if (form === 'a' && activeForm.value === 'b') {
+    console.log("123")
     showRegister.value = false;
     activeForm.value = 'a';
     nextTick(toggleClasses);
   } else if (form === 'b' && activeForm.value === 'a') {
+    console.log("123")
     showRegister.value = true;
     activeForm.value = 'b';
     nextTick(toggleClasses);
@@ -237,7 +251,7 @@ async function login (){
       icon: 'success', //error\warning\info\question
       title: result
     })
-    await router.push('/home')
+    router.push('/')
   }else{
     await Swal.fire({
       icon: 'error', //error\warning\info\question
@@ -529,4 +543,5 @@ async function login (){
   box-shadow: 2px 2px 6px #d1d9e6, -2px -2px 6px #f9f9f9;
   background-color: #e3e0e0;
 }
+
 </style>

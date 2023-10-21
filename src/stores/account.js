@@ -1,13 +1,14 @@
 import { defineStore } from "pinia";
 import accountAPI from "@/api/account";
 import { getToken, setToken, clearToken } from "@/utils/token";
+import {ref} from "vue";
 
 const state = () => {
     return {
         code: '',
         token: getToken(),
         userInfo: {},
-        unreadMessage: false
+        unreadMessage: false,
     }
 }
 
