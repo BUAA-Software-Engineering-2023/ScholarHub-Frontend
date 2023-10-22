@@ -7,6 +7,7 @@ import App from './App.vue'
 import I18n from "./language"
 import * as ElementPlusIconsVue from "@element-plus/icons-vue"
 import 'virtual:svg-icons-register'
+import 'element-plus/theme-chalk/el-loading.css'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

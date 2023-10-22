@@ -1,8 +1,9 @@
 // 二次封装axios
 import axios from 'axios'
 import { useAccountStore } from "@/stores/account";
-import { ElMessage } from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import router from "@/router";
+import '@/assets/style/css/loading.scss'
 
 // 1. 创建axios实例
 const requests = axios.create({
@@ -12,12 +13,15 @@ const requests = axios.create({
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
-
+let loading =  null;
 // 2. 请求拦截器
+// 封装loading
 requests.interceptors.request.use(config => {
+    loading = ElLoading.service({
+        lock: true,
+        spinner: 'el-icon-loading',
+    })
     const accountStore = useAccountStore();
-    console.log(config)
-    console.log(config.url === '/messages')
     if (accountStore.token) {
         config.headers.Authorization = accountStore.token;
     }
@@ -26,6 +30,7 @@ requests.interceptors.request.use(config => {
 
 // 3. 响应拦截器
 requests.interceptors.response.use(response => {
+    loading.close();
     return response
 }, error => {
     console.log(error)
@@ -33,7 +38,6 @@ requests.interceptors.response.use(response => {
         let pattern = /token/i
         if (pattern.test(error.response.data.detail)) {
             const accountStore = useAccountStore();
-            accountStore.logout();
             router.push({
                 path: '/login',
             }).then(() => { });

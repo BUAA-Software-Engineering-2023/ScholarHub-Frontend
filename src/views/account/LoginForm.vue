@@ -13,10 +13,10 @@
           <el-input v-model="registerForm.email" type="text" class="form_input" placeholder="邮箱"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="registerForm.password" type="text" class="form_input" placeholder="密码"></el-input>
+          <el-input v-model="registerForm.password" type="password" class="form_input" placeholder="密码"></el-input>
         </el-form-item>
         <el-form-item prop="confirm_password">
-          <el-input v-model="registerForm.confirm_password" type="text" class="form_input" placeholder="确认密码"></el-input>
+          <el-input v-model="registerForm.confirm_password" type="password" class="form_input" placeholder="确认密码"></el-input>
         </el-form-item>
         <el-form-item prop="code">
           <el-input v-model="registerForm.code" type="text" class="code form_input" placeholder="验证码"> </el-input>
@@ -41,10 +41,10 @@
         </div>
         <span class="form_span">知识让一切不可能变为可能</span>
         <el-form-item prop="email">
-          <el-input v-model="loginForm.email" type="text" class="form_input" placeholder="邮箱"></el-input>
+          <el-input v-model="loginForm.email" type="text" class="form_input" placeholder="用户名"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" type="text" class="form_input" placeholder="密码"></el-input>
+          <el-input v-model="loginForm.password" type="password" class="form_input" placeholder="密码"></el-input>
         </el-form-item>
         <a class="form_link">忘记密码？</a>
         <button @click.prevent="login" class="form_button button submit">SIGN IN</button>
@@ -78,8 +78,21 @@
 <script setup>
 import { ref, nextTick } from 'vue';
 import Swal from 'sweetalert2';
-import accountRequest from '@/api/account'
+import {useAccountStore} from '@/stores/account'
+import {getLogin} from "@/utils/token.js";
 
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  if (getLogin()==='true'){
+    console.log(getLogin())
+    showRegister.value = true;
+    activeForm.value = 'b';
+    toggleClasses();
+  }
+});
+
+const accountStore = useAccountStore();
 const validateName = (rule,value,callback)=>{
   if(!value.length){
     callback(new Error("请输入用户名"))
@@ -143,11 +156,14 @@ const showRegister = ref(false)
 const activeForm = ref('a');
 
 const changeForm = (form) => {
+  console.log(form+" "+activeForm.value)
   if (form === 'a' && activeForm.value === 'b') {
+    console.log("123")
     showRegister.value = false;
     activeForm.value = 'a';
     nextTick(toggleClasses);
   } else if (form === 'b' && activeForm.value === 'a') {
+    console.log("123")
     showRegister.value = true;
     activeForm.value = 'b';
     nextTick(toggleClasses);
@@ -178,13 +194,21 @@ const toggleClasses = () => {
   bContainer.classList.toggle("is-z");
 };
 async function Register () {
-  await accountRequest.register(registerForm.value.username,registerForm.value.email,registerForm.value.code,registerForm.value.password,registerForm.value.confirm_password)
-  await Swal.fire({
-    icon: 'success', //error\warning\info\question
-    title: '注册成功',
-    text: '即将跳转至登录界面',
-  })
-  changeForm('b')
+  const result = await useAccountStore().register(registerForm.value.username,registerForm.value.email,registerForm.value.code,registerForm.value.password,registerForm.value.confirm_password)
+  if(result === '注册成功'){
+    await Swal.fire({
+      icon: 'success', //error\warning\info\question
+      title: '注册成功',
+      text: '即将跳转至登录界面',
+    })
+    changeForm('b')
+  }else{
+    await Swal.fire({
+      icon: 'error', //error\warning\info\question
+      title: '注册失败',
+      text: result
+    })
+  }
 }
 const countdown = ref(60);
 let countdownInterval;
@@ -204,20 +228,37 @@ const startCountdown = () => {
 
 async function sendVerificationCode() {
   if (!sendCodeDisabled.value) {
-    await accountRequest.send_code(registerForm.value.email)
-    await Swal.fire({
-      icon: 'success',
-      title: '验证码发送成功',
-      text: '请登录邮箱查收',
-    });
-    startCountdown();
+    const result = await useAccountStore().getCode(registerForm.value.email)
+    if (result==='验证码已发送'){
+      await Swal.fire({
+        icon: 'success',
+        title: result,
+        text: '请登录邮箱查收',
+      });
+      startCountdown();
+    }else{
+      await Swal.fire({
+        icon: 'error',
+        title: result,
+      });
+    }
   }
 }
-const login = () =>{
-  Swal.fire({
-    icon: 'success', //error\warning\info\question
-    title: '登录成功'
-  })
+async function login (){
+  const result = await useAccountStore().loginWithPassword(loginForm.value.email,loginForm.value.password);
+  if (result==='登录成功'){
+    await Swal.fire({
+      icon: 'success', //error\warning\info\question
+      title: result
+    })
+    router.push('/')
+  }else{
+    await Swal.fire({
+      icon: 'error', //error\warning\info\question
+      title: result
+    })
+  }
+
 }
 
 </script>
@@ -502,4 +543,5 @@ const login = () =>{
   box-shadow: 2px 2px 6px #d1d9e6, -2px -2px 6px #f9f9f9;
   background-color: #e3e0e0;
 }
+
 </style>

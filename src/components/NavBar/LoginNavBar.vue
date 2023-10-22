@@ -15,12 +15,13 @@
 
           <!-- 右侧导航栏 -->
           <div class="navbar-container-right">
-            <div class="navbar-btns-User">
-              <div class="userPhoto" @click.prevent="login">
-                <a  href="">登录/注册</a>
-              </div>
+            <div class="userPhoto formButton" @click.prevent="login">
+              <a href="">登录</a>
+            </div>
+            <div class="userPhoto formButton" @click.prevent="register">
+              <a href="">注册</a>
+            </div>
           </div>
-        </div>
       </div>
     </div>
   </div>
@@ -28,13 +29,32 @@
 </template>
 <script setup>
 import router from "@/router/index.js";
+import {setLogin} from "@/utils/token.js";
 
 function login() {
+  setLogin(true)
+  router.push('/login');
+}
+function register(){
+  setLogin(false)
   router.push('/login');
 }
 </script>
 
 <style scoped>
+.navbar-container-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* 靠右对齐 */
+}
+
+body{
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .navbar{
   position: fixed;
   z-index: 2001;
@@ -172,46 +192,6 @@ a{
   color: #fff;
 }
 
-.userPhoto{
-  height: 100%;
-  width: 200px;
-  color: white;
-  float: left;
-  position: relative;
-  line-height: 48px;
-  text-align: center;
-  border-radius: 20px;
-  transition:all 0.2s linear 0s;
-}
-.userPhoto:hover{
-  background-color: black;
-}
-.hasAvatar{
-  display: block;
-  line-height: 48px;
-  color: #222226;
-  margin-top: calc((48px - 32px)/ 2);
-  margin-right: 16px;
-  opacity: 1;
-}
-.hasAvatar img{
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-.navbar-profile{
-  width: 248px;
-  color: #222226;
-  background: #fff;
-  position: absolute;
-  min-height: 200px;
-  top: 48px;
-  left: 50%;
-  margin-left: -132px;
-  z-index: 9999999;
-  border-radius: 4px;
-  box-shadow: 0 0 10px 2px rgb(0 0 0 / 6%);
-}
 .navbar-profile .profile-user{
   text-align: center;
   padding: 20px 0 12px 0;
@@ -249,26 +229,6 @@ a{
   white-space: nowrap;
   overflow: hidden;
 }
-.navbar-btn{
-  position: relative;
-  height: 48px;
-  line-height: 48px;
-  color: inherit;
-  text-align: center;
-  padding: 0 4px;
-}
-.navbar-fl{
-  float: left;
-}
-.navbar-btn-write>a i:first-child{
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-  background: url("../assets/write.png");
-  background-size: 100%;
-  margin-right: 2px;
-}
 .navbar-btn-write>a i:last-child{
   display: inline-block;
   width: 10px;
@@ -278,16 +238,84 @@ a{
   background: url(https://g.csdnimg.cn/common/csdn-toolbar/images/write-hover-thro.png) no-repeat center center;
   background-size: 100%;
 }
-.write{
-  display: block;
-  min-width: 88px;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  color: #fff;
-  background: #fc5531;
+.formButton1{
+
+}
+.formButton {
+  margin-left: 20px;
+  font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;
+  text-transform: uppercase;
+  font-size: 15px;
+  width: 100px;
   border-radius: 20px;
-  margin-top: calc((48px - 32px)/ 2);
+  text-align: center;
+  border: 3px solid #009688;
+  display: inline-block;
+  text-decoration: none;
+  color: #009688;
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
+  transition: .3s;
+}
+.formButton::before, .formButton::after{
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: #009699;
+  top: -100%;
+  transition: .3s;
+  z-index: -1;
+  opacity: .5;
+}
+.formButton:after{
+  opacity: 1;
+  transition-delay: .2s;
+}
+.formButton:hover{
+  color: #fff;
+}
+.formButton:hover::before,.formButton:hover::after{
+  top: 0;
+}
+.formButton {
+  margin-left: 20px;
+  font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;
+  text-transform: uppercase;
+  font-size: 15px;
+  width: 100px;
+  border-radius: 20px;
+  text-align: center;
+  border: 3px solid #009688;
+  display: inline-block;
+  text-decoration: none;
+  color: #009688;
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
+  transition: .3s;
+}
+.formButton::before, .formButton::after{
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: #009699;
+  top: -100%;
+  transition: .3s;
+  z-index: -1;
+  opacity: .5;
+}
+.formButton:after{
+  opacity: 1;
+  transition-delay: .2s;
+}
+.formButton:hover{
+  color: #fff;
+}
+.formButton:hover::before,.formButton:hover::after{
+  top: 0;
 }
 </style>
 
