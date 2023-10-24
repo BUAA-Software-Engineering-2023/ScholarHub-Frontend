@@ -7,10 +7,12 @@
     >
       <template #dropdown>
         <SearchHistory
-            :history="searchHistory"
+            v-show="!searchValue"
             @select="handleSearch"
-            @remove="removeHistoryItem"
         />
+        <SearchHint
+            v-show="searchValue"
+            :search-text="searchValue"/>
       </template>
     </SearchFrame>
   </div>
@@ -20,18 +22,13 @@
 import { ref } from 'vue';
 import SearchFrame from "@/components/Search/SearchFrame.vue";
 import SearchHistory from "@/components/Search/SearchHistory.vue";
+import SearchHint from "@/components/Search/SearchHint.vue";
 
 const searchValue = ref('');
-const searchHistory = ref([]);
-searchHistory.value = ["hhhh"]
+
 
 const handleSearch = (searchValue) => {
-  if (searchValue) {
-    searchHistory.value.unshift(searchValue);
-    if (searchHistory.value.length > 10) { // Limit to last 10 searches for example
-      searchHistory.value.pop();
-    }
-  }
+  console.log(searchValue)
 };
 
 const handleClear = () => {
@@ -39,12 +36,6 @@ const handleClear = () => {
 }
 
 
-const removeHistoryItem = (item) => {
-  const index = searchHistory.value.indexOf(item);
-  if (index !== -1) {
-    searchHistory.value.splice(index, 1);
-  }
-};
 </script>
 
 <style scoped>

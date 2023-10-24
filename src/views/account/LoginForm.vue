@@ -82,6 +82,7 @@ import {useAccountStore} from '@/stores/account'
 import {getLogin} from "@/utils/token.js";
 
 import { onMounted } from 'vue';
+import router from "@/router/index.js";
 
 onMounted(() => {
   if (getLogin()==='true'){
@@ -251,7 +252,7 @@ async function login (){
       icon: 'success', //error\warning\info\question
       title: result
     })
-    router.push('/')
+    await router.push('/')
   }else{
     await Swal.fire({
       icon: 'error', //error\warning\info\question

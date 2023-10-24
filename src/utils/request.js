@@ -4,6 +4,7 @@ import { useAccountStore } from "@/stores/account";
 import {ElLoading, ElMessage} from "element-plus";
 import router from "@/router";
 import '@/assets/style/css/loading.scss'
+import Swal from "sweetalert2";
 
 // 1. 创建axios实例
 const requests = axios.create({
@@ -33,6 +34,7 @@ requests.interceptors.response.use(response => {
     loading.close();
     return response
 }, error => {
+    loading.close();
     console.log(error)
     if (error.response && error.response.data.detail) {
         let pattern = /token/i
@@ -43,28 +45,28 @@ requests.interceptors.response.use(response => {
             }).then(() => { });
         }
         else {
-            ElMessage({
-                message: error.response.data.detail,
-                type: 'error'
+            Swal.fire({
+                icon: 'error',
+                title: error.response.data.detail,
             });
         }
     }
     else if (error.response && error.response.status === 403) {
-        ElMessage({
-            message: '您没有权限进行该操作',
-            type: 'error'
-        });
+        let promise = Swal.fire({
+            icon: 'error',
+            title:'您没有权限进行该操作'
+        })
     }
     else if (error.response && error.response.status === 404) {
-        ElMessage({
-            message: '该资源不存在',
-            type: 'error'
+        let promise = Swal.fire({
+            icon: 'error',
+            title:'该资源不存在'
         });
     }
     else if (error.response && error.response.status === 500) {
-        ElMessage({
-            message: '服务器内部错误',
-            type: 'error'
+        let promise = Swal.fire({
+            icon: 'error',
+            title:'服务器内部错误'
         });
     }
     else if (!error.response?.data.result) {

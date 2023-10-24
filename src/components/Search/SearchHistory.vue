@@ -1,6 +1,5 @@
 <template>
   <div v-if="history.length" class="history-dropdown">
-    <span class="history-record">历史记录</span>
     <div
         v-for="item in history"
         :key="item"
@@ -9,6 +8,7 @@
       <span @click="selectItem(item)">{{ item }}</span>
       <button class="delete-btn" @click.stop="removeItem(item)"><el-icon style="color: red"><DeleteFilled /></el-icon></button>
     </div>
+    <span class="history-record">历史记录</span>
   </div>
 </template>
 
@@ -16,12 +16,7 @@
 import { ref, defineProps, defineEmits } from 'vue';
 import {Delete, DeleteFilled} from "@element-plus/icons-vue";
 
-const props = defineProps({
-  history: {
-    type: Array,
-    default: () => [],
-  }
-});
+const history = ref(["哈哈"])
 
 const emits = defineEmits(['select', 'remove']);
 

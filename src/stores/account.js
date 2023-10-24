@@ -16,8 +16,10 @@ const actions = {
     async loginWithCode(phone_number, code) {
         const result = await accountAPI.loginWithCode(phone_number, code);
         if (result.response.status === 200) {
-            this.token = result.data.token;
-            setToken(result.data.token);
+            console.log(result.data)
+            this.token = result.data.data.token;
+            setToken(result.data.data.token);
+            console.log(result.data.data.token)
             // setUser(response.data.id);
             // setName(response.data.name);
             return "登录成功";
@@ -28,9 +30,9 @@ const actions = {
         const response = await accountAPI.loginWithPassword(email, password);
         console.log(response)
         if (response.data.success) {
-            this.token = response.data.token;
+            this.token = response.data.data.token;
             console.log(this.token)
-            setToken(response.data.token);
+            setToken(response.data.data.token);
             // setUser(response.data.id);
             // setName(response.data.name);
             return "登录成功";
