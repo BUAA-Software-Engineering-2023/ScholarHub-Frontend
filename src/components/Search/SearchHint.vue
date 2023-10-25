@@ -6,7 +6,7 @@
         class="history-item"
     >
       <span @click="selectItem(item)">{{ item }}</span>
-      <button class="delete-btn" @click.stop="removeItem(item)"><el-icon style="color: red"><DeleteFilled /></el-icon></button>
+      <button class="delete-btn" @click.stop="removeItem(item)"></button>
     </div>
   </div>
 </template>
@@ -26,12 +26,22 @@ const hints = ref([])
 const emits = defineEmits(['select', 'remove']);
 const getHintData = async () => {
   if (!props.searchText) return;
-  const result = await Search.autocomplete_concept(props.searchText)
+  const result = await Search.autocomplete_source(props.searchText)
+  console.log(props.searchText)
   console.log(result)
+  let item;
+  hints.value = []
+  for (item in result.data.data)
+  {
+    hints.value.push(result.data.data[item].display_name)
+    console.log(item)
+  }
+
+
   // const result = await
 }
 watchDebounced(
-    () => props.searchText.toString(),
+    () => props.searchText,
     getHintData,
     {
       immediate: true,

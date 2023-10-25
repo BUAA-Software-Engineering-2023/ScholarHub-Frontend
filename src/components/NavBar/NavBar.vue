@@ -10,12 +10,10 @@
         <div class="navbar-container">
           <!-- 左侧 -->
           <div class="navbar-container-left">
-
             <!-- 网页logo -->
             <div class="logo">
               <img src="@/assets/imgs/scholarHub.png" alt="">
             </div>
-
             <!-- 左侧导航栏 -->
             <ul class="left-ul">
               <li title=""><router-link active-class="active" to="#"> 博客 </router-link></li>
@@ -35,7 +33,6 @@
               <input type="text" autocomplete="off" id="search" :placeholder="defaultText">
               <button>
                 <i></i>
-                <span>搜索</span>
               </button>
             </div>
           </div>

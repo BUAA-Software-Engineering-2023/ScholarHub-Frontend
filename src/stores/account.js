@@ -31,8 +31,8 @@ const actions = {
         console.log(response)
         if (response.data.success) {
             this.token = response.data.data.token;
+            setToken(this.token);
             console.log(this.token)
-            setToken(response.data.data.token);
             // setUser(response.data.id);
             // setName(response.data.name);
             return "登录成功";

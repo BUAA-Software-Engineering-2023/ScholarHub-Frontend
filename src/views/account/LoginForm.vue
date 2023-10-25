@@ -252,7 +252,7 @@ async function login (){
       icon: 'success', //error\warning\info\question
       title: result
     })
-    await router.push('/')
+    await router.push('/home')
   }else{
     await Swal.fire({
       icon: 'error', //error\warning\info\question

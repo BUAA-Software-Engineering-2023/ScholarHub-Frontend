@@ -102,7 +102,7 @@ export default {
     autocomplete_source(search){
         return requests({
             url: '/source/autocomplete',
-            method: 'POST',
+            method: 'GET',
             data:{
                 search
             }
@@ -120,7 +120,7 @@ export default {
     autocomplete_concept(search){
         return requests({
             url: '/concept/autocomplete',
-            method: 'POST',
+            method: 'GET',
             data:{
                 search
             }
@@ -129,7 +129,7 @@ export default {
     autocomplete_publisher(search){
     return requests({
         url: '/publisher/autocomplete',
-        method: 'POST',
+        method: 'GET',
         data:{
             search
         }
