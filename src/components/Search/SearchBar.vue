@@ -9,10 +9,13 @@
         <SearchHistory
             v-show="!searchValue"
             @select="handleSearch"
+            @remove="handleRemove"
         />
         <SearchHint
             v-show="searchValue"
-            :search-text="searchValue"/>
+            :search-text="searchValue"
+            @select="handleSearch"
+        />
       </template>
     </SearchFrame>
   </div>
@@ -27,21 +30,24 @@ import SearchHint from "@/components/Search/SearchHint.vue";
 const searchValue = ref('');
 
 
-const handleSearch = (searchValue) => {
-  console.log(searchValue)
+const handleSearch = (InputValue) => {
+  searchValue.value = InputValue;
+  console.log(InputValue)
 };
 
 const handleClear = () => {
   searchValue.value = '';
 }
+const handleRemove = () =>{
 
+}
 
 </script>
 
 <style scoped>
 .search-input-container {
   z-index: 999;
-  width: 45%;
+  width: 100%;
   box-sizing: border-box;
 }
 </style>

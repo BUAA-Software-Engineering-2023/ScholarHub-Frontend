@@ -4,9 +4,9 @@
         v-for="item in hints"
         :key="item"
         class="history-item"
+        @click="selectItem(item)"
     >
-      <span @click="selectItem(item)">{{ item }}</span>
-      <button class="delete-btn" @click.stop="removeItem(item)"></button>
+      <span>{{ item }}</span>
     </div>
   </div>
 </template>
@@ -36,8 +36,6 @@ const getHintData = async () => {
     hints.value.push(result.data.data[item].display_name)
     console.log(item)
   }
-
-
   // const result = await
 }
 watchDebounced(
@@ -51,10 +49,6 @@ watchDebounced(
 );
 const selectItem = (item) => {
   emits('select', item);
-};
-
-const removeItem = (item) => {
-  emits('remove', item);
 };
 </script>
 

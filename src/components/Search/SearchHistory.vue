@@ -4,8 +4,9 @@
         v-for="item in history"
         :key="item"
         class="history-item"
+        @click="selectItem(item)"
     >
-      <span @click="selectItem(item)">{{ item }}</span>
+      <span >{{ item }}</span>
       <button class="delete-btn" @click.stop="removeItem(item)"><el-icon style="color: red"><DeleteFilled /></el-icon></button>
     </div>
     <span class="history-record">历史记录</span>
