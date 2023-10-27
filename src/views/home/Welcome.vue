@@ -4,7 +4,7 @@
   <SearchBar class="search"></SearchBar>
   <div class="main">
     <div class="slogen">
-      <div class="slogen-title">Make Academia Visible</div>
+      <div class="slogen-title">Explore Whatever You Want</div>
       <div class="slogen-dis">
         创新思想，共享智慧，启迪未来<br/>
         海量数据构建智慧网络，构建专业可视化的学术成果分享平台

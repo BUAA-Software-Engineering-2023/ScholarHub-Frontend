@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-<!--登录之后的导航栏-->
 <template>
   <div>
     <div class="navbarBox" style="min-height: 48px;">
@@ -10,12 +6,10 @@
         <div class="navbar-container">
           <!-- 左侧 -->
           <div class="navbar-container-left">
-
             <!-- 网页logo -->
             <div class="logo">
               <img src="@/assets/imgs/scholarHub.png" alt="">
             </div>
-
             <!-- 左侧导航栏 -->
             <ul class="left-ul">
               <li title=""><router-link active-class="active" to="#"> 博客 </router-link></li>
@@ -32,11 +26,7 @@
           <!-- 中间搜索框 -->
           <div class="navbar-container-middle">
             <div class="navbar-search-container">
-              <input type="text" autocomplete="off" id="search" :placeholder="defaultText">
-              <button>
-                <i></i>
-                <span>搜索</span>
-              </button>
+              <SearchBar></SearchBar>
             </div>
           </div>
 
@@ -44,47 +34,33 @@
           <div class="navbar-container-right">
             <div class="navbar-btns-User">
               <!--用户登录: 展示用户的头像以及其他信息-->
-              <div class="userPhoto" @mouseover="mouseOver" @mouseleave="mouseLeave" v-if="isLogin">
+              <div class="userPhoto" @mouseover="mouseOver" @mouseleave="mouseLeave">
                 <!-- 用户头像 -->
-                <a class="hasAvatar" :style="{opacity}" href="https://blog.csdn.net/weixin_52372879?spm=1000.2115.3001.5343"  >
-                  <img src="../assets/portrait.png">
+                <a class="hasAvatar" :style="{opacity}">
+                  <img src="@/assets/icons/default_avatar.png" alt="用户头像">
                 </a>
-                <!-- 用信息弹出框 初始display:none-->
-                <div class="navbar-profile"  :style="{display}" >
-                  <div class="profile-user">
-                    <!-- 用户简介的头像 -->
-                    <a class="profile-avatar" href="https://blog.csdn.net/weixin_52372879?spm=1000.2115.3001.5343">
-                      <img src="../assets/portrait.png"></a>
-                    <p class="profile-nickName">京茶吉鹿</p>
-                  </div>
-                </div>
-              </div>
-              <!--用户未登录: 提示提示信息-->
-              <div class="userPhoto" v-else @click.prevent="login">
-                <a href="">登录/注册</a>
-              </div>
 
-              <!-- 会员中心 -->
-              <div class="navbar-btn navbar-btn-dynamic navbar-fl">
-                <a href="">会员中心</a>
-              </div>
-              <!-- 足迹 -->
-              <div class="navbar-btn navbar-btn-news navbar-fl">
-                <a href="">足迹</a>
-              </div>
-              <!-- 动态 -->
-              <div class="navbar-btn navbar-btn-news navbar-fl">
-                <a href="">动态</a>
-              </div>
-              <!-- 消息 -->
-              <div class="navbar-btn navbar-btn-news navbar-fl">
-                <a href="">消息</a>
-              </div>
-              <!-- 发布 -->
-              <div class="navbar-btn navbar-btn-write navbar-fl">
-                <a class="write" href="">
-                  <i ></i>发布
-                  <i ></i></a>
+                <transition  name="slide">
+                <div class="navbar-profile" v-if="showProfile">
+                  <div id="test"></div>
+                    <div class="profile-user">
+                      <div class="profile-nickName">
+                        <img class="profile-avatar" src="@/assets/icons/default_avatar.png" alt="用户头像"> <span class="nickName">您好，张三</span> <!-- 显示用户姓名 -->
+                      </div>
+                      <el-divider></el-divider>
+                      <div class="profile-links">
+                        <a href="#" class="profile-link">学术主页</a>
+                        <a href="#" class="profile-link">我的收藏</a>
+                        <a href="#" class="profile-link">个人信息</a>
+                      </div>
+                      <el-divider></el-divider>
+                      <div class="profile-links" @click.prevent="logout">
+                        <a href="" class="profile-link">退出登录</a>
+                      </div>
+                    </div>
+                  <!-- Profile content goes here -->
+                </div>
+                </transition>
               </div>
             </div>
           </div>
@@ -96,24 +72,43 @@
     </div>
   </div>
 </template>
+<script setup>
+  import {clearToken} from "@/utils/token.js";
+  import router from "@/router/index.js";
+  import SearchBar from "@/components/Search/SearchBar.vue";
+  const showProfile = ref(false)
+  function mouseOver() {
+    showProfile.value = true;
+  }
 
+  function mouseLeave() {
+    showProfile.value = false;
+  }
+  function logout(){
+    clearToken();
+    router.push('/')
+  }
+</script>
+<!--登录之后的导航栏-->
 
 <style scoped>
 .navbar{
   position: fixed;
   z-index: 2001;
-  top: 0px;
+  top: 0;
   width: 100%;
-  left: 0px;
+  left: 0;
   font-size: 14px;
   /* 字体粗细，400相当于normal */
   font-weight: 400;
-  color: #222226;
-  background-color: #fff;
+  color: white;
+  opacity: .8;
   /* 阴影  水平阴影距离，垂直阴影距离， 模糊尺寸， 阴影尺寸 颜色*/
   box-shadow:0 2px 4px 0 rgb(0, 0, 0,5%);
 }
+
 .navbar-container{
+  color: white;
   width: 100%;
   /* 最小宽度，窗口缩小之后到1280px不会再缩小 */
   min-width: 1280px;
@@ -138,15 +133,16 @@
   cursor: pointer;
 }
 .logo img{
-  width: 80px;
-  max-width: 80px;
-  height: 44px;
+  width: 120px;
+  max-width: 180px;
+  height: 67px;
   display: block;
-  margin-top: calc((48px - 44px)/ 2);
+//margin-top: calc((48px - 44px)/ 2);
 }
 .left-ul{
   width: auto;
   height: 100%;
+  padding-top: 10px;
   /* 去除li中的间隙，在li中设置font-size,否则没有内容 */
   font-size: 0px;
   float: left;
@@ -159,7 +155,7 @@
   line-height: 48px;
 }
 a{
-  color:#000;
+  color:white;
   padding: 0 10px;
   /* 删除a标签的下划线 */
   text-decoration: none;
@@ -169,12 +165,13 @@ a{
   background-color: #eee;
 }
 .navbar-container-middle{
-  padding: 0 40px;
+  padding: 10px 40px;
   flex: 1;
 }
 .navbar-search-container{
   width: 100%;
   max-width: 720px;
+
   height: 32px;
   line-height: 32px;
   margin-top: calc((48px - 32px)/ 2);
@@ -242,8 +239,6 @@ a{
   height: 100%;
   float: left;
   position: relative;
-  line-height: 48px;
-  text-align: center;
   padding: 0 8px;
 }
 .hasAvatar{
@@ -255,13 +250,14 @@ a{
   opacity: 1;
 }
 .hasAvatar img{
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
 }
 .navbar-profile{
   width: 248px;
   color: #222226;
+  margin-top: 10px;
   background: #fff;
   position: absolute;
   min-height: 200px;
@@ -273,29 +269,32 @@ a{
   box-shadow: 0 0 10px 2px rgb(0 0 0 / 6%);
 }
 .navbar-profile .profile-user{
-  text-align: center;
   padding: 20px 0 12px 0;
   border-bottom: 1px solid #e8e8ed;
 }
 .navbar-profile .profile-user .profile-avatar{
   position: absolute;
-  width: 48px;
   height: 48px;
   padding: 0px;
-  top: -32px;
-  left: 50%;
-  -webkit-transform: translate(-50%,0);
-  transform: translate(-50%,0);
   border-radius: 50%;
   cursor: pointer;
   z-index: 9999;
-  border: 1px solid #e8e8ed;
 }
-.profile-user .profile-avatar img {
+.profile-user {
   width: 100%;
   height: 100%;
   border-radius: 50%;
 }
+.profile-nickName {
+  display: flex; /* 使用 Flexbox 布局 */
+  align-items: center; /* 垂直居中对齐 */
+}
+
+.profile-avatar {
+  border-radius: 50%; /* 圆形头像 */
+  margin-right: 10px; /* 添加一些间距以与用户名分隔开 */
+}
+
 .navbar-profile .profile-user .profile-nickName{
   width: 100%;
   box-sizing: border-box;
@@ -320,24 +319,6 @@ a{
 .navbar-fl{
   float: left;
 }
-.navbar-btn-write>a i:first-child{
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-  background: url("../assets/write.png");
-  background-size: 100%;
-  margin-right: 2px;
-}
-.navbar-btn-write>a i:last-child{
-  display: inline-block;
-  width: 10px;
-  height: 7px;
-  margin-left: 7px;
-  vertical-align: middle;
-  background: url(https://g.csdnimg.cn/common/csdn-toolbar/images/write-hover-thro.png) no-repeat center center;
-  background-size: 100%;
-}
 .write{
   display: block;
   min-width: 88px;
@@ -348,6 +329,69 @@ a{
   background: #fc5531;
   border-radius: 20px;
   margin-top: calc((48px - 32px)/ 2);
+}
+.navbar-container-right{
+  margin-right: 60px;
+  padding-top: 10px;
+}
+.slide-enter-active,
+.slide-leave-active{
+  transition: all .5s;
+}
+
+.profile-link {
+  padding-left: 15px;
+  font-size: 15px;
+  display: flex;
+  color: #888f96;
+  margin-top: -10px;
+  text-decoration: none;
+}
+
+.profile-link:hover {
+  color: #293541;
+  background-color: #e8e8e4;
+}
+.nickName{
+  margin-left: 60px;
+}
+.slide-enter-from,
+.slide-leave-to{
+  opacity: 0;
+  transform: translateY(40px);
+}
+a:hover {
+  cursor: pointer
+}
+#test {
+  top: -20px;
+  left: 115px;
+  position: absolute;
+  border-width: 10px;
+  border-style: solid;
+  width: 0px;
+  height: 0px;
+  border-color: transparent;
+  border-bottom-color: #e0dede;
+}
+#test::after {
+  content: "  ";
+  top: -9px;
+  left: -10px;
+  position: absolute;
+  border-width: 10px;
+  border-style: solid;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-bottom-color: white;
+}
+.el-divider{
+  margin-top: 10px;
+  width: 90%;
+}
+.el-divider--horizontal{
+  margin: 15px;
 }
 </style>
 

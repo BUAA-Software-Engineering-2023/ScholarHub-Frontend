@@ -7,9 +7,14 @@
     >
       <template #dropdown>
         <SearchHistory
-            :history="searchHistory"
+            v-show="!searchValue"
             @select="handleSearch"
-            @remove="removeHistoryItem"
+            @remove="handleRemove"
+        />
+        <SearchHint
+            v-show="searchValue"
+            :search-text="searchValue"
+            @select="handleSearch"
         />
       </template>
     </SearchFrame>
@@ -20,37 +25,35 @@
 import { ref } from 'vue';
 import SearchFrame from "@/components/Search/SearchFrame.vue";
 import SearchHistory from "@/components/Search/SearchHistory.vue";
+import SearchHint from "@/components/Search/SearchHint.vue";
+import Search from "@/api/search.js"
+import {useSearchStore} from "@/stores/search.js";
 
-const searchValue = ref('');
-const searchHistory = ref([]);
-searchHistory.value = ["hhhh"]
-
-const handleSearch = (searchValue) => {
-  if (searchValue) {
-    searchHistory.value.unshift(searchValue);
-    if (searchHistory.value.length > 10) { // Limit to last 10 searches for example
-      searchHistory.value.pop();
-    }
+const searchStore = useSearchStore();
+const searchValue = ref(searchStore.searchInput);
+async function handleSearch(InputValue){
+  searchValue.value = InputValue;
+  if (InputValue)
+  {
+    const result = await Search.search(InputValue);
+    searchStore.addHistory(InputValue);
+    searchStore.setSearchInput(InputValue)
   }
-};
-
+}
 const handleClear = () => {
   searchValue.value = '';
+  searchStore.setSearchInput("");
+}
+const handleRemove = () =>{
+
 }
 
-
-const removeHistoryItem = (item) => {
-  const index = searchHistory.value.indexOf(item);
-  if (index !== -1) {
-    searchHistory.value.splice(index, 1);
-  }
-};
 </script>
 
 <style scoped>
 .search-input-container {
   z-index: 999;
-  width: 45%;
+  width: 100%;
   box-sizing: border-box;
 }
 </style>

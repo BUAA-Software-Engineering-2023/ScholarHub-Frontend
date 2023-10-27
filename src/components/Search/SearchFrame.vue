@@ -31,23 +31,29 @@
 <script setup>
 import {Close, Search} from "@element-plus/icons-vue";
 import { useVModel, onClickOutside } from '@vueuse/core';
-const searchValue = ref('');
+
 const isFocused = ref(false);
 const searchContainerTarget = ref(null);
+const CLEAR = 'clear';
+const FOCUS = 'focus'
+const SEARCH = 'search';
+const INPUT = 'input';
+const EMIT_UPDATE_MODEL_VALUE = 'update:modelValue';
+// emits与props进行父子组件通信，保持searchValue一致
+const emits = defineEmits([SEARCH, CLEAR, FOCUS, INPUT,EMIT_UPDATE_MODEL_VALUE]);
+const props = defineProps(
+    {modelValue:{type:String,required:true}}
+)
+const searchValue = useVModel(props);
 onClickOutside(searchContainerTarget, () => {
   isFocused.value = false;
 });
 const onFocusHandler = () => {
   isFocused.value = true;
-  emits(FOCUS);
 };
-const CLEAR = 'clear';
-const FOCUS = 'focus'
-const SEARCH = 'search';
+// 监听输入框的变化
+
 // 用常量定义、符合规范
-const emits = defineEmits([SEARCH,CLEAR,FOCUS])
-const props = defineProps({modelValue:{type:String,required:true}})
-// emits与props进行父子组件通信，保持searchValue一致
 const clearSearchValue = () =>{
   searchValue.value = '';
   emits(CLEAR,'')

@@ -121,25 +121,7 @@ a{
   text-decoration: none;
 }
 /* 鼠标停留时的样式 */
-.left-ul li:hover{
-  background-color: #eee;
-}
-.navbar-container-middle{
-  padding: 0 40px;
-  flex: 1;
-}
-.navbar-search-container{
-  width: 100%;
-  max-width: 720px;
-  height: 32px;
-  line-height: 32px;
-  margin-top: calc((48px - 32px)/ 2);
-  box-sizing: border-box;
-  font-size: 0px;
-  margin-left: auto;
-  margin-right: auto;
 
-}
 .navbar-search-container input{
   font-size: 14px;
   display: inline-block;
@@ -238,9 +220,7 @@ a{
   background: url(https://g.csdnimg.cn/common/csdn-toolbar/images/write-hover-thro.png) no-repeat center center;
   background-size: 100%;
 }
-.formButton1{
 
-}
 .formButton {
   margin-left: 20px;
   font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;

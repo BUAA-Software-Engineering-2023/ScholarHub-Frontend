@@ -1,28 +1,25 @@
 <template>
   <div v-if="history.length" class="history-dropdown">
-    <span class="history-record">历史记录</span>
     <div
         v-for="item in history"
         :key="item"
-        class="history-item"
+        class="hint-item"
+        @click="selectItem(item)"
     >
-      <span @click="selectItem(item)">{{ item }}</span>
+      <span >{{ item }}</span>
       <button class="delete-btn" @click.stop="removeItem(item)"><el-icon style="color: red"><DeleteFilled /></el-icon></button>
     </div>
+    <span class="history-record">历史记录</span>
   </div>
 </template>
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
 import {Delete, DeleteFilled} from "@element-plus/icons-vue";
+import {useSearchStore} from "@/stores/search.js";
+const searchStore = useSearchStore();
 
-const props = defineProps({
-  history: {
-    type: Array,
-    default: () => [],
-  }
-});
-
+const history = useSearchStore().historyList
 const emits = defineEmits(['select', 'remove']);
 
 const selectItem = (item) => {
@@ -47,7 +44,7 @@ const removeItem = (item) => {
   box-shadow: 2px 2px 2px #a0a5a8;
 }
 
-.history-item {
+.hint-item {
   display: flex;
   justify-content: space-between;
   padding: 5px 10px;
@@ -63,7 +60,7 @@ const removeItem = (item) => {
   color: #a1a1a8;
   background-color: #fff;
 }
-.history-item:hover {
+.hint-item:hover {
   background-color: #ececec;
 }
 
