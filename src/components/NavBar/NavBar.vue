@@ -331,7 +331,7 @@ a{
   margin-top: calc((48px - 32px)/ 2);
 }
 .navbar-container-right{
-  margin-right: 80px;
+  margin-right: 60px;
   padding-top: 10px;
 }
 .slide-enter-active,

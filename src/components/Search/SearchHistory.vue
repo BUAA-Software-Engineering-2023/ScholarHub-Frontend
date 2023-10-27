@@ -3,7 +3,7 @@
     <div
         v-for="item in history"
         :key="item"
-        class="history-item"
+        class="hint-item"
         @click="selectItem(item)"
     >
       <span >{{ item }}</span>
@@ -16,9 +16,10 @@
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
 import {Delete, DeleteFilled} from "@element-plus/icons-vue";
+import {useSearchStore} from "@/stores/search.js";
+const searchStore = useSearchStore();
 
-const history = ref(["哈哈"])
-
+const history = useSearchStore().historyList
 const emits = defineEmits(['select', 'remove']);
 
 const selectItem = (item) => {
@@ -43,7 +44,7 @@ const removeItem = (item) => {
   box-shadow: 2px 2px 2px #a0a5a8;
 }
 
-.history-item {
+.hint-item {
   display: flex;
   justify-content: space-between;
   padding: 5px 10px;
@@ -59,7 +60,7 @@ const removeItem = (item) => {
   color: #a1a1a8;
   background-color: #fff;
 }
-.history-item:hover {
+.hint-item:hover {
   background-color: #ececec;
 }
 

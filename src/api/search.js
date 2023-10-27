@@ -99,49 +99,28 @@ export default {
             }
         })
     },
-    autocomplete_source(search){
+    auto_complete(search){
         return requests({
-            url: '/source/autocomplete',
-            method: 'GET',
+            url:"/work/autocomplete",
+            method:"GET",
             data:{
                 search
             }
         })
     },
-    autocomplete_institution(search){
+    history(){
         return requests({
-            url: '/institution/autocomplete',
+            url: "/history",
+            method: 'GET',
+        })
+    },
+    search(search){
+        return requests({
+            url:"/work/search",
             method: 'POST',
             data:{
                 search
             }
         })
-    },
-    autocomplete_concept(search){
-        return requests({
-            url: '/concept/autocomplete',
-            method: 'GET',
-            data:{
-                search
-            }
-        })
-    },
-    autocomplete_publisher(search){
-    return requests({
-        url: '/publisher/autocomplete',
-        method: 'GET',
-        data:{
-            search
-        }
-    })
-    },
-    autocomplete_funder(search){
-    return requests({
-        url: '/funder/autocomplete',
-        method: 'POST',
-        data:{
-            search
-        }
-    })
-},
+    }
 }

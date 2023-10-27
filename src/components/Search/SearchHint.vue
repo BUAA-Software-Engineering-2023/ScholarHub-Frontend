@@ -3,7 +3,7 @@
     <div
         v-for="item in hints"
         :key="item"
-        class="history-item"
+        class="hint-item"
         @click="selectItem(item)"
     >
       <span>{{ item }}</span>
@@ -26,15 +26,13 @@ const hints = ref([])
 const emits = defineEmits(['select', 'remove']);
 const getHintData = async () => {
   if (!props.searchText) return;
-  const result = await Search.autocomplete_source(props.searchText)
-  console.log(props.searchText)
-  console.log(result)
+  console.log("props:"+props.searchText)
+  const result = await Search.auto_complete(props.searchText)
   let item;
   hints.value = []
   for (item in result.data.data)
   {
     hints.value.push(result.data.data[item].display_name)
-    console.log(item)
   }
   // const result = await
 }
@@ -65,15 +63,17 @@ const selectItem = (item) => {
   box-shadow: 2px 2px 2px #a0a5a8;
 }
 
-.history-item {
+.hint-item {
   display: flex;
-  justify-content: space-between;
+  align-items: flex-start; /* 将项目在交叉轴上顶部对齐 */
+  text-align: left;
   padding: 5px 10px;
   cursor: pointer;
   z-index: 999;
-  color: #18181b;;
+  color: #18181b;
   background-color: #fff;
 }
+
 .history-record{
   font-weight: bold;
   font-size: 15px;
@@ -81,7 +81,7 @@ const selectItem = (item) => {
   color: #a1a1a8;
   background-color: #fff;
 }
-.history-item:hover {
+.hint-item:hover {
   background-color: #ececec;
 }
 

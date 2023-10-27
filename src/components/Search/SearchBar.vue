@@ -26,17 +26,23 @@ import { ref } from 'vue';
 import SearchFrame from "@/components/Search/SearchFrame.vue";
 import SearchHistory from "@/components/Search/SearchHistory.vue";
 import SearchHint from "@/components/Search/SearchHint.vue";
+import Search from "@/api/search.js"
+import {useSearchStore} from "@/stores/search.js";
 
-const searchValue = ref('');
-
-
-const handleSearch = (InputValue) => {
+const searchStore = useSearchStore();
+const searchValue = ref(searchStore.searchInput);
+async function handleSearch(InputValue){
   searchValue.value = InputValue;
-  console.log(InputValue)
-};
-
+  if (InputValue)
+  {
+    const result = await Search.search(InputValue);
+    searchStore.addHistory(InputValue);
+    searchStore.setSearchInput(InputValue)
+  }
+}
 const handleClear = () => {
   searchValue.value = '';
+  searchStore.setSearchInput("");
 }
 const handleRemove = () =>{
 

@@ -83,7 +83,8 @@ import {getLogin} from "@/utils/token.js";
 
 import { onMounted } from 'vue';
 import router from "@/router/index.js";
-
+import {useSearchStore} from "@/stores/search.js";
+import SearchAPI from "@/api/search.js"
 onMounted(() => {
   if (getLogin()==='true'){
     console.log(getLogin())
@@ -252,6 +253,15 @@ async function login (){
       icon: 'success', //error\warning\info\question
       title: result
     })
+    const searchStore = useSearchStore();
+    const result1 = await SearchAPI.history();
+    const HistoryList = []
+    let index;
+    for (index in result1.data.data){
+      console.log(result1.data.data)
+      HistoryList.push(result1.data.data[index].title)
+    }
+    searchStore.setSearchHistory(HistoryList)
     await router.push('/home')
   }else{
     await Swal.fire({

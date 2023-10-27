@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import accountAPI from "@/api/account";
 import { getToken, setToken, clearToken } from "@/utils/token";
 import {ref} from "vue";
-
+import {useSearchStore} from "@/stores/search.js";
 const state = () => {
     return {
         code: '',
@@ -11,7 +11,6 @@ const state = () => {
         unreadMessage: false,
     }
 }
-
 const actions = {
     async loginWithCode(phone_number, code) {
         const result = await accountAPI.loginWithCode(phone_number, code);
