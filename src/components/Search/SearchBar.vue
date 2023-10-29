@@ -28,16 +28,24 @@ import SearchHistory from "@/components/Search/SearchHistory.vue";
 import SearchHint from "@/components/Search/SearchHint.vue";
 import Search from "@/api/search.js"
 import {useSearchStore} from "@/stores/search.js";
+import {getToken} from "@/utils/token.js";
+import router from "@/router/index.js";
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
 async function handleSearch(InputValue){
-  searchValue.value = InputValue;
-  if (InputValue)
+  if (!getToken())
   {
-    const result = await Search.search(InputValue);
-    searchStore.addHistory(InputValue);
-    searchStore.setSearchInput(InputValue)
+    await router.push('/login')
+  }
+  else{
+    searchValue.value = InputValue;
+    if (InputValue)
+    {
+      const result = await Search.search(InputValue);
+      searchStore.addHistory(InputValue);
+      searchStore.setSearchInput(InputValue)
+    }
   }
 }
 const handleClear = () => {

@@ -76,6 +76,8 @@
   import {clearToken} from "@/utils/token.js";
   import router from "@/router/index.js";
   import SearchBar from "@/components/Search/SearchBar.vue";
+  import {useSearchStore} from "@/stores/search.js";
+  const searchStore = useSearchStore();
   const showProfile = ref(false)
   function mouseOver() {
     showProfile.value = true;
@@ -86,6 +88,8 @@
   }
   function logout(){
     clearToken();
+    searchStore.setSearchHistory([]);
+    searchStore.setSearchInput('');
     router.push('/')
   }
 </script>
@@ -95,6 +99,7 @@
 .navbar{
   position: fixed;
   z-index: 2001;
+  height: 60px;
   top: 0;
   width: 100%;
   left: 0;
@@ -102,7 +107,8 @@
   /* 字体粗细，400相当于normal */
   font-weight: 400;
   color: white;
-  opacity: .8;
+  //opacity: .8;
+  background-color: #0e161e;
   /* 阴影  水平阴影距离，垂直阴影距离， 模糊尺寸， 阴影尺寸 颜色*/
   box-shadow:0 2px 4px 0 rgb(0, 0, 0,5%);
 }
