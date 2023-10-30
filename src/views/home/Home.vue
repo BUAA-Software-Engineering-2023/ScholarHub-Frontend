@@ -1,6 +1,6 @@
 <template>
   <Background></Background>
-  <NavBar></NavBar>
+  <NavBar :showSearch="showSearch"></NavBar>
   <SearchBar class="search"></SearchBar>
   <div class="main">
     <div class="slogen">
@@ -11,19 +11,89 @@
       </div>
     </div>
     <div class="right">
-      <AcademicField></AcademicField>
+      <StatisticsComponent></StatisticsComponent>
+    </div>
+  </div>
+  <div class="title"><h2>个性推荐</h2></div>
+  <div class="recommendation">
+    <div v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
+      <div class="recommendation-title" @click="jumpToarticle"> {{ recommendation.display_name }}</div>
+      <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
+        <div class="recommendation-details">
+          <div   @mouseover="showAuthorInfo(author.author)"
+                 @mouseleave="hideAuthorInfo"
+                 class="author_container"
+          ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
+            <span v-if="index1 !== recommendation.authorships.length - 1">，</span>
+          </div>
+        </div>
+        <transition  name="slide">
+        <div v-if="authorInfo && authorInfo.id === author.author.id" class="author-info">
+          <img src="@/assets/icons/default_avatar.png" alt="Author Avatar">
+          <div class="author-details">
+            <div class="author-name">{{ authorInfo.display_name }}</div>
+            <div class="author-stats">
+              引用量: {{ authorInfo.citations }} | 论文数: {{ authorInfo.paper_count }}
+            </div>
+            <div class="author-title">
+              头衔：
+            </div>
+          </div>
+        </div>
+        </transition>
+      </div>
+      <div class="recommendation-abstract">{{ recommendation.abstract }}</div>
+      <el-divider></el-divider>
     </div>
   </div>
 </template>
 <script setup>
+
 import Background from '../../components/Background/Background.vue';
 import SearchBar from "../../components/Search/SearchBar.vue";
-import AcademicField from "@/components/visual/AcademicField.vue";
 import NavBar from "@/components/NavBar/NavBar.vue";
-import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
+import StatisticsComponent from "@/components/visual/StatisticsComponent.vue";
+import HomeAPI from "@/api/home.js";
 // const { width, height } = useWindowSize();
+const recommendations = ref([])
+const showSearch = ref(false); // 根据你的需求将其设置为 true 或 false
+const authorInfo = ref(null);
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+  const result =  HomeAPI.get_recommendation();
+  console.log(result)
+  result.then(data => {
+    // 在异步操作成功时处理数据
+    recommendations.value = data.data.data[0].result
+    console.log(recommendations.value)
+  });
+});
+function showAuthorInfo(author) {
+  showSearch.value = false
+  authorInfo.value = author;
+  console.log(authorInfo.value.id)
+}
+
+function hideAuthorInfo() {
+  showSearch.value = true
+  authorInfo.value = null;
+}
+function handleScroll() {
+  const threshold = 400; // 你可以根据实际需要调整这个值
+
+  if (window.scrollY > threshold) {
+    showSearch.value = true;
+  } else {
+    showSearch.value = false;
+  }
+}
 </script>
 <style lang="scss" scoped>
+*{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 .main{
   justify-content: space-between;
 }
@@ -76,7 +146,7 @@ import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 
 .slogen {
   position: absolute;
-  left: 5%;
+  left: 15%;
   top: calc(50%);
 
   &-title {
@@ -95,9 +165,9 @@ import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 }
 .search {
   position: absolute;
-  left: 5vw;
-  top: 40vh;
-  width: 45vw;
+  left: 10vw;
+  top: 400px;
+  width: 55vw;
 }
 .login-register {
   font-size: 12px;
@@ -183,5 +253,107 @@ import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 
 .el-input__wrapper {
   background-color: transparent !important;
+}
+.recommendation {
+  border: 1px solid #5a5a5a;
+  background-color: #0e161e;
+  width: 100%;
+  border-radius: 20px !important;
+  text-align: left;
+  margin-top: 20px;
+  color: #363c50 !important;
+}
+
+.recommendation h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.recommendation-item {
+  font-size: 18px;
+  padding: 10px;
+  color: #363c50;
+}
+
+.recommendation-title {
+  cursor: pointer;  /*鼠标悬停变小手*/
+  font-size: 20px;
+  font-weight: bold;
+  color: #a0a5a8;
+}
+.recommendation-title:hover{
+  color: #4B70E2;
+}
+.recommendation-details {
+  cursor: pointer;
+  font-size: 14px;
+  color: #75a468;
+}
+
+.recommendation-abstract {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #d0cece;
+}
+.author_container{
+  display: inline-block;
+}
+.title{
+  color: white;
+  text-align: left;
+}
+.el-divider{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.author-container {
+  position: relative;
+}
+
+.author-info {
+  position: absolute;
+  border-radius: 5px;
+  top: auto;
+  transition: .5s;
+  margin-left: 10px;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #ccc;
+  display: flex;
+  box-shadow: 2px 2px #5a5a5a;
+}
+.author{
+  display: inline-block;
+}
+img{
+  width: 75px;
+  height: 75px;
+  margin-right: 20px;
+}
+// 动画
+.slide-enter-from,
+ .slide-leave-to{
+   opacity: 0;
+   transform: translateY(40px);
+ }
+.slide-enter-active,
+.slide-leave-active{
+  transition: all .5s;
+}
+.author-name{
+  font-size: 20px;
+}
+.author-stats{
+  font-size: 12px;
+}
+.author-title{
+  font-size: 12px;
+}
+#authorName:hover{
+  text-decoration: none; /* 取消实线下划线 */
+  border-bottom: 1px dashed #75a468; /* 添加虚线下划线 */
 }
 </style>

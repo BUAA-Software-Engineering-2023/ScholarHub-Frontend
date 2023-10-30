@@ -11,7 +11,8 @@
       </div>
     </div>
     <div class="right">
-      <AcademicField></AcademicField>
+<!--      <AcademicField></AcademicField>-->
+      <StatisticsComponent></StatisticsComponent>
     </div>
   </div>
 
@@ -22,6 +23,7 @@ import SearchBar from "../../components/Search/SearchBar.vue";
 import AcademicField from "@/components/visual/AcademicField.vue";
 import NavBar from "@/components/NavBar/NavBar.vue";
 import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
+import StatisticsComponent from "@/components/visual/StatisticsComponent.vue";
 // const { width, height } = useWindowSize();
 </script>
 <style lang="scss" scoped>
