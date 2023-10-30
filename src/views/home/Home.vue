@@ -69,13 +69,11 @@ onMounted(() => {
   });
 });
 function showAuthorInfo(author) {
-  showSearch.value = false
   authorInfo.value = author;
   console.log(authorInfo.value.id)
 }
 
 function hideAuthorInfo() {
-  showSearch.value = true
   authorInfo.value = null;
 }
 function handleScroll() {
@@ -328,10 +326,11 @@ function handleScroll() {
 .author{
   display: inline-block;
 }
-img{
+.author-info img{
   width: 75px;
   height: 75px;
-  margin-right: 20px;
+  margin-right: 30px;
+  padding-right: 20px;
 }
 // 动画
 .slide-enter-from,
@@ -351,6 +350,9 @@ img{
 }
 .author-title{
   font-size: 12px;
+}
+.author-details{
+  margin-left: 20px;
 }
 #authorName:hover{
   text-decoration: none; /* 取消实线下划线 */

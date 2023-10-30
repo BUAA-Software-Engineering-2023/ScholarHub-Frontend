@@ -26,7 +26,7 @@
           <!-- 中间搜索框 -->
           <div class="navbar-container-middle">
             <div class="navbar-search-container">
-              <SearchBar v-show="props.showSearch"></SearchBar>
+              <SearchBar v-if="props.showSearch"></SearchBar>
             </div>
           </div>
 
@@ -181,7 +181,6 @@ a{
 
   height: 32px;
   line-height: 32px;
-  margin-top: calc((48px - 32px)/ 2);
   box-sizing: border-box;
   font-size: 0px;
   margin-left: auto;
@@ -339,7 +338,7 @@ a{
 }
 .navbar-container-right{
   margin-right: 60px;
-  padding-top: 10px;
+  padding-top: 5px;
 }
 .slide-enter-active,
 .slide-leave-active{
