@@ -37,7 +37,7 @@ import LoginForm from "@/views/account/LoginForm.vue";
   transition: opacity 0.5s ease;
 }
 .right{
-  margin-left: 200px;
+  margin-left: 300px;
   top: calc(50% - 40px);
   left: calc(50% - 40px);
 }

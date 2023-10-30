@@ -26,7 +26,7 @@
           <!-- 中间搜索框 -->
           <div class="navbar-container-middle">
             <div class="navbar-search-container">
-              <SearchBar></SearchBar>
+              <SearchBar v-show="props.showSearch"></SearchBar>
             </div>
           </div>
 
@@ -79,6 +79,7 @@
   import {useSearchStore} from "@/stores/search.js";
   const searchStore = useSearchStore();
   const showProfile = ref(false)
+  const props = defineProps(["showSearch"])
   function mouseOver() {
     showProfile.value = true;
   }

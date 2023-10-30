@@ -1,6 +1,6 @@
 <template>
   <Background></Background>
-  <NavBar></NavBar>
+  <NavBar :showSearch="showSearch"></NavBar>
   <SearchBar class="search"></SearchBar>
   <div class="main">
     <div class="slogen">
@@ -56,8 +56,10 @@ import StatisticsComponent from "@/components/visual/StatisticsComponent.vue";
 import HomeAPI from "@/api/home.js";
 // const { width, height } = useWindowSize();
 const recommendations = ref([])
+const showSearch = ref(false); // 根据你的需求将其设置为 true 或 false
 const authorInfo = ref(null);
 onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
   const result =  HomeAPI.get_recommendation();
   console.log(result)
   result.then(data => {
@@ -67,17 +69,29 @@ onMounted(() => {
   });
 });
 function showAuthorInfo(author) {
+  showSearch.value = false
   authorInfo.value = author;
   console.log(authorInfo.value.id)
 }
 
 function hideAuthorInfo() {
+  showSearch.value = true
   authorInfo.value = null;
+}
+function handleScroll() {
+  const threshold = 400; // 你可以根据实际需要调整这个值
+
+  if (window.scrollY > threshold) {
+    showSearch.value = true;
+  } else {
+    showSearch.value = false;
+  }
 }
 </script>
 <style lang="scss" scoped>
 *{
   margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .main{
@@ -132,7 +146,7 @@ function hideAuthorInfo() {
 
 .slogen {
   position: absolute;
-  left: 5%;
+  left: 15%;
   top: calc(50%);
 
   &-title {
@@ -151,9 +165,9 @@ function hideAuthorInfo() {
 }
 .search {
   position: absolute;
-  left: 5vw;
-  top: 40vh;
-  width: 45vw;
+  left: 10vw;
+  top: 400px;
+  width: 55vw;
 }
 .login-register {
   font-size: 12px;
@@ -247,7 +261,6 @@ function hideAuthorInfo() {
   border-radius: 20px !important;
   text-align: left;
   margin-top: 20px;
-  margin-left: -10% !important;
   color: #363c50 !important;
 }
 
@@ -269,7 +282,9 @@ function hideAuthorInfo() {
   font-weight: bold;
   color: #a0a5a8;
 }
-
+.recommendation-title:hover{
+  color: #4B70E2;
+}
 .recommendation-details {
   cursor: pointer;
   font-size: 14px;
@@ -288,7 +303,6 @@ function hideAuthorInfo() {
 }
 .title{
   color: white;
-  margin-left: -10% !important;
   text-align: left;
 }
 .el-divider{
