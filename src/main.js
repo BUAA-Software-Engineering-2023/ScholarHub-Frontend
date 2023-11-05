@@ -8,9 +8,10 @@ import I18n from "./language"
 import * as ElementPlusIconsVue from "@element-plus/icons-vue"
 import 'virtual:svg-icons-register'
 import 'element-plus/theme-chalk/el-loading.css'
-
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/reset.css';
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component);
 }
-app.use(createPinia()).use(router).use(I18n).use(ElementPlus).mount('#app')
+app.use(createPinia()).use(router).use(I18n).use(ElementPlus).use(Antd).mount('#app')

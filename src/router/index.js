@@ -6,7 +6,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'Welcome',
-            component:() => import('../views/home/Welcome.vue'),
+            component:() => import('@/views/home/Welcome.vue'),
             meta: {
                 no_login: true
             }
@@ -14,12 +14,12 @@ const router = createRouter({
         {
             path: '/login',
             name: "Login",
-            component: ()=> import('../views/account/Login.vue')
+            component: ()=> import('@/views/account/Login.vue')
         },
         {
             path: '/home',
             name: 'Home',
-            component: ()=> import('../views/home/Home.vue')
+            component: ()=> import('@/views/home/Home.vue')
         }
 ]
 })

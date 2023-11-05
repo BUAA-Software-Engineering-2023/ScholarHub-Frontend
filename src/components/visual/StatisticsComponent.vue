@@ -46,6 +46,13 @@
           <div class="count">{{ source_count }}</div>
         </div>
       </div>
+      <div class="count-container">
+        <Message></Message>
+        <div class="info">
+          <div class="title">论文成果</div>
+          <div class="count">{{ work_count }}</div>
+        </div>
+      </div>
 <!--      <div class="title">机构数量</div>-->
 <!--      <div class="count">{{ institution_count }}</div>-->
 <!--      <div class="title">领域数量</div>-->
@@ -67,6 +74,7 @@ import InstitutionCount from "@/assets/icons/InstitutionCount.vue";
 import ConceptCount from "@/assets/icons/ConceptCount.vue";
 import FunderCount from "@/assets/icons/FunderCount.vue";
 import SourceCount from "@/assets/icons/SourceCount.vue";
+import Message from "@/assets/icons/Message.vue";
 const work_count = ref(0); // 这里替换为实际的数据
 const author_count = ref(0); // 替换为实际的数据
 const source_count = ref(0); // 替换为实际的数据
@@ -105,7 +113,7 @@ onMounted(() => {
 
 .statistic {
   margin-bottom: 10px;
-  margin-left:62vw;
+  margin-left:55vw;
 }
 .count-container {
   margin-top: 10px;

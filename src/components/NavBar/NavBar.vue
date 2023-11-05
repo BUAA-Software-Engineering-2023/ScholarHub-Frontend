@@ -8,7 +8,7 @@
           <div class="navbar-container-left">
             <!-- 网页logo -->
             <div class="logo">
-              <img src="@/assets/imgs/scholarHub.png" alt="">
+              <img src="@/assets/imgs/scholarHub.png" alt="#">
             </div>
             <!-- 左侧导航栏 -->
             <ul class="left-ul">
@@ -36,7 +36,7 @@
               <!--用户登录: 展示用户的头像以及其他信息-->
               <div class="userPhoto" @mouseover="mouseOver" @mouseleave="mouseLeave">
                 <!-- 用户头像 -->
-                <a class="hasAvatar" :style="{opacity}">
+                <a class="hasAvatar">
                   <img src="@/assets/icons/default_avatar.png" alt="用户头像">
                 </a>
 
@@ -63,7 +63,9 @@
                 </transition>
               </div>
             </div>
+            <Message></Message>
           </div>
+
         </div>
       </div>
     </div>
@@ -77,6 +79,8 @@
   import router from "@/router/index.js";
   import SearchBar from "@/components/Search/SearchBar.vue";
   import {useSearchStore} from "@/stores/search.js";
+  import Notification from "@/components/NavBar/Message.vue";
+  import Message from "@/components/NavBar/Message.vue";
   const searchStore = useSearchStore();
   const showProfile = ref(false)
   const props = defineProps(["showSearch"])
@@ -149,9 +153,9 @@
 .left-ul{
   width: auto;
   height: 100%;
-  padding-top: 10px;
+  margin-top: 10px;
   /* 去除li中的间隙，在li中设置font-size,否则没有内容 */
-  font-size: 0px;
+  font-size: 0;
   float: left;
 }
 .left-ul li{
@@ -178,14 +182,10 @@ a{
 .navbar-search-container{
   width: 100%;
   max-width: 720px;
-
+  color: #4B70E2;
   height: 32px;
-  line-height: 32px;
+  line-height: 20px;
   box-sizing: border-box;
-  font-size: 0px;
-  margin-left: auto;
-  margin-right: auto;
-
 }
 .navbar-search-container input{
   font-size: 14px;
@@ -209,35 +209,7 @@ a{
   border: 1px solid #fc5531;
   border-right: none;
 }
-.navbar-search-container button{
-  display: inline-block;
-  width: 88px;
-  height: 100%;
-  outline: 0;
-  border: 0 none;
-  border-radius: 0 16px 16px 0;
-  font-size: 14px;
-  line-height: 32px;
-  cursor: pointer;
-  background-color: #fc5531;
-  text-align: left;
-}
-.navbar-search-container i{
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  background: url(https://g.csdnimg.cn/common/csdn-toolbar/images/csdn-white-search.png) no-repeat center center;
-  background-size: 100%;
-  vertical-align: middle;
-  position: relative;
-  top: -1px;
-  margin-left: 14px;
-}
-.navbar-search-container span{
-  display: inline-block;
-  vertical-align: top;
-  color: #fff;
-}
+
 .navbar-btns-User{
   flex: 1;
 }
@@ -337,6 +309,8 @@ a{
   margin-top: calc((48px - 32px)/ 2);
 }
 .navbar-container-right{
+  display: flex;
+  align-items: center;
   margin-right: 60px;
   padding-top: 5px;
 }
@@ -346,6 +320,7 @@ a{
 }
 
 .profile-link {
+  border-radius: 5px;
   padding-left: 15px;
   font-size: 15px;
   display: flex;

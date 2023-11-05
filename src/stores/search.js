@@ -32,7 +32,15 @@ export const useSearchStore = defineStore({
             }
             this.historyList.unshift(newHistory);
         },
-        deleteAlleHistory(){
+        deleteHistory(history){
+            const index = this.historyList.findIndex(
+                (item)=>item===history
+            );
+            if (index!==-1){
+                this.historyList.splice(index,1);
+            }
+        },
+        deleteAllHistory(){
             this.historyList=[];
         }
     }

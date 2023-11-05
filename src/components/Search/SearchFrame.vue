@@ -1,14 +1,26 @@
 <template>
   <div ref="searchContainerTarget" class="search-container">
-    <select class="search-type">
-      <option>论文</option>
-      <option>作者</option>
-      <option>期刊会议</option>
-      <option>摘要</option>
-      <option>关键词</option>
-      <option>学术领域</option>
-      <option>名称</option>
-    </select>
+    <!--    <select class="search-type">-->
+    <!--      <option>论文</option>-->
+    <!--      <option>作者</option>-->
+    <!--      <option>期刊会议</option>-->
+    <!--      <option>摘要</option>-->
+    <!--      <option>关键词</option>-->
+    <!--      <option>学术领域</option>-->
+    <!--      <option>名称</option>-->
+    <!--    </select>-->
+    <a-space class="search-type">
+      <a-select
+          ref="select"
+          v-model:value="value1"
+          :bordered=false
+          style="width: 100px;"
+          :options="options1"
+          @focus="focus"
+          @change="handleChange"
+      >
+      </a-select>
+    </a-space>
     <div class="search-divider"></div>
     <input v-model="searchValue" @focus="onFocusHandler" class="search-input" type="text" placeholder="搜索一下...">
     <button class="delete-btn" @click="clearSearchValue"><keep-alive> <el-icon v-show="searchValue"><Close /></el-icon></keep-alive></button>
@@ -31,7 +43,37 @@
 <script setup>
 import {Close, Search} from "@element-plus/icons-vue";
 import { useVModel, onClickOutside } from '@vueuse/core';
-
+const value1 = ref("论文")
+const options1 = ref([
+  {
+    value: '论文',
+    label: '论文',
+  },
+  {
+    value: '科研人员',
+    label: '科研人员',
+  },
+  {
+    value: '来源',
+    label: '来源',
+  },
+  {
+    value: '机构',
+    label: '机构',
+  },
+  {
+    value: '领域',
+    label: '领域',
+  },
+  {
+    value: '出版社',
+    label: '出版社',
+  },
+  {
+    value: '基金',
+    label: '基金',
+  },
+]);
 const isFocused = ref(false);
 const searchContainerTarget = ref(null);
 const CLEAR = 'clear';
@@ -61,7 +103,9 @@ const clearSearchValue = () =>{
 const search = () =>{
   emits(SEARCH,searchValue.value)
 }
-
+const handleChange = value => {
+  console.log(`selected ${value}`);
+};
 </script>
 
 <style scoped>
@@ -129,6 +173,9 @@ const search = () =>{
 button:focus {
   outline: none;
   /* 可以将outline设置为none来去掉焦点时的边框 */
+}
+button{
+  line-height: 0;
 }
 .slide-enter-active,
 .slide-leave-active{
