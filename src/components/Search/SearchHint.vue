@@ -3,7 +3,7 @@
     <div
         v-for="item in hints"
         :key="item"
-        class="hint-item"
+        class="history-item"
         @click="selectItem(item)"
     >
       <span>{{ item }}</span>
@@ -23,10 +23,9 @@ const props = defineProps({
   }
 });
 const hints = ref([])
-const emits = defineEmits(['select', 'remove']);
+const emits = defineEmits(['select']);
 const getHintData = async () => {
   if (!props.searchText) return;
-  console.log("props:"+props.searchText)
   const result = await Search.auto_complete(props.searchText)
   let item;
   hints.value = []
@@ -63,7 +62,7 @@ const selectItem = (item) => {
   box-shadow: 2px 2px 2px #a0a5a8;
 }
 
-.hint-item {
+.history-item {
   display: flex;
   align-items: flex-start; /* 将项目在交叉轴上顶部对齐 */
   text-align: left;
@@ -75,13 +74,14 @@ const selectItem = (item) => {
 }
 
 .history-record{
+  text-align: center;
   font-weight: bold;
   font-size: 15px;
   line-height: 14px;
   color: #a1a1a8;
   background-color: #fff;
 }
-.hint-item:hover {
+.history-item:hover {
   background-color: #ececec;
 }
 

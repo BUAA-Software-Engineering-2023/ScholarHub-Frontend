@@ -9,7 +9,6 @@
         <SearchHistory
             v-show="!searchValue"
             @select="handleSearch"
-            @remove="handleRemove"
         />
         <SearchHint
             v-show="searchValue"
@@ -30,6 +29,7 @@ import Search from "@/api/search.js"
 import {useSearchStore} from "@/stores/search.js";
 import {getToken} from "@/utils/token.js";
 import router from "@/router/index.js";
+import Swal from "sweetalert2";
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
@@ -52,7 +52,10 @@ const handleClear = () => {
   searchValue.value = '';
   searchStore.setSearchInput("");
 }
-const handleRemove = () =>{
+const handleRemoveHistory = (history) =>{
+  searchStore.deleteHistory(history);
+}
+const handleClearHistory = async () => {
 
 }
 

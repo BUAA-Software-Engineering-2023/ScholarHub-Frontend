@@ -17,7 +17,7 @@
   <div class="title"><h2>个性推荐</h2></div>
   <div class="recommendation">
     <div v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
-      <div class="recommendation-title" @click="jumpToarticle"> {{ recommendation.display_name }}</div>
+      <div  @click="jumpToarticle"> <span class="recommendation-title">{{ recommendation.display_name }}</span> </div>
       <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
         <div class="recommendation-details">
           <div   @mouseover="showAuthorInfo(author.author)"
@@ -43,6 +43,9 @@
         </transition>
       </div>
       <div class="recommendation-abstract">{{ recommendation.abstract }}</div>
+      <div class="recommendation-stats">
+        引用: <span class="count">{{ recommendation.cited_by_count }}</span>
+      </div>
       <el-divider></el-divider>
     </div>
   </div>
@@ -77,13 +80,8 @@ function hideAuthorInfo() {
   authorInfo.value = null;
 }
 function handleScroll() {
-  const threshold = 400; // 你可以根据实际需要调整这个值
-
-  if (window.scrollY > threshold) {
-    showSearch.value = true;
-  } else {
-    showSearch.value = false;
-  }
+  const threshold = 350; // 你可以根据实际需要调整这个值
+  showSearch.value = window.scrollY > threshold;
 }
 </script>
 <style lang="scss" scoped>
@@ -164,8 +162,8 @@ function handleScroll() {
 .search {
   position: absolute;
   left: 10vw;
-  top: 400px;
-  width: 55vw;
+  top: 350px;
+  width: 52vw;
 }
 .login-register {
   font-size: 12px;
@@ -300,6 +298,7 @@ function handleScroll() {
   display: inline-block;
 }
 .title{
+
   color: white;
   text-align: left;
 }
@@ -321,14 +320,17 @@ function handleScroll() {
   padding: 5px;
   border: 1px solid #ccc;
   display: flex;
-  box-shadow: 2px 2px #5a5a5a;
+  box-shadow: 1px 1px #a0a5a8;
 }
 .author{
   display: inline-block;
 }
+.author-info{
+  z-index: 10000;
+}
 .author-info img{
-  width: 75px;
-  height: 75px;
+  width: 90px;
+  height: 80px;
   margin-right: 30px;
   padding-right: 20px;
 }
@@ -353,6 +355,14 @@ function handleScroll() {
 }
 .author-details{
   margin-left: 20px;
+}
+.recommendation-stats{
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #a0a5a8;
+}
+.count{
+  color: #4B70E2;
 }
 #authorName:hover{
   text-decoration: none; /* 取消实线下划线 */
