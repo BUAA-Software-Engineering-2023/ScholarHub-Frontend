@@ -1,14 +1,5 @@
 <template>
   <div ref="searchContainerTarget" class="search-container">
-    <!--    <select class="search-type">-->
-    <!--      <option>论文</option>-->
-    <!--      <option>作者</option>-->
-    <!--      <option>期刊会议</option>-->
-    <!--      <option>摘要</option>-->
-    <!--      <option>关键词</option>-->
-    <!--      <option>学术领域</option>-->
-    <!--      <option>名称</option>-->
-    <!--    </select>-->
     <a-space class="search-type">
       <a-select
           ref="select"
@@ -161,6 +152,7 @@ const handleChange = value => {
 .delete-btn{
   border: none;
   background-color: #f4f4f5;
+  color: black;
 }
 .search-icon{
   transition:all 0.2s linear 0s;

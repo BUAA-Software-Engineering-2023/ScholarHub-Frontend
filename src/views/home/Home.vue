@@ -36,7 +36,9 @@
               引用量: {{ authorInfo.citations }} | 论文数: {{ authorInfo.paper_count }}
             </div>
             <div class="author-title">
-              头衔：
+              贡献：{{author.author_position}}
+            </div>
+            <div class="author-title">
             </div>
           </div>
         </div>
@@ -142,7 +144,7 @@ function handleScroll() {
 
 .slogen {
   position: absolute;
-  left: 15%;
+  left: 20%;
   top: calc(50%);
 
   &-title {
@@ -161,7 +163,7 @@ function handleScroll() {
 }
 .search {
   position: absolute;
-  left: 10vw;
+  left: 15vw;
   top: 350px;
   width: 52vw;
 }
@@ -257,6 +259,7 @@ function handleScroll() {
   border-radius: 20px !important;
   text-align: left;
   margin-top: 20px;
+  margin-left: -50px;
   color: #363c50 !important;
 }
 

@@ -4,25 +4,6 @@
 <!--        <img src="/person.png" class="earth-img" />-->
         <div class="login-box">
           <LoginForm></LoginForm>
-<!--            <div class="slogen">-->
-<!--                <div class="slogen-title">Make Academia Visible</div>-->
-<!--                <div class="slogen-dis">-->
-<!--                    上亿级数据，毫秒级响应<br />-->
-<!--                    从引用图表到专家关系网络，构建专业可视化的学术成果分享平台-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="login-form">-->
-<!--                <div class="login-logo">-->
-<!--                    <img class="login-icon" src="../../assets/vue.svg" alt="" />-->
-<!--                </div>-->
-<!--                <router-view v-slot="{ route, Component }">-->
-<!--                    <transition name="fade" mode="out-in">-->
-<!--                        <keep-alive>-->
-<!--                            <component :is="Component"></component>-->
-<!--                        </keep-alive>-->
-<!--                    </transition>-->
-<!--                </router-view>-->
-<!--            </div>-->
         </div>
     </div>
 </template>
@@ -31,7 +12,7 @@ import Background from '../../components/Background/Background.vue';
 import LoginForm from "@/views/account/LoginForm.vue";
 // const { width, height } = useWindowSize();
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;

@@ -106,7 +106,7 @@ onMounted(() => {
 
 .statistic {
   margin-bottom: 10px;
-  margin-left:55vw;
+  margin-left:60vw;
 }
 .count-container {
   margin-top: 10px;
