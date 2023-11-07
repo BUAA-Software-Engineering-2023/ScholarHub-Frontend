@@ -33,10 +33,15 @@
           <div class="author-details">
             <div class="author-name">{{ authorInfo.display_name }}</div>
             <div class="author-stats">
-              引用量: {{ authorInfo.citations }} | 论文数: {{ authorInfo.paper_count }}
+              引用量: {{ authorInfo.citations }}&nbsp; | &nbsp; 论文数: {{ authorInfo.paper_count }}
             </div>
             <div class="author-title">
-              贡献：{{author.author_position}}
+              贡献： {{
+                author.author_position === 'first' ? '第一作者' :
+                author.author_position === 'middle' ? '中间作者' :
+                author.author_position === 'last' ? '最后作者' :
+                    '其他作者'
+              }}
             </div>
             <div class="author-title">
             </div>
@@ -59,14 +64,17 @@ import SearchBar from "../../components/Search/SearchBar.vue";
 import NavBar from "@/components/NavBar/NavBar.vue";
 import StatisticsComponent from "@/components/visual/StatisticsComponent.vue";
 import HomeAPI from "@/api/home.js";
+import {getName} from "@/utils/token.js";
 // const { width, height } = useWindowSize();
 const recommendations = ref([])
 const showSearch = ref(false); // 根据你的需求将其设置为 true 或 false
 const authorInfo = ref(null);
+const userName = ref('')
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
   const result =  HomeAPI.get_recommendation();
   console.log(result)
+  userName.value = getName();
   result.then(data => {
     // 在异步操作成功时处理数据
     recommendations.value = data.data.data[0].result
@@ -89,9 +97,9 @@ function handleScroll() {
 <style lang="scss" scoped>
 *{
   margin-left: 0 !important;
+  max-width: 1280px;
   margin-right: 0 !important;
 }
-
 .main{
   justify-content: space-between;
 }
