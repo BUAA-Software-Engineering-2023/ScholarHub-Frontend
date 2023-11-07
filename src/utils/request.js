@@ -18,23 +18,30 @@ let loading =  null;
 // 2. 请求拦截器
 // 封装loading
 requests.interceptors.request.use(config => {
-    loading = ElLoading.service({
-        lock: true,
-        spinner: 'el-icon-loading',
-    })
     const accountStore = useAccountStore();
     if (accountStore.token) {
         config.headers.Authorization = accountStore.token;
     }
+    if(!config.noLoading){
+        loading = ElLoading.service({
+            lock: true,
+            spinner: 'el-icon-loading',
+        })
+    }
+
     return config;
 });
 
 // 3. 响应拦截器
 requests.interceptors.response.use(response => {
-    loading.close();
-    return response
+    if (loading) {
+        loading.close();
+    }
+    return response;
 }, error => {
-    loading.close();
+    if (loading){
+        loading.close();
+    }
     console.log(error)
     if (error.response && error.response.data.detail) {
         let pattern = /token/i

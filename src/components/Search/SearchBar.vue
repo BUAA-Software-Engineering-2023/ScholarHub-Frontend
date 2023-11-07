@@ -34,18 +34,12 @@ import Swal from "sweetalert2";
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
 async function handleSearch(InputValue){
-  if (!getToken())
+  searchValue.value = InputValue;
+  if (InputValue)
   {
-    await router.push('/login')
-  }
-  else{
-    searchValue.value = InputValue;
-    if (InputValue)
-    {
-      const result = await Search.search(InputValue);
-      searchStore.addHistory(InputValue);
-      searchStore.setSearchInput(InputValue)
-    }
+    const result = await Search.search(InputValue);
+    searchStore.addHistory(InputValue);
+    searchStore.setSearchInput(InputValue)
   }
 }
 const handleClear = () => {
