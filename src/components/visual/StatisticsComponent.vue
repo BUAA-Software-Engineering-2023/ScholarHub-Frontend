@@ -46,13 +46,6 @@
           <div class="count">{{ source_count }}</div>
         </div>
       </div>
-      <div class="count-container">
-        <Message></Message>
-        <div class="info">
-          <div class="title">论文成果</div>
-          <div class="count">{{ work_count }}</div>
-        </div>
-      </div>
 <!--      <div class="title">机构数量</div>-->
 <!--      <div class="count">{{ institution_count }}</div>-->
 <!--      <div class="title">领域数量</div>-->
