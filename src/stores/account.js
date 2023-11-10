@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import accountAPI from "@/api/account";
-import { getToken, setToken, clearToken } from "@/utils/token";
+import { getToken, setToken, clearToken,setName } from "@/utils/token";
 import {ref} from "vue";
 import {useSearchStore} from "@/stores/search.js";
 const state = () => {
@@ -31,7 +31,8 @@ const actions = {
         if (response.data.success) {
             this.token = response.data.data.token;
             setToken(this.token);
-            console.log(this.token)
+            console.log(this.token);
+            setName(response.data.data.username);
             // setUser(response.data.id);
             // setName(response.data.name);
             return "登录成功";

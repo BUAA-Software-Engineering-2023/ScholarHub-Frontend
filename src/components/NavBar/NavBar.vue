@@ -45,7 +45,7 @@
                   <div id="test"></div>
                     <div class="profile-user">
                       <div class="profile-nickName">
-                        <img class="profile-avatar" src="@/assets/icons/default_avatar.png" alt="用户头像"> <span class="nickName">您好，张三</span> <!-- 显示用户姓名 -->
+                        <img class="profile-avatar" src="@/assets/icons/default_avatar.png" alt="用户头像"> <span class="nickName">您好，{{}}</span> <!-- 显示用户姓名 -->
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links">
