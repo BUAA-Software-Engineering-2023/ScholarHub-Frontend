@@ -101,12 +101,12 @@ onMounted(() => {
   text-align: left;
 }
 .statistics {
-  margin-top: 15%;
+  margin-top: 8%;
 }
 
 .statistic {
   margin-bottom: 10px;
-  margin-left:60vw;
+  margin-left:75vw;
 }
 .count-container {
   margin-top: 10px;

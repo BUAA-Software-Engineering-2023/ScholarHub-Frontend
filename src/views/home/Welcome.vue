@@ -10,12 +10,11 @@
         海量数据构建智慧网络，构建专业可视化的学术成果分享平台
       </div>
     </div>
-    <div class="right">
-<!--      <AcademicField></AcademicField>-->
-      <StatisticsComponent></StatisticsComponent>
-    </div>
   </div>
-
+  <div class="right">
+    <!--      <AcademicField></AcademicField>-->
+    <StatisticsComponent></StatisticsComponent>
+  </div>
 </template>
 <script setup>
 import Background from '../../components/Background/Background.vue';
@@ -27,8 +26,12 @@ import StatisticsComponent from "@/components/visual/StatisticsComponent.vue";
 // const { width, height } = useWindowSize();
 </script>
 <style lang="scss" scoped>
+
 .main{
   justify-content: space-between;
+}
+.right{
+  margin-left: -200px;
 }
 
 .fade-enter-active,
