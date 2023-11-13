@@ -309,6 +309,7 @@ function handleScroll() {
   display: inline-block;
 }
 .title{
+  color: white;
   width: 80%;
   text-align: left;
 }

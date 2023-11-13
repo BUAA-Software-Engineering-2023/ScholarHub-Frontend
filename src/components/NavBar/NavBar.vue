@@ -45,7 +45,7 @@
                   <div id="test"></div>
                     <div class="profile-user">
                       <div class="profile-nickName">
-                        <img class="profile-avatar" src="@/assets/icons/default_avatar.png" alt="用户头像"> <span class="nickName">您好，{{}}</span> <!-- 显示用户姓名 -->
+                        <img class="profile-avatar" src="@/assets/icons/default_avatar.png" alt="用户头像"> <span class="nickName">您好，{{name}}</span> <!-- 显示用户姓名 -->
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links">
@@ -75,7 +75,7 @@
   </div>
 </template>
 <script setup>
-  import {clearToken} from "@/utils/token.js";
+import {clearToken, getName} from "@/utils/token.js";
   import router from "@/router/index.js";
   import SearchBar from "@/components/Search/SearchBar.vue";
   import {useSearchStore} from "@/stores/search.js";
@@ -84,6 +84,7 @@
   const searchStore = useSearchStore();
   const showProfile = ref(false)
   const props = defineProps(["showSearch"])
+  const name = getName();
   function mouseOver() {
     showProfile.value = true;
   }
