@@ -293,32 +293,6 @@ async function login (){
   border-radius: 12px;
   overflow: hidden;
 }
-
-/* 设置响应式 */
-@media (max-width: 1200px) {
-  .shell {
-    transform: scale(0.7);
-  }
-}
-
-@media (max-width: 1000px) {
-  .shell {
-    transform: scale(0.6);
-  }
-}
-
-@media (max-width: 800px) {
-  .shell {
-    transform: scale(0.5);
-  }
-}
-
-@media (max-width: 600px) {
-  .shell {
-    transform: scale(0.4);
-  }
-}
-
 .container {
   display: flex;
   justify-content: center;
@@ -358,6 +332,7 @@ async function login (){
 }
 .form_input {
   width: 350px;
+
   height: 40px;
   margin: 4px 0;
   font-size: 13px;

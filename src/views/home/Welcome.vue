@@ -1,7 +1,7 @@
 <template>
   <Background></Background>
   <LoginNavBar></LoginNavBar>
-  <SearchBar class="search"></SearchBar>
+  <AdvancedSearchBar class="search"></AdvancedSearchBar>
   <div class="main">
     <div class="slogen">
       <div class="slogen-title">Explore Whatever You Want</div>
@@ -12,7 +12,6 @@
     </div>
   </div>
   <div class="right">
-    <!--      <AcademicField></AcademicField>-->
     <StatisticsComponent></StatisticsComponent>
   </div>
 </template>
@@ -23,7 +22,7 @@ import AcademicField from "@/components/visual/AcademicField.vue";
 import NavBar from "@/components/NavBar/NavBar.vue";
 import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 import StatisticsComponent from "@/components/visual/StatisticsComponent.vue";
-// const { width, height } = useWindowSize();
+import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
 </script>
 <style lang="scss" scoped>
 

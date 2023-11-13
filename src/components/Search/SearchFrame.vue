@@ -13,7 +13,7 @@
       </a-select>
     </a-space>
     <div class="search-divider"></div>
-    <input v-model="searchValue" @focus="onFocusHandler" class="search-input" type="text" placeholder="搜索一下...">
+    <input @keyup.enter="search" v-model="searchValue" @focus="onFocusHandler" class="search-input" type="text" placeholder="搜索一下...">
     <button class="delete-btn" @click="clearSearchValue"><keep-alive> <el-icon v-show="searchValue"><Close /></el-icon></keep-alive></button>
     <button class="search-btn" @click="search">
       <el-icon class="search-icon"><Search /></el-icon>
@@ -67,6 +67,7 @@ const options1 = ref([
 ]);
 const isFocused = ref(false);
 const searchContainerTarget = ref(null);
+const AdvSearch = ref(true)
 const CLEAR = 'clear';
 const FOCUS = 'focus'
 const SEARCH = 'search';
@@ -102,6 +103,7 @@ const handleChange = value => {
 <style scoped>
 .search-container {
   display: flex;
+  min-width: 400px;
   align-items: center;
   background-color: #f4f4f5;
   padding: 5px;
@@ -117,7 +119,7 @@ const handleChange = value => {
 .search-type {
   text-align: center;
   flex: 1;
-  width: 10px;;
+  width: 100px;;
   border: none;
   border-radius: 16px 0 0 16px;
   background-color: #f4f4f5;
