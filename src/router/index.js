@@ -16,10 +16,29 @@ const router = createRouter({
             name: "Login",
             component: ()=> import('@/views/account/Login.vue')
         },
+        // 客户端
         {
-            path: '/home',
-            name: 'Home',
-            component: ()=> import('@/views/home/Home.vue')
+            path: '/client',
+            component: ()=>import('@/views/client/Index.vue'),
+            meta:{
+                requiresAdmin:false
+            },
+            children:[
+                {
+                    path: '',
+                    name: 'Home',
+                    component: ()=>import('@/views/home/Home.vue')
+                },
+                {
+                    path: 'author/:authorId',
+                    name: 'AuthorDetail',
+                    component: ()=>import("@/views/Detail/ResearcherPortal.vue")
+                }
+            ]
+        },
+        // 管理端
+        {
+            path: ''
         }
 ]
 })
@@ -40,7 +59,7 @@ router.beforeEach((to, from) => {
         // 如果已登录但访问的是 /login 路由，重定向到上一个页面
         return false;
     }else if(token&&to.path==='/'){
-        return '/home';
+        return '/client';
     }
     loading.close();
 });

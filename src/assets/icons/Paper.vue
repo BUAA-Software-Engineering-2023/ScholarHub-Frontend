@@ -1,0 +1,11 @@
+<script setup>
+
+</script>
+
+<template>
+  <svg class="icon" style="width: 50px;height: 50px;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="869"><path d="M356.573 768.21h-255.83v-36.537h255.83v-73.55h-255.83v-36.535h255.83v-72.435h-255.83v-37.93h255.83v-71.279h-255.83v-36.536h255.83V183.317H27.631V1024h621.388l0.08-146.741-292.526-0.319V768.21zM795.203 0v219.295h219.334L795.203 0zM760.02 1.355H393.15v839.05h621.388V256.786l-254.516-0.16V1.356z m181.405 693.384H466.26v-35.181h475.166v35.181z m0-109.17H466.26v-37.053h475.166v37.054z m0-146.222v36.535H466.26v-36.535h475.166z" fill="" p-id="870"></path></svg>
+</template>
+
+<style scoped>
+
+</style>
