@@ -15,10 +15,12 @@
     <div class="search-divider"></div>
     <input  @keyup.enter="search" v-model="searchValue" @focus="onFocusHandler" class="search-input" type="text" placeholder="搜索一下...">
     <button class="show-adv" @click="showAdv">
-      <el-icon class="search-icon"><Search /></el-icon>
+      高级搜索
+      <DownOutlined v-show="!AdvSearch"/> <UpOutlined v-show="AdvSearch" />
     </button>
+
     <button class="delete-btn" @click="clearSearchValue"><keep-alive> <el-icon v-show="searchValue"><Close /></el-icon></keep-alive></button>
-    <button class="search-btn" @click="search">
+    <button class="search-btn" @click="search" v-show="!AdvSearch">
       <el-icon class="search-icon"><Search /></el-icon>
     </button>
   </div>
@@ -44,10 +46,10 @@
           <a-space class="adv-search-class">
             <a-select
                 ref="select"
-                v-model:value="value1"
+                v-model:value="advSearchClass"
                 :bordered=false
                 style="width: 80px;"
-                :options="options1"
+                :options="SearchClassOptions"
                 @focus="focus"
                 @change="handleChange"
             >
@@ -56,10 +58,10 @@
           <a-space class="adv-search-type">
             <a-select
                 ref="select"
-                v-model:value="value1"
+                v-model:value="advSearchType"
                 :bordered=false
                 style="width: 80px;"
-                :options="options1"
+                :options="SearchTypeOptions"
                 @focus="focus"
                 @change="handleChange"
             >
@@ -68,7 +70,7 @@
           <a-input
               v-model:value="domain.value"
               placeholder="please input domain"
-              style="width: 100%; min-width: 200px;"
+              style="width: 100%;"
           />
           <MinusCircleOutlined
               v-if="dynamicValidateForm.domains.length > 1"
@@ -79,12 +81,18 @@
         </div>
       </a-form-item>
       <a-form-item v-bind="formItemLayoutWithOutLabel">
-        <a-button type="dashed" style="width: 60%" @click="addDomain">
-          <PlusOutlined />
-          添加检索条件
-        </a-button>
-        <a-button type="primary" html-type="submit" @click="submitForm">检索</a-button>
-        <a-button style="margin-left: 10px" @click="resetForm">重置条件</a-button>
+        <div class="bottom">
+          <div class="left">
+            <a-button type="primary" ghost style="width: 100%" @click="addDomain">
+              <PlusOutlined />
+              添加检索条件
+            </a-button>
+          </div>
+          <div class="right">
+            <a-button type="primary" html-type="submit" @click="submitForm">检索</a-button>
+            <a-button style="margin-left: 10px" @click="resetForm">重置条件</a-button>
+          </div>
+        </div>
       </a-form-item>
     </a-form>
   </div>
@@ -161,6 +169,30 @@ const addDomain = () => {
     key: Date.now(),
   });
 };
+const advSearchClass = ref("并且")
+const SearchClassOptions = ref([
+    {
+      value: "并且",
+      label: "并且"
+    },{
+      value: "或者",
+      label: "或者",
+  }])
+const advSearchType = ref("论文")
+const SearchTypeOptions = ref([
+  {
+    value: "作者",
+    label: "作者",
+  },
+  {
+    value: "机构",
+    label: "机构",
+  },
+  {
+    value: "领域",
+    label: "领域",
+  }
+])
 const value1 = ref("论文")
 const options1 = ref([
   {
@@ -194,7 +226,7 @@ const options1 = ref([
 ]);
 const isFocused = ref(false);
 const searchContainerTarget = ref(null);
-const AdvSearch = ref(true)
+const AdvSearch = ref(false)
 const CLEAR = 'clear';
 const FOCUS = 'focus'
 const SEARCH = 'search';
@@ -206,11 +238,7 @@ const props = defineProps(
     {modelValue:{type:String,required:true}}
 )
 const showAdv = () =>{
-  if (AdvSearch.value){
-    AdvSearch.value = false;
-  }else{
-    AdvSearch.value = true;
-  }
+  AdvSearch.value = !AdvSearch.value;
 
 }
 const searchValue = useVModel(props);
@@ -331,14 +359,16 @@ button{
   opacity: 0.5;
 }
 .adv-search-container{
-  margin-left: 100px;
-  width: 80%;
+  padding: 10px;
+  width: 100%;
   background: white;
+  min-width: 400px;
 }
 .adv-search-item{
   margin-left: 20px;
   width: 100%;
   display: flex;
+
 }
 .adv-search-class{
   border-radius: 5px;
@@ -348,5 +378,20 @@ button{
   border-radius: 5px;
   margin-left: 10px;
   border: black 1px solid;
+}
+.bottom{
+  display: flex;
+  justify-content: space-between;
+}
+
+.left {
+  margin-left: 20px;
+  max-width: 200px;
+  flex-grow: 1; /* Takes as much space as available */
+}
+
+.right {
+  margin-left: 20px;
+  display: flex;
 }
 </style>

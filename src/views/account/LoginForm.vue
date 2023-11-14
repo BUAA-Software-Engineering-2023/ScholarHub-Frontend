@@ -262,7 +262,7 @@ async function login (){
       HistoryList.push(result1.data.data[index].title)
     }
     searchStore.setSearchHistory(HistoryList)
-    await router.push('/home')
+    await router.push('/client')
   }else{
     await Swal.fire({
       icon: 'error', //error\warning\info\question
