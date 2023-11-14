@@ -20,11 +20,14 @@ const router = createRouter({
             path: '/home',
             name: 'Home',
             component: ()=> import('@/views/home/Home.vue')
-        },
-        {
-            path: '/search/portal',
-            name: 'searchPortal',
-            component: ()=> import('@/views/search/SearchPortal.vue')
+        },{
+            path: '/search/article',
+            name: 'SearchArticle',
+            component: () => import('@/views/search/SearchArticle.vue')
+        },{
+            path: '/test',
+            name: 'Test',
+            component: () => import('@/components/Test/test.vue')
         }
 ]
 })

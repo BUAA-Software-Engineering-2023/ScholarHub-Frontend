@@ -103,9 +103,10 @@ export default {
         return requests({
             url:"/work/autocomplete",
             method:"GET",
-            data:{
+            params:{
                 search
-            }
+            },
+            noLoading: true // 添加这个配置项
         })
     },
     history(){
@@ -120,7 +121,8 @@ export default {
             method: 'POST',
             data:{
                 search
-            }
+            },
+            showLoading:true,
         })
     }
 }

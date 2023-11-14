@@ -1,22 +1,18 @@
 <template>
   <div class="search-input-container">
-    <SearchFrame
+    <AdvancedSearchFrame
         v-model="searchValue"
         @search="handleSearch"
         @clear="handleClear"
     >
       <template #dropdown>
-        <SearchHistory
-            v-show="!searchValue"
-            @select="handleSearch"
-        />
-        <SearchHint
+        <AdvancedSearchHint
             v-show="searchValue"
             :search-text="searchValue"
             @select="handleSearch"
         />
       </template>
-    </SearchFrame>
+    </AdvancedSearchFrame>
   </div>
 </template>
 
@@ -28,24 +24,21 @@ import SearchHint from "@/components/Search/SearchHint.vue";
 import Search from "@/api/search.js"
 import {useSearchStore} from "@/stores/search.js";
 import {getToken} from "@/utils/token.js";
-// import router from "@/router/index.js";
+import router from "@/router/index.js";
 import Swal from "sweetalert2";
-import {useRouter} from "vue-router";
+import AdvancedSearchFrame from "@/components/Search/AdvancedSearchFrame.vue";
+import AdvancedSearchHint from "@/components/Search/AdvancedSearchHint.vue";
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
-const router = useRouter();
-
 async function handleSearch(InputValue){
-    searchValue.value = InputValue;
-    console.log(searchValue.value)
-    if (InputValue)
-    {
-      const result = await Search.search(InputValue);
-      searchStore.addHistory(InputValue);
-      searchStore.setSearchInput(InputValue)
-      await router.push('/search/article')
-    }
+  searchValue.value = InputValue;
+  if (InputValue)
+  {
+    const result = await Search.search(InputValue);
+    searchStore.addHistory(InputValue);
+    searchStore.setSearchInput(InputValue)
+  }
 }
 const handleClear = () => {
   searchValue.value = '';
