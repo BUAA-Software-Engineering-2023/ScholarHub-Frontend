@@ -20,6 +20,11 @@ const router = createRouter({
             path: '/home',
             name: 'Home',
             component: ()=> import('@/views/home/Home.vue')
+        },
+        {
+            path: '/search/portal',
+            name: 'searchPortal',
+            component: ()=> import('@/views/search/SearchPortal.vue')
         }
 ]
 })
