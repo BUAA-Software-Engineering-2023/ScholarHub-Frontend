@@ -2,7 +2,7 @@
   <div class="container">
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
-        <a-layout-sider :collapse="changeShowSide" collapsible :width="400" :style="siderStyle">Sider
+        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">Sider
           <Trend v-show="showSide"></Trend>
         </a-layout-sider>
         <a-layout>
@@ -111,7 +111,10 @@ import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
 const route = useRoute()
 const showSide = ref(true)
-const changeShowSide = ()=>{
+const collapsed = ref(false)
+const changeShowSide = (collapsed, type)=>{
+    if (collapsed)
+      console.log("111")
     console.log("111")
     showSide.value = !showSide.value;
 }
