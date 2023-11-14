@@ -38,7 +38,13 @@ const router = createRouter({
         },
         // 管理端
         {
-            path: ''
+            path: '/search/article',
+            name: 'SearchArticle',
+            component: () => import('@/views/search/SearchArticle.vue')
+        },{
+            path: '/test',
+            name: 'Test',
+            component: () => import('@/components/Test/test.vue')
         }
 ]
 })
