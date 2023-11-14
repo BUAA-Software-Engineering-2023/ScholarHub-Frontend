@@ -7,8 +7,8 @@
       </div>
     </div>
     <div class="paper-list-wrap">
-      <el-tabs class="tab-position" type="border-card">
-        <el-tab-pane label="论文">
+      <a-tabs style="margin-left:10px" v-model:activeKey="activeKey">
+        <a-tab-pane key="1" tab="论文">
           <ul class="search-result__list">
             <div>
               <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
@@ -22,17 +22,22 @@
             <!--          </div>-->
             <!-- 单个搜索结果卡片 -->
             <li class="result-item" v-for="(item, index) in paperList">
-              <el-card shadow = "hover">
+              <a-card hoverable>
+
                 <test2 :item="item"/>
-              </el-card>
+
+              </a-card>
+              <!--              <el-card shadow = "hover">-->
+              <!--                <test2 :item="item"/>-->
+              <!--              </el-card>-->
             </li>
           </ul>
-        </el-tab-pane>
-        <el-tab-pane label="专家">
-          牛逼wok
-        </el-tab-pane>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="专家" force-render>
+          66666666666666//todos
+        </a-tab-pane>
 
-      </el-tabs>
+      </a-tabs>
 
 
 <!--      <ul class="search-result__list">-->
@@ -72,6 +77,7 @@ import test2 from "@/components/Test/test2.vue";
 import SearchBar from "@/components/Search/SearchBar.vue";
 import NavBar from "@/views/search/NavBar/NavBar.vue";
 
+const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
 // const props = defineProps({
