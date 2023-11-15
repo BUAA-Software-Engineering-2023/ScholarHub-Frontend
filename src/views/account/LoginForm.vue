@@ -85,6 +85,7 @@ import { onMounted } from 'vue';
 import router from "@/router/index.js";
 import {useSearchStore} from "@/stores/search.js";
 import SearchAPI from "@/api/search.js"
+import NavBar from "@/views/search/NavBar/NavBar.vue";
 onMounted(() => {
   if (getLogin()==='true'){
     console.log(getLogin())

@@ -159,7 +159,7 @@ const researchResults = ref([
   line-height: 30px;
 }
 body{
-  background-color: white;
+  background-color:#041527;
 }
 .container {
   margin-top: 10px;
