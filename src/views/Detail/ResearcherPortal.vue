@@ -112,11 +112,20 @@ import Trend from "@/components/visual/Trend.vue";
 const route = useRoute()
 const showSide = ref(true)
 const collapsed = ref(false)
-const changeShowSide = (collapsed, type)=>{
-    if (collapsed)
-      console.log("111")
-    console.log("111")
-    showSide.value = !showSide.value;
+const changeShowSide = (collapsed, type) => {
+
+    if (!showSide.value){
+      setTimeout(() => {
+        showSide.value = !showSide.value;
+      }, 100); // 延迟10ms
+    }
+    else
+      showSide.value = !showSide.value;
+
+
+
+
+
 }
 const AuthorId = "https://openalex.org/A5067833651"
 onMounted(async () => {
