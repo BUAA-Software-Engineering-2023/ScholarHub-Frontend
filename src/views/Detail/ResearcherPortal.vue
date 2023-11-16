@@ -10,11 +10,11 @@
             <div class="author-info">
               <img src="@/assets/icons/default_avatar.png" alt="">
               <div class="author-details">
-                <p style="margin: 0;font-size: 15px">作者姓名：</p>
-                <p>机构</p>
+                <p style="margin: 0;font-size: 15px">{{authorName}}</p>
+                <p>{{author.last_known_institution.display_name}}</p>
               </div>
               <div class="h-index">
-                <p style="margin: 0;font-size: 20px">H指数：10</p>
+                <p style="margin: 0;font-size: 20px">H指数：{{author.summary_stats.h_index}}</p>
               </div>
             </div>
           </a-layout-header>
@@ -111,6 +111,8 @@ import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
 const route = useRoute()
 const showSide = ref(true)
+const authorName = ref('')
+const author = ref()
 const collapsed = ref(false)
 const changeShowSide = (collapsed, type)=>{
     if (collapsed)
@@ -122,6 +124,8 @@ const AuthorId = "https://openalex.org/A5067833651"
 onMounted(async () => {
     console.log(AuthorId)
     const result =  await Search.author_detail(AuthorId)
+    author.value = result.data.data
+    authorName.value = author.value.display_name
     console.log(result)
 })
 const headerStyle = {
