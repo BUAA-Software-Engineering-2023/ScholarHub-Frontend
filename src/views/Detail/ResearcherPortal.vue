@@ -2,8 +2,10 @@
   <div class="container">
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
-        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">Sider
-          <Trend v-show="showSide"></Trend>
+        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">学者贡献
+         <transition name="slide">
+           <Trend v-show="showSide"></Trend>
+         </transition>
         </a-layout-sider>
         <a-layout>
           <a-layout-header theme="light" :style="headerStyle">
@@ -11,10 +13,10 @@
               <img src="@/assets/icons/default_avatar.png" alt="">
               <div class="author-details">
                 <p style="margin: 0;font-size: 15px">{{authorName}}</p>
-                <p>{{author.last_known_institution.display_name}}</p>
+                <p>{{last_known_institution}}</p>
               </div>
               <div class="h-index">
-                <p style="margin: 0;font-size: 20px">H指数：{{author.summary_stats.h_index}}</p>
+                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p>
               </div>
             </div>
           </a-layout-header>
@@ -109,9 +111,12 @@ import Paper from "@/assets/icons/Paper.vue";
 import Quote from "@/assets/icons/Quote.vue";
 import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
+import Swal from "sweetalert2";
 const route = useRoute()
 const showSide = ref(true)
 const authorName = ref('')
+const last_known_institution =ref('')
+const h_index = ref('')
 const author = ref()
 const collapsed = ref(false)
 const changeShowSide = (collapsed, type)=>{
@@ -120,13 +125,24 @@ const changeShowSide = (collapsed, type)=>{
     console.log("111")
     showSide.value = !showSide.value;
 }
-const AuthorId = "https://openalex.org/A5067833651"
+
+// const AuthorId = "https://openalex.org/A5067833651"
+const AuthorId ="https://openalex.org/"+route.params.authorId
 onMounted(async () => {
-    console.log(AuthorId)
     const result =  await Search.author_detail(AuthorId)
-    author.value = result.data.data
-    authorName.value = author.value.display_name
-    console.log(result)
+    if (result.data.success){
+      const response = result.data.data
+      author.value = result.data.data
+      last_known_institution.value = author.value.last_known_institution.display_name
+      h_index.value = author.value.summary_stats.h_index
+      authorName.value = author.value.display_name
+    }else {
+      let promise = Swal.fire({
+        icon: 'error',
+        title:'该作者不存在'
+      })
+    }
+
 })
 const headerStyle = {
   textAlign: 'center',
@@ -282,5 +298,13 @@ img{
 }
 .title{
   font-weight: 900;
+}
+.slide-enter-from,
+.slide-leave-to{
+  opacity: 0;
+  transform: translateY(40px);
+}
+.slide-enter-active{
+  transition: all .5s;
 }
 </style>
