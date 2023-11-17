@@ -120,9 +120,6 @@ const h_index = ref('')
 const author = ref()
 const collapsed = ref(false)
 const changeShowSide = (collapsed, type)=>{
-    if (collapsed)
-      console.log("111")
-    console.log("111")
     showSide.value = !showSide.value;
 }
 
@@ -132,6 +129,7 @@ onMounted(async () => {
     const result =  await Search.author_detail(AuthorId)
     if (result.data.success){
       const response = result.data.data
+      console.log(response)
       author.value = result.data.data
       last_known_institution.value = author.value.last_known_institution.display_name
       h_index.value = author.value.summary_stats.h_index
