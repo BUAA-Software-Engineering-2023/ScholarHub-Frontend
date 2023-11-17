@@ -28,9 +28,9 @@ import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
 
 .main{
   justify-content: space-between;
+  margin-left: 100px;
 }
 .right{
-  margin-left: -200px;
 }
 
 .fade-enter-active,
