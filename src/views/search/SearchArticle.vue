@@ -76,7 +76,7 @@
 import test2 from "@/components/Test/test2.vue";
 import SearchBar from "@/components/Search/SearchBar.vue";
 import NavBar from "@/views/search/NavBar/NavBar.vue";
-
+import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
