@@ -14,7 +14,9 @@
                 <p>机构</p>
               </div>
               <div class="h-index">
-                <p style="margin: 0;font-size: 20px">H指数：10</p>
+                <a-card title="H指数" :bordered="false" style="width: 70px ;height: 70px ">
+
+                </a-card>
               </div>
             </div>
           </a-layout-header>
