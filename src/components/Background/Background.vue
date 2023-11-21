@@ -48,7 +48,7 @@ export default {
 <style>
 .container{
   margin: 0 !important;
-position: fixed;
+  position: fixed;
   left: 0;
   top: 0;
   z-index: -10;

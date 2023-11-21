@@ -124,5 +124,14 @@ export default {
             },
             showLoading:true,
         })
+    },
+    author_detail(author_id){
+        return requests({
+            url: "/author/detail",
+            method:"POST",
+            data:{
+                author_id
+            }
+        })
     }
 }

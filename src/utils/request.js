@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 // 1. 创建axios实例
 const requests = axios.create({
     baseURL: '/api/v1',
-    timeout: 5000
+    timeout: 10000
 });
 
 const CancelToken = axios.CancelToken;
