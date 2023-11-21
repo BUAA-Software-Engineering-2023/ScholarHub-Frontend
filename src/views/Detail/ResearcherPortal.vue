@@ -10,8 +10,13 @@
         <a-layout>
           <a-layout-header theme="light" :style="headerStyle">
             <div class="author-info">
-              <img src="@/assets/icons/default_avatar.png" alt="">
+
               <div class="author-details">
+                <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" :src="avatar">
+                  <template #icon>
+                    <AntDesignOutlined />
+                  </template>
+                </a-avatar>
                 <p style="margin: 0;font-size: 15px">{{authorName}}</p>
                 <p>{{last_known_institution}}</p>
               </div>
@@ -111,6 +116,7 @@ import Paper from "@/assets/icons/Paper.vue";
 import Quote from "@/assets/icons/Quote.vue";
 import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
+import { AntDesignOutlined } from '@ant-design/icons-vue';
 import Swal from "sweetalert2";
 const route = useRoute()
 const showSide = ref(true)
@@ -119,6 +125,8 @@ const last_known_institution =ref('')
 const h_index = ref('')
 const author = ref()
 const collapsed = ref(false)
+const avatar = ref()
+
 const changeShowSide = (collapsed, type)=>{
     showSide.value = !showSide.value;
 }
@@ -134,6 +142,8 @@ onMounted(async () => {
       last_known_institution.value = author.value.last_known_institution.display_name
       h_index.value = author.value.summary_stats.h_index
       authorName.value = author.value.display_name
+      avatar.value = author.value.avatar
+      console.log(avatar.value)
     }else {
       let promise = Swal.fire({
         icon: 'error',
