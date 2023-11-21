@@ -79,6 +79,7 @@ import SearchAPI from "@/api/search.js"
 
 const result = ref();
 const searchRef = ref(null);
+import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
