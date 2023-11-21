@@ -115,7 +115,7 @@ export default {
             method: 'GET',
         })
     },
-    search(search){
+    search(search,){
         return requests({
             url:"/work/search",
             method: 'POST',
