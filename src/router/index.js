@@ -59,7 +59,7 @@ router.beforeEach((to, from) => {
         // 如果没有登录且访问的不是 /login 路由或设置了 no_login 标记的路由，重定向到 /login
         return '/login';
     } else if (token && to.path === '/login' && from.path === '/') {
-        return '/';
+        return '/client';
     }
     else if (token && to.path === '/login') {
         // 如果已登录但访问的是 /login 路由，重定向到上一个页面

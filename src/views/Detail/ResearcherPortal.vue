@@ -2,21 +2,31 @@
   <div class="container">
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
-        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">Sider
-          <Trend v-show="showSide"></Trend>
+        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">学者贡献
+         <transition name="slide">
+           <Trend v-show="showSide"></Trend>
+         </transition>
         </a-layout-sider>
         <a-layout>
           <a-layout-header theme="light" :style="headerStyle">
             <div class="author-info">
-              <img src="@/assets/icons/default_avatar.png" alt="">
+
               <div class="author-details">
-                <p style="margin: 0;font-size: 15px">作者姓名：</p>
-                <p>机构</p>
+                <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" :src="avatar">
+                  <template #icon>
+                    <AntDesignOutlined />
+                  </template>
+                </a-avatar>
+                <p style="margin: 0;font-size: 15px">{{authorName}}</p>
+                <p>{{last_known_institution}}</p>
               </div>
               <div class="h-index">
+
                 <a-card title="H指数" :bordered="false" style="width: 70px ;height: 70px ">
 
                 </a-card>
+                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p>
+
               </div>
             </div>
           </a-layout-header>
@@ -111,29 +121,47 @@ import Paper from "@/assets/icons/Paper.vue";
 import Quote from "@/assets/icons/Quote.vue";
 import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
+import { AntDesignOutlined } from '@ant-design/icons-vue';
+import Swal from "sweetalert2";
 const route = useRoute()
 const showSide = ref(true)
+const authorName = ref('')
+const last_known_institution =ref('')
+const h_index = ref('')
+const author = ref()
 const collapsed = ref(false)
-const changeShowSide = (collapsed, type) => {
-
-    if (!showSide.value){
-      setTimeout(() => {
-        showSide.value = !showSide.value;
-      }, 100); // 延迟10ms
-    }
-    else
-      showSide.value = !showSide.value;
 
 
 
+
+
+
+
+const avatar = ref()
 
 
 }
-const AuthorId = "https://openalex.org/A5067833651"
+
+// const AuthorId = "https://openalex.org/A5067833651"
+const AuthorId ="https://openalex.org/"+route.params.authorId
 onMounted(async () => {
-    console.log(AuthorId)
     const result =  await Search.author_detail(AuthorId)
-    console.log(result)
+    if (result.data.success){
+      const response = result.data.data
+      console.log(response)
+      author.value = result.data.data
+      last_known_institution.value = author.value.last_known_institution.display_name
+      h_index.value = author.value.summary_stats.h_index
+      authorName.value = author.value.display_name
+      avatar.value = author.value.avatar
+      console.log(avatar.value)
+    }else {
+      let promise = Swal.fire({
+        icon: 'error',
+        title:'该作者不存在'
+      })
+    }
+
 })
 const headerStyle = {
   textAlign: 'center',
@@ -170,7 +198,7 @@ const researchResults = ref([
   line-height: 30px;
 }
 body{
-  background-color: white;
+  background-color:#041527;
 }
 .container {
   margin-top: 10px;
@@ -289,5 +317,13 @@ img{
 }
 .title{
   font-weight: 900;
+}
+.slide-enter-from,
+.slide-leave-to{
+  opacity: 0;
+  transform: translateY(40px);
+}
+.slide-enter-active{
+  transition: all .5s;
 }
 </style>

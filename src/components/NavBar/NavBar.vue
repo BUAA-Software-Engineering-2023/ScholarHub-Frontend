@@ -7,7 +7,7 @@
           <!-- 左侧 -->
           <div class="navbar-container-left">
             <!-- 网页logo -->
-            <div class="logo">
+            <div class="logo" @click="gotoHome">
               <img src="@/assets/imgs/scholarHub.png" alt="#">
             </div>
             <!-- 左侧导航栏 -->
@@ -98,13 +98,16 @@ import {clearToken, getName} from "@/utils/token.js";
     searchStore.setSearchInput('');
     router.push('/')
   }
+  function gotoHome(){
+    router.push('/client')
+  }
 </script>
 <!--登录之后的导航栏-->
 
 <style scoped>
 .navbar{
   position: fixed;
-  z-index: 2001;
+  z-index: 20011;
   height: 60px;
   top: 0;
   width: 100%;
