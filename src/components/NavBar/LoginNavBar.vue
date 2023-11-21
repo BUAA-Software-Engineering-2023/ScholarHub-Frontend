@@ -8,11 +8,10 @@
           <!-- 左侧 -->
           <div class="navbar-container-left">
             <!-- 网页logo -->
-            <div class="logo">
+            <div class="logo" @click="gotoHome">
               <img src="@/assets/imgs/scholarHub.png" alt="">
             </div>
           </div>
-
           <!-- 右侧导航栏 -->
           <div class="navbar-container-right">
             <div class="userPhoto formButton" @click.prevent="login">
@@ -33,11 +32,16 @@ import {setLogin} from "@/utils/token.js";
 
 function login() {
   setLogin(true)
+  console.log("111")
   router.push('/login');
 }
 function register(){
   setLogin(false)
   router.push('/login');
+}
+function gotoHome(){
+  console.log("111")
+  router.push('/')
 }
 </script>
 
@@ -94,9 +98,8 @@ body{
   cursor: pointer;
 }
 .logo img{
-  width: 180px;
-  max-width: 180px;
-  height: 100px;
+  width: 120px;
+  height: 60px;
   display: block;
   //margin-top: calc((48px - 44px)/ 2);
 }

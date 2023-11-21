@@ -1,5 +1,6 @@
 <template>
     <Background />
+    <LoginNavBar/>
     <div class="login-container">
 <!--        <img src="/person.png" class="earth-img" />-->
         <div class="login-box">
@@ -10,7 +11,7 @@
 <script setup>
 import Background from '../../components/Background/Background.vue';
 import LoginForm from "@/views/account/LoginForm.vue";
-// const { width, height } = useWindowSize();
+import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 </script>
 <style lang="scss" scoped>
 .fade-enter-active,

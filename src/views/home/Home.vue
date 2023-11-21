@@ -17,7 +17,6 @@
       <h2>个性推荐</h2>
     </div>
     <div class="recommendation">
-
       <div v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
         <div  @click="jumpToarticle"> <span class="recommendation-title">{{ recommendation.display_name }}</span> </div>
         <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
