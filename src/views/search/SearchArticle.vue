@@ -3,7 +3,7 @@
     <NavBar/>
     <div class="nav_outer">
       <div class="search-bar">
-        <searchBar/>
+        <searchBar ref="searchRef"/>
       </div>
     </div>
     <div class="paper-list-wrap">
@@ -12,7 +12,7 @@
           <ul class="search-result__list">
             <div>
               <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
-                <el-menu-item index="1">最新</el-menu-item>
+                <el-menu-item index="1" @click="getUpdate">最新</el-menu-item>
                 <el-menu-item index="2">综合</el-menu-item>
                 <el-menu-item index="3">引用数</el-menu-item>
               </el-menu>
@@ -23,8 +23,7 @@
             <!-- 单个搜索结果卡片 -->
             <li class="result-item" v-for="(item, index) in paperList">
               <a-card hoverable>
-
-                <test2 :item="item"/>
+                <ArticleCard :paper="item"/>
 
               </a-card>
               <!--              <el-card shadow = "hover">-->
@@ -69,14 +68,17 @@
         />
       </div>
     </div>
-  </div>>
+  </div>
 </template>
 
 <script setup>
-import test2 from "@/components/Test/test2.vue";
 import SearchBar from "@/components/Search/SearchBar.vue";
 import NavBar from "@/views/search/NavBar/NavBar.vue";
+import ArticleCard from "@/views/search/ArticleCard.vue";
+import SearchAPI from "@/api/search.js"
 
+const result = ref();
+const searchRef = ref(null);
 const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
@@ -84,13 +86,25 @@ const pageCurrent = ref(1);
 //   paperList: Object,
 //   pageTotalSize: Number,
 // });
-const paperList = ref([
-  {id:'01',title:'a'},
-  {id:'02',title:'b'},
-  {id:'03',title:'c'},
-  {id:'04',title:'c'},
-  {id:'05',title:'c'},
-])
+const paperList = ref();
+
+async function getPapers(){
+  console.log("searchRef.value.searchValue:"+searchRef.value.searchValue)
+  result.value = await SearchAPI.search(searchRef.value.searchValue)
+  console.log("result:", result)
+  paperList.value = result.value.data.data.result;
+  console.log("paperlist:", paperList.value);
+
+}
+
+onMounted(async ()=>{
+  console.log("@@@@@@@@@@@@")
+  await getPapers()
+
+})
+async function getUpdate(){
+  await getPapers()
+}
 
 const changePage = () => {
   emit("changePage", pageCurrent.value);
@@ -140,7 +154,7 @@ body{
 .search-result__list .result-item {
   width: 80%;
   display: inline-block;
-  font-size: 0.875rem;
+  //font-size: 0.875rem;
 }
 .search-bar{
   width: 80%;
