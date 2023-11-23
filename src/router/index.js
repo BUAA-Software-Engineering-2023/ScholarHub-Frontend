@@ -33,6 +33,21 @@ const router = createRouter({
                     path: 'author/:authorId',
                     name: 'AuthorDetail',
                     component: ()=>import("@/views/Detail/ResearcherPortal.vue")
+                },
+                {
+                    path: 'user/collections',
+                    name: 'Collections',
+                    component:()=>import("@/views/user/Collection.vue")
+                },
+                {
+                    path: 'user/information',
+                    name: 'Information',
+                    component:()=>import("@/views/user/Information.vue")
+                },
+                {
+                    path: 'user/history',
+                    name:  "History",
+                    component:()=>import("@/views/user/History.vue")
                 }
             ]
         },
