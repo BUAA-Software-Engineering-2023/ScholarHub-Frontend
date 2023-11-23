@@ -30,15 +30,19 @@ import {useSearchStore} from "@/stores/search.js";
 import {getToken} from "@/utils/token.js";
 // import router from "@/router/index.js";
 import Swal from "sweetalert2";
-import {useRouter} from "vue-router";
+import {useRouter} from "vue-router"
+import {defineEmits} from 'vue'
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
 const router = useRouter();
 
+defineExpose({searchValue})
+
 async function handleSearch(InputValue){
     searchValue.value = InputValue;
-    console.log(searchValue.value)
+    console.log("input:"+searchValue.value)
+
     if (InputValue)
     {
       const result = await Search.search(InputValue);
@@ -57,6 +61,14 @@ const handleRemoveHistory = (history) =>{
 const handleClearHistory = async () => {
 
 }
+
+// const emit = defineEmits(['inputSearch'])
+// const inputSearch = () =>{
+//   let param = {
+//     content:'x'
+//   }
+//   emit('inputSearch', param)
+// }
 
 </script>
 

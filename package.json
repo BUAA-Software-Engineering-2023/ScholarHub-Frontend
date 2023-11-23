@@ -13,6 +13,7 @@
     "@element-plus/icons-vue": "^2.1.0",
     "@vueuse/core": "^10.5.0",
     "ant-design-vue": "^4.0.6",
+    "antd": "^5.11.2",
     "axios": "^1.5.1",
     "echarts": "^5.4.3",
     "element-plus": "^2.4.0",
