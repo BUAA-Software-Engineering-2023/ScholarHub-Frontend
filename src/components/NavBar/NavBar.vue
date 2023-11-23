@@ -49,9 +49,9 @@
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links">
-                        <a href="#" class="profile-link">学术主页</a>
-                        <a href="#" class="profile-link">我的收藏</a>
-                        <a href="#" class="profile-link">个人信息</a>
+                        <a  @click="goto" class="profile-link">学术主页</a>
+                        <a  @click="gotoCollection" class="profile-link">我的收藏</a>
+                        <a  @click="gotoInfo" class="profile-link">个人信息</a>
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links" @click.prevent="logout">
@@ -92,6 +92,13 @@ import {clearToken, getName} from "@/utils/token.js";
   function mouseLeave() {
     showProfile.value = false;
   }
+  function gotoCollection(){
+    router.push('/client/user/collections')
+  }
+  function gotoInfo(){
+    router.push('/client/user/information')
+  }
+
   function logout(){
     clearToken();
     searchStore.setSearchHistory([]);
@@ -377,6 +384,9 @@ a:hover {
 }
 .el-divider--horizontal{
   margin: 15px;
+}
+a:hover{
+  cursor: pointer;
 }
 </style>
 

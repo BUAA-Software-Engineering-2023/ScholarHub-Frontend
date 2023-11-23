@@ -10,7 +10,6 @@
         <a-layout>
           <a-layout-header theme="light" :style="headerStyle">
             <div class="author-info">
-
               <div class="author-details">
                 <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" :src="avatar">
                   <template #icon>
