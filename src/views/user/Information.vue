@@ -2,14 +2,13 @@
 import UserApi from "@/api/user.js";
 import SideBar from "@/views/user/sideBar.vue";
 import Swal from "sweetalert2";
-import {getName} from "@/utils/token.js";
 import {useGlobalStore} from "@/stores/global.js";
 
-const userName = getName();
 const globalStore  = useGlobalStore();
 
 async function handleChange(){
-    const result = await UserApi.update_info(formState.nickname)
+    const result = await UserApi.update_info(formState.nickname);
+    globalStore.userInfo.nickname = formState.nickname;
     if (!result.data.success){
       let promise = Swal.fire({
         icon: 'error',
@@ -21,7 +20,6 @@ async function handleChange(){
         title:'修改信息成功！'
       });
     }
-    console.log(result)
 }
 
 onMounted( async () => {
@@ -66,7 +64,7 @@ const buttonItemLayout = computed(() => {
     <div class="content">
       <div class="header">
         <div class="avatar"><img class="avatar" src="@/assets/icons/default_avatar.png" alt="user_avatar"></div>
-        <div class="header-content">{{userName}}</div>
+        <div class="header-content">{{globalStore.userInfo.nickname}}</div>
       </div>
       <div class="information">
         <div class="left">
@@ -215,6 +213,10 @@ const buttonItemLayout = computed(() => {
 
 #components-form-demo-normal-login .login-form-button {
   width: 100%;
+}
+.header-content{
+  font-size: 25px;
+  font-weight: 900;
 }
 
 </style>
