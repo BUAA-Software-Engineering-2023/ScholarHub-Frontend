@@ -11,7 +11,7 @@
           <a-layout-header theme="light" :style="headerStyle">
             <div class="author-info">
               <div class="author-details">
-                <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" :src="avatar">
+                <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" src="{{avatar}}">
                   <template #icon>
                     <AntDesignOutlined />
                   </template>
@@ -21,7 +21,7 @@
               </div>
               <div class="h-index">
 <!--                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >-->
-                <a-card hoverable :bordered="false"  :size="small" style="height: 55%; margin-top: 5px;">
+                <a-card hoverable :bordered="false"   style="height: 55%; margin-top: 5px;">
                   <div class="card-H ">H指数</div>
                   <div class="card-H card-H-content">{{h_index}}</div>
                 </a-card>
@@ -37,7 +37,7 @@
                       <Paper style="font-size: 50px" />
                       <div >
                         <p>学术发文总量</p >
-                        <h2>168</h2>
+                        <h2>{{ works_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -58,8 +58,8 @@
                     <div class="card-content">
                       <Quote style="font-size: 50px" />
                       <div >
-                        <p>学术发文总量</p >
-                        <h2>168</h2>
+                        <p>总被引频次</p >
+                        <h2>{{ cited_by_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -69,7 +69,7 @@
                     <div class="card-content">
                       <Data style="font-size: 50px"  value=""/>
                       <div >
-                        <p>学术发文总量</p >
+                        <p>篇均被引频次</p >
                         <h2>168</h2>
                       </div>
                     </div>
@@ -92,7 +92,7 @@
                           </div>
                         </div>
                         <div class="research-stats">
-                          <p>引用量: 10&nbsp; | &nbsp; 论文数: 5</p >
+                          <p>引用量: {{ cited_by_count }}&nbsp; | &nbsp; 论文数: 5</p >
                         </div>
                       </div>
 <!--                      <div class="research-abstract">-->
@@ -100,10 +100,7 @@
 <!--                      </div>-->
                       <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
                         <template #footer>
-                          <div>
-                            <b>ant design vue</b>
-                            footer part
-                          </div>
+
                         </template>
                         <template #renderItem="{ item }">
                           <a-list-item key="item.title">
@@ -153,6 +150,7 @@ import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
 import { AntDesignOutlined, LinkOutlined,  VerticalAlignBottomOutlined,CustomerServiceOutlined, CommentOutlined} from '@ant-design/icons-vue';
 import Swal from "sweetalert2";
+import {ref} from "vue";
 const route = useRoute()
 const showSide = ref(true)
 const authorName = ref('')
@@ -161,6 +159,8 @@ const h_index = ref('')
 const author = ref()
 const collapsed = ref(false)
 const avatar = ref()
+const works_count = ref()
+const cited_by_count = ref()
 const listData: Record<string, string>[] = [];
 
 for (let i = 0; i < 23; i++) {
@@ -200,7 +200,10 @@ onMounted(async () => {
     last_known_institution.value = author.value.last_known_institution.display_name
     h_index.value = author.value.summary_stats.h_index
     authorName.value = author.value.display_name
+    works_count.value = author.value.works_count
+    cited_by_count.value = author.value.cited_by_count
     avatar.value = author.value.avatar
+
     console.log(avatar.value)
   }else {
     let promise = Swal.fire({
