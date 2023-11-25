@@ -3,7 +3,7 @@
     <NavBar/>
     <div class="nav_outer">
       <div class="search-bar">
-        <searchBar/>
+        <searchBar ref="searchRef"/>
       </div>
     </div>
     <div class="paper-list-wrap">
@@ -12,7 +12,7 @@
           <ul class="search-result__list">
             <div>
               <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
-                <el-menu-item index="1">最新</el-menu-item>
+                <el-menu-item index="1" @click="getUpdate">最新</el-menu-item>
                 <el-menu-item index="2">综合</el-menu-item>
                 <el-menu-item index="3">引用数</el-menu-item>
               </el-menu>
@@ -23,8 +23,7 @@
             <!-- 单个搜索结果卡片 -->
             <li class="result-item" v-for="(item, index) in paperList">
               <a-card hoverable>
-
-                <test2 :item="item"/>
+                <ArticleCard :paper="item"/>
 
               </a-card>
               <!--              <el-card shadow = "hover">-->
@@ -34,30 +33,64 @@
           </ul>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
-          66666666666666//todos
+	        <a-table :columns="columns" :data-source="data" size="small" :pagination="false" class="filterBar" bordered>
+		        <template #headerCell="{ column }">
+			        <template v-if="column.key === 'name'" >
+				        <span>
+					        <a class="filter">
+					            筛选项
+				            </a>
+				        </span>
+			        </template>
+		        </template>
+		        <template #bodyCell="{ column, record }">
+			        <template v-if="column.key === 'tags'">
+				        <span>
+				          <a-checkable-tag
+					          v-for="tag in record.tags"
+					          :key="tag"
+					          @click=""
+					          class="filter"
+				          >
+				            {{ tag }}
+				          </a-checkable-tag>
+				        </span>
+			        </template>
+		        </template>
+	        </a-table>
+	        <a-layout>
+		        <a-layout-sider :style="siderStyle" width="330" >
+			        <div class = "slideSearch">
+				        <a-menu
+					        v-model:selectedKeys="state.selectedKeys"
+					        style="width: 212px"
+					        mode="inline"
+					        :open-keys="state.openKeys"
+					        :items="items"
+					        @openChange="onOpenChange"
+				        >
+				        </a-menu>
+			        </div>
+		        </a-layout-sider>
+		        <a-layout-content :style="contentStyle">
+			        <a-card hoverable style="margin-top: 20px;width: 93%" v-for="person in people">
+				        <template #actions>
+					        <setting-outlined key="setting" />
+					        <edit-outlined key="edit" />
+					        <ellipsis-outlined key="ellipsis" />
+				        </template>
+				        <a-card-meta :title=person.title :description=person.description>
+					        <template #avatar>
+						        <a-avatar src="https://joeschmoe.io/api/v1/random" />
+					        </template>
+				        </a-card-meta>
+			        </a-card>
+		        </a-layout-content>
+	        </a-layout>
         </a-tab-pane>
-
+		
       </a-tabs>
-
-
-<!--      <ul class="search-result__list">-->
-<!--        <div>-->
-<!--          <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">-->
-<!--            <el-menu-item index="1">最新</el-menu-item>-->
-<!--            <el-menu-item index="2">综合</el-menu-item>-->
-<!--            <el-menu-item index="3">引用数</el-menu-item>-->
-<!--          </el-menu>-->
-<!--        </div>-->
-<!--&lt;!&ndash;          <div class="hint">&ndash;&gt;-->
-<!--&lt;!&ndash;            *由于结果数量超过10,000，出于实用性考虑，列表只会展示相关度排序的前10,000条&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--        &lt;!&ndash; 单个搜索结果卡片 &ndash;&gt;-->
-<!--        <li class="result-item" v-for="(item, index) in paperList">-->
-<!--          <el-card shadow = "hover">-->
-<!--            <test2 :item="item"/>-->
-<!--          </el-card>-->
-<!--        </li>-->
-<!--      </ul>-->
+	    
       <div class="pagination-wrap">
         <el-pagination
             layout="prev, pager, next"
@@ -69,13 +102,30 @@
         />
       </div>
     </div>
-  </div>>
+  </div>
 </template>
 
 <script setup>
-import test2 from "@/components/Test/test2.vue";
 import SearchBar from "@/components/Search/SearchBar.vue";
 import NavBar from "@/views/search/NavBar/NavBar.vue";
+const contentStyle = {
+	paddingleft:'200px',
+	textAlign: 'center',
+	minHeight: 120,
+	lineHeight: '120px',
+	
+	backgroundColor: '#fff',
+};
+const siderStyle = {
+	textAlign: 'center',
+	lineHeight: '120px',
+	backgroundColor: '#fff',
+};
+import ArticleCard from "@/views/search/ArticleCard.vue";
+import SearchAPI from "@/api/search.js"
+
+const result = ref();
+const searchRef = ref(null);
 import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
@@ -84,16 +134,120 @@ const pageCurrent = ref(1);
 //   paperList: Object,
 //   pageTotalSize: Number,
 // });
-const paperList = ref([
-  {id:'01',title:'a'},
-  {id:'02',title:'b'},
-  {id:'03',title:'c'},
-  {id:'04',title:'c'},
-  {id:'05',title:'c'},
-])
+const paperList = ref();
+
+async function getPapers(){
+  console.log("searchRef.value.searchValue:"+searchRef.value.searchValue)
+  result.value = await SearchAPI.search(searchRef.value.searchValue)
+  console.log("result:", result)
+  paperList.value = result.value.data.data.result;
+  console.log("paperlist:", paperList.value);
+
+}
+
+onMounted(async ()=>{
+  console.log("@@@@@@@@@@@@")
+  await getPapers()
+
+})
+async function getUpdate(){
+  await getPapers()
+}
 
 const changePage = () => {
   emit("changePage", pageCurrent.value);
+};
+
+
+const columns = [
+	{
+		name: 'Name',
+		dataIndex: 'name',
+		key: 'name',
+	},
+	{
+		title: '标签',
+		dataIndex: 'tags',
+		key: 'tags',
+	}
+];
+const data = [
+	{
+		key: '1',
+		name: '性别',
+		tags: ['男(5)', '女(4)'],
+	},
+	{
+		key: '2',
+		name: '地区',
+		tags: ['美国(10)','日本','德国','意大利'],
+	},
+	{
+		key: '3',
+		name: '语言',
+		tags: ['英语', '法语'],
+	},
+];
+const people = [
+	{
+		key: '1',
+		title: 'one',
+		description: "好好好",
+	},
+	{
+		key: '2',
+		title: 'one',
+		description: "好好好",
+	},
+	{
+		key: '3',
+		title: 'one',
+		description: "好好好",
+	},
+	{
+		key: '4',
+		title: 'one',
+		description: "好好好",
+	},
+];
+
+import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined } from '@ant-design/icons-vue';
+function getItem(label, key, icon, children, type) {
+	return {
+		key,
+		icon,
+		children,
+		label,
+		type,
+	};
+}
+const items = reactive([
+	getItem('职称', 'sub1', () => h(PieChartOutlined), [
+		getItem('生命科学', '1', () => h(ExperimentOutlined)),
+		getItem('数学', '2', () => h(ExperimentOutlined)),
+		getItem('计算机科学', '3', () => h(ExperimentOutlined)),
+		getItem('人工智能', '4', () => h(ExperimentOutlined)),
+	]),
+	getItem('机构', 'sub2', () => h(BankOutlined), [
+		getItem('清华大学', '5'),
+		getItem('北京航空航天大学', '6'),
+		getItem('北京大学', '6'),
+		getItem('南京大学', '6'),
+	]),
+
+]);
+const state = reactive({
+	rootSubmenuKeys: ['sub1', 'sub2'],
+	openKeys: ['sub1'],
+	selectedKeys: [],
+});
+const onOpenChange = openKeys => {
+	const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
+	if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+		state.openKeys = openKeys;
+	} else {
+		state.openKeys = latestOpenKey ? [latestOpenKey] : [];
+	}
 };
 </script>
 
@@ -140,18 +294,26 @@ body{
 .search-result__list .result-item {
   width: 80%;
   display: inline-block;
-  font-size: 0.875rem;
+  //font-size: 0.875rem;
 }
 .search-bar{
   width: 80%;
   margin: auto;
 }
-.hint {
-  margin: 20px;
-  font-style: italic;
+
+.filterBar{
+	width: 90%;
+	margin: auto;
 }
-#app{
-  margin: 0;
-  padding: 0;
+
+.filter{
+	font-family:"楷体";
+	font-weight: bold;
+	color: #1a1a1a;
 }
+.slideSearch{
+	margin-top: 20px;
+	margin-left:72px;
+}
+
 </style>
