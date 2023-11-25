@@ -73,18 +73,11 @@
 			        </div>
 		        </a-layout-sider>
 		        <a-layout-content :style="contentStyle">
-			        <a-card hoverable style="margin-top: 20px;width: 93%" v-for="person in people">
-				        <template #actions>
-					        <setting-outlined key="setting" />
-					        <edit-outlined key="edit" />
-					        <ellipsis-outlined key="ellipsis" />
-				        </template>
-				        <a-card-meta :title=person.title :description=person.description>
-					        <template #avatar>
-						        <a-avatar src="https://joeschmoe.io/api/v1/random" />
-					        </template>
-				        </a-card-meta>
-			        </a-card>
+			        <li class = "ExpertRes" v-for="(item, index) in expertList">
+				        <a-card hoverable>
+					        <ExpertCard :paper="item"/>
+				        </a-card>
+				    </li>
 		        </a-layout-content>
 	        </a-layout>
         </a-tab-pane>
@@ -125,6 +118,7 @@ import ArticleCard from "@/views/search/ArticleCard.vue";
 import SearchAPI from "@/api/search.js"
 
 const result = ref();
+const exResult = ref();
 const searchRef = ref(null);
 import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
@@ -135,6 +129,7 @@ const pageCurrent = ref(1);
 //   pageTotalSize: Number,
 // });
 const paperList = ref();
+const expertList = ref();
 
 async function getPapers(){
   console.log("searchRef.value.searchValue:"+searchRef.value.searchValue)
@@ -144,10 +139,17 @@ async function getPapers(){
   console.log("paperlist:", paperList.value);
 
 }
-
+async function getExperts(){
+	exResult.value = await SearchAPI.searchExpert(searchRef.value.searchValue)
+	console.log("exResult:", exResult)
+	expertList.value = exResult.value.data.data.result;
+	console.log("expertList:", expertList.value);
+	
+}
 onMounted(async ()=>{
   console.log("@@@@@@@@@@@@")
   await getPapers()
+  await getExperts()
 
 })
 async function getUpdate(){
@@ -212,6 +214,7 @@ const people = [
 ];
 
 import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined } from '@ant-design/icons-vue';
+import ExpertCard from "@/views/search/ExpertCard.vue";
 function getItem(label, key, icon, children, type) {
 	return {
 		key,
@@ -305,7 +308,9 @@ body{
 	width: 90%;
 	margin: auto;
 }
-
+.ExpertRes{
+	margin-top: 20px;
+}
 .filter{
 	font-family:"楷体";
 	font-weight: bold;
@@ -313,7 +318,7 @@ body{
 }
 .slideSearch{
 	margin-top: 20px;
-	margin-left:72px;
+	margin-left: 20%;
 }
 
 </style>

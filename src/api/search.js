@@ -125,6 +125,16 @@ export default {
             showLoading:true,
         })
     },
+    searchExpert(search,){
+        return requests({
+            url:"/author/search",
+            method: 'POST',
+            data:{
+                search
+            },
+            showLoading:true,
+        })
+    },
     author_detail(author_id){
         return requests({
             url: "/author/detail",
