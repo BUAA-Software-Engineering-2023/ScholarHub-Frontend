@@ -72,20 +72,15 @@ const recommendations = ref([])
 const showSearch = ref(false); // 根据你的需求将其设置为 true 或 false
 const authorInfo = ref(null);
 const userName = ref('')
-onMounted(() => {
+onMounted( async () => {
   window.addEventListener('scroll', handleScroll);
-  const result =  HomeAPI.get_recommendation();
-  console.log(result)
+  const result =  await HomeAPI.get_recommendation();
   userName.value = getName();
-  result.then(data => {
     // 在异步操作成功时处理数据
-    recommendations.value = data.data.data[0].result
-    console.log(recommendations.value)
-  });
+  recommendations.value = result.data.data[0].result
 });
 function showAuthorInfo(author) {
   authorInfo.value = author;
-  console.log(authorInfo.value.id)
 }
 
 function hideAuthorInfo() {
