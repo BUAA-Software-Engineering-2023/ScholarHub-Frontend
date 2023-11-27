@@ -11,16 +11,9 @@
               <img src="@/assets/imgs/scholarHub.png" alt="#">
             </div>
             <!-- 左侧导航栏 -->
-            <ul class="left-ul">
+            <div class="left-ul">
               <li title=""><router-link active-class="active" to="#"> 博客 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 开发者文库 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 课程 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 问答 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 社区 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 插件 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 认证 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 开源 </router-link></li>
-            </ul>
+            </div>
           </div>
 
           <!-- 中间搜索框 -->
@@ -192,7 +185,7 @@ a{
 }
 .navbar-search-container{
   width: 100%;
-  max-width: 720px;
+  max-width: 780px;
   color: #4B70E2;
   height: 32px;
   line-height: 20px;

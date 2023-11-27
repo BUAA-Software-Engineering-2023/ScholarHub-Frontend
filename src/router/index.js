@@ -32,12 +32,13 @@ const router = createRouter({
                 {
                     path: 'author/:authorId',
                     name: 'AuthorDetail',
-                    component: ()=>import("@/views/Detail/ResearcherPortal.vue")
+                    component: ()=>import("@/views/detail/ResearcherPortal.vue")
                 },
                 {
                     path: 'user/collections',
                     name: 'Collections',
-                    component:()=>import("@/views/user/Collection.vue")
+                    component:()=>import("@/views/user/Collection.vue"),
+                    props: (route) => ({ query: route.query }) // 将查询字符串作为组件属性传递
                 },
                 {
                     path: 'user/information',
@@ -48,7 +49,12 @@ const router = createRouter({
                     path: 'user/history',
                     name:  "History",
                     component:()=>import("@/views/user/History.vue")
-                }
+                },
+                {
+                    path: 'paper/:paperId',
+                    name: 'PaperDetail',
+                    component: ()=>import('../views/paper/Paper.vue'),
+                },
             ]
         },
         // 管理端
