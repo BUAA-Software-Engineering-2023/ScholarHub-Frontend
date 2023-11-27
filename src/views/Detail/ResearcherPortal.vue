@@ -2,7 +2,7 @@
   <div class="container">
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
-        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">学者贡献
+        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">
           <transition name="slide">
             <Trend v-show="showSide"></Trend>
           </transition>
@@ -19,13 +19,13 @@
                 <p style="margin: 0;font-size: 15px">{{authorName}}</p >
                 <p>{{last_known_institution}}</p >
               </div>
-              <div class="h-index">
-<!--                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >-->
-                <a-card hoverable :bordered="false"   style="height: 55%; margin-top: 5px;">
-                  <div class="card-H ">H指数</div>
-                  <div class="card-H card-H-content">{{h_index}}</div>
-                </a-card>
-              </div>
+<!--              <div class="h-index">-->
+<!--&lt;!&ndash;                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >&ndash;&gt;-->
+<!--                <a-card hoverable :bordered="false"   style="height: 55%; margin-top: 5px;">-->
+<!--                  <div class="card-H ">H指数</div>-->
+<!--                  <div class="card-H card-H-content">{{h_index}}</div>-->
+<!--                </a-card>-->
+<!--              </div>-->
             </div>
           </a-layout-header>
           <a-layout-content :style="contentStyle" style="margin-left: 15%;min-width: 1100px">
@@ -37,7 +37,7 @@
                       <Paper style="font-size: 50px" />
                       <div >
                         <p>学术发文总量</p >
-                        <h2>{{ works_count }}</h2>
+                        <h2 style="font-weight: bold;color: #53cda5">{{ works_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -46,9 +46,9 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Core style="font-size: 50px" />
-                      <div >
-                        <p>核心发文总量</p >
-                        <h2>168</h2>
+                      <div style="text-align: center;margin-left: 25%;">
+                        <p>H指数</p >
+                        <h2 style="color: #747bff;font-weight: bold">{{ h_index }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -59,7 +59,7 @@
                       <Quote style="font-size: 50px" />
                       <div >
                         <p>总被引频次</p >
-                        <h2>{{ cited_by_count }}</h2>
+                        <h2 style="color: rgb(145,236,252);font-weight: bold">{{ cited_by_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -70,7 +70,7 @@
                       <Data style="font-size: 50px"  value=""/>
                       <div >
                         <p>篇均被引频次</p >
-                        <h2>168</h2>
+                        <h2 style="color: rgb(217,144,175);font-weight: bold">{{ Math.floor(cited_by_count / works_count)}}</h2>
                       </div>
                     </div>
                   </a-card>
