@@ -75,12 +75,11 @@ const institution_count = ref(0); // 替换为实际的数据
 const concept_count = ref(0); // 替换为实际的数据
 const publisher_count = ref(0); // 替换为实际的数据
 const funder_count = ref(0); // 替换为实际的数据
-onMounted(() => {
-  const result = HomeAPI.get_data();
-  result.then(data => {
+onMounted(async () => {
+   const result = await HomeAPI.get_data();
+   console.log(result)
     // 在异步操作成功时处理数据
-    const tmp = data.data.data;
-    console.log(data.data.data);
+    const tmp = result.data.data;
     work_count.value = tmp.work_count;
     author_count.value = tmp.author_count;
     source_count.value = tmp.source_count;
@@ -88,11 +87,6 @@ onMounted(() => {
     concept_count.value = tmp.concept_count;
     publisher_count.value = tmp.publisher_count;
     funder_count.value = tmp.funder_count;
-
-  }).catch(error => {
-    // 在异步操作失败时处理错误
-    console.error(error);
-  });
 });
 </script>
 

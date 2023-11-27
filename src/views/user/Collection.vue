@@ -1,50 +1,71 @@
 <script setup>
 import UserApi from "@/api/user.js";
 import { h, ref } from 'vue';
-import SideBar from "@/views/user/sideBar.vue";
+import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
+import CollectionList from "@/views/user/CollectionList.vue";
+import {useRoute} from "vue-router";
 const collections = ref([])
 const authorInfo = ref()
+const route = useRoute();
+const title = ref('');
 const empty = ref('还没有收藏？，快去收藏论文吧！')
+const folderId = ref('')
 function showAuthorInfo(author) {
   authorInfo.value = author;
-  console.log(authorInfo.value.id)
 }
-
 function hideAuthorInfo() {
   authorInfo.value = null;
 }
 onMounted( async () => {
-  const result =  await UserApi.get_favorite();
-  console.log(result.data)
-  if (!result.data.success){
-    let promise = Swal.fire({
-      icon: 'error',
-      title:'服务器错误'
-    });
+  folderId.value = route.query.id
+  if (folderId.value === ''||folderId.value===undefined) {
+      folderId.value=''
+  }else{
+    const result =  await UserApi.get_favorite_item(folderId.value);
+    if (!result.data.success){
+      let promise = Swal.fire({
+        icon: 'error',
+        title:'服务器错误'
+      });
+      collections.value = result.data.data.items
+      title.value = result.data.data.title
+    }
+    console.log(title.value)
   }
-  collections.value = result.data.data
 });
+async function handleSelect(){
+  folderId.value = route.query.id
+  if (folderId === '') {
+
+  }else{
+    const result = await UserApi.get_favorite_item(folderId.value);
+    collections.value = result.data.data.items
+    title.value = result.data.data.title
+    console.log(title.value)
+  }
+}
 
 </script>
 
 <template>
   <div class="main-container">
     <div class="sidebar">
-      <SideBar select-keys="2"></SideBar>
+      <SideBar  select-keys="2"></SideBar>
+      <CollectionList @select="handleSelect"></CollectionList>
     </div>
     <div class="content">
       <div class="header">
-        <div class="title">我的收藏</div>
+        <div v-if="!folderId" class="title">我的收藏</div>
+        <div class="title" v-else>{{title}}</div>
         <div class="header-content">总共收藏{{collections.length}}篇论文</div>
       </div>
       <div class="empty" v-if="!collections.length">
         <a-empty :description="empty" />
       </div>
       <div v-else class="collection">
-
         <div v-for="(collection, index) in collections" :key="index" class="collection-item">
-          <div  @click="jumpToarticle"> <span class="collection-title">{{ collection.display_name }}</span> </div>
+          <div  @click.prevent="jumpToarticle"> <span class="collection-title">{{ collection.display_name }}</span> </div>
           <div  class="author" v-for="(author,index1) in collection.authorships" :key="index1">
             <div class="collection-details">
               <div   @mouseover="showAuthorInfo(author.author)"
@@ -98,6 +119,7 @@ onMounted( async () => {
   margin-right: 10vw;
   color: #18181b;
   margin-top: 20px;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
 }
 .main-container {
   min-height: 900px;
@@ -109,6 +131,7 @@ onMounted( async () => {
 
 .sidebar {
   border-radius: 10px;
+  min-width: 300px;
   /* 左侧导航栏样式 */
   width: 20%; /* 左侧宽度，可以根据需求调整 */
   background-color: #f0f1f4; /* 侧边栏背景色 */
@@ -139,6 +162,7 @@ onMounted( async () => {
   border-radius: 10px !important;
   text-align: left;
   color: #363c50 !important;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .collection h2 {
