@@ -3,24 +3,28 @@
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
         <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">学者贡献
-         <transition name="slide">
-           <Trend v-show="showSide"></Trend>
-         </transition>
+          <transition name="slide">
+            <Trend v-show="showSide"></Trend>
+          </transition>
         </a-layout-sider>
         <a-layout>
           <a-layout-header theme="light" :style="headerStyle">
             <div class="author-info">
               <div class="author-details">
-                <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" :src="avatar">
+                <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" src="{{avatar}}">
                   <template #icon>
                     <AntDesignOutlined />
                   </template>
                 </a-avatar>
-                <p style="margin: 0;font-size: 15px">{{authorName}}</p>
-                <p>{{last_known_institution}}</p>
+                <p style="margin: 0;font-size: 15px">{{authorName}}</p >
+                <p>{{last_known_institution}}</p >
               </div>
               <div class="h-index">
-                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p>
+<!--                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >-->
+                <a-card hoverable :bordered="false"   style="height: 55%; margin-top: 5px;">
+                  <div class="card-H ">H指数</div>
+                  <div class="card-H card-H-content">{{h_index}}</div>
+                </a-card>
               </div>
             </div>
           </a-layout-header>
@@ -32,8 +36,8 @@
                     <div class="card-content">
                       <Paper style="font-size: 50px" />
                       <div >
-                        <p>学术发文总量</p>
-                        <h2>168</h2>
+                        <p>学术发文总量</p >
+                        <h2>{{ works_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -43,7 +47,7 @@
                     <div class="card-content">
                       <Core style="font-size: 50px" />
                       <div >
-                        <p>核心发文总量</p>
+                        <p>核心发文总量</p >
                         <h2>168</h2>
                       </div>
                     </div>
@@ -54,8 +58,8 @@
                     <div class="card-content">
                       <Quote style="font-size: 50px" />
                       <div >
-                        <p>学术发文总量</p>
-                        <h2>168</h2>
+                        <p>总被引频次</p >
+                        <h2>{{ cited_by_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -65,7 +69,7 @@
                     <div class="card-content">
                       <Data style="font-size: 50px"  value=""/>
                       <div >
-                        <p>学术发文总量</p>
+                        <p>篇均被引频次</p >
                         <h2>168</h2>
                       </div>
                     </div>
@@ -77,9 +81,9 @@
               <a-row :gutter="16">
                 <a-col :span="24">
                   <div class="research-container">
-                    <span class="title">研究成果</span>
+<!--                    <span class="title">研究成果</span>-->
                     <div class="research-item">
-                      <div class="research-title">研究成果标题</div>
+                      <div class="research-title">研究成果</div>
                       <div class="research-details">
                         <div class="research-authors">
                           <div class="author-container" v-for="(author, index) in researchAuthors" :key="index">
@@ -88,12 +92,37 @@
                           </div>
                         </div>
                         <div class="research-stats">
-                          <p>引用量: 10&nbsp; | &nbsp; 论文数: 5</p>
+                          <p>引用量: {{ cited_by_count }}&nbsp; | &nbsp; 论文数: 5</p >
                         </div>
                       </div>
-                      <div class="research-abstract">
-                        这里是研究成果的摘要内容，可以是一段文字。
-                      </div>
+<!--                      <div class="research-abstract">-->
+<!--                        这里是研究成果的摘要内容，可以是一段文字。-->
+<!--                      </div>-->
+                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
+                        <template #footer>
+
+                        </template>
+                        <template #renderItem="{ item }">
+                          <a-list-item key="item.title">
+                            <template #actions>
+                            <span v-for="{ icon, text } in actions" :key="icon">
+                              <component :is="icon" style="margin-right: 8px" />
+                              {{ text }}
+                            </span>
+                            </template>
+                            <template #extra>
+
+                            </template>
+                            <a-list-item-meta :description="item.description">
+                              <template #title>
+                                <a :href="item.href">{{ item.title }}</a>
+                              </template>
+                              <template #avatar><a-avatar :src="item.avatar" /></template>
+                            </a-list-item-meta>
+                            {{ item.content }}
+                          </a-list-item>
+                        </template>
+                      </a-list>
                     </div>
                   </div>
                 </a-col>
@@ -104,10 +133,14 @@
         </a-layout>
       </a-layout>
     </a-space>
+    <a-float-button-group shape="circle" :style="{ right: '24px' }">
+      
+      <a-back-top :visibility-height="0" />
+    </a-float-button-group>
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import Search from "@/api/search.js"
 import { useRoute } from "vue-router";
 import Core from "@/assets/icons/Core.vue";
@@ -115,8 +148,9 @@ import Paper from "@/assets/icons/Paper.vue";
 import Quote from "@/assets/icons/Quote.vue";
 import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
-import { AntDesignOutlined } from '@ant-design/icons-vue';
+import { AntDesignOutlined, LinkOutlined,  VerticalAlignBottomOutlined,CustomerServiceOutlined, CommentOutlined} from '@ant-design/icons-vue';
 import Swal from "sweetalert2";
+import {ref} from "vue";
 const route = useRoute()
 const showSide = ref(true)
 const authorName = ref('')
@@ -125,30 +159,58 @@ const h_index = ref('')
 const author = ref()
 const collapsed = ref(false)
 const avatar = ref()
+const works_count = ref()
+const cited_by_count = ref()
+const listData: Record<string, string>[] = [];
 
+for (let i = 0; i < 23; i++) {
+  listData.push({
+    href: 'https://d.wanfangdata.com.cn/periodical/ChlQZXJpb2RpY2FsQ0hJTmV3UzIwMjMwODMxEg1oa3hiMjAyMzAyMDE1GggydzljcXptbQ%3D%3D',
+    title: `科研成果 ${i + 1}`,
+    avatar: '/assets/icons/default_avatar.png',
+    description:
+        '作者1，作者2，作者3',
+    content:
+        '这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,',
+  });
+}
+const pagination = {
+  onChange: (page: number) => {
+    console.log(page);
+  },
+  pageSize: 3,
+};
+const actions: Record<string, any>[] = [
+  { icon: LinkOutlined , text: '2' },
+  { icon: VerticalAlignBottomOutlined, text: '2' },
+
+];
 const changeShowSide = (collapsed, type)=>{
-    showSide.value = !showSide.value;
+  showSide.value = !showSide.value;
 }
 
 // const AuthorId = "https://openalex.org/A5067833651"
 const AuthorId ="https://openalex.org/"+route.params.authorId
 onMounted(async () => {
-    const result =  await Search.author_detail(AuthorId)
-    if (result.data.success){
-      const response = result.data.data
-      console.log(response)
-      author.value = result.data.data
-      last_known_institution.value = author.value.last_known_institution.display_name
-      h_index.value = author.value.summary_stats.h_index
-      authorName.value = author.value.display_name
-      avatar.value = author.value.avatar
-      console.log(avatar.value)
-    }else {
-      let promise = Swal.fire({
-        icon: 'error',
-        title:'该作者不存在'
-      })
-    }
+  const result =  await Search.author_detail(AuthorId)
+  if (result.data.success){
+    const response = result.data.data
+    console.log(response)
+    author.value = result.data.data
+    last_known_institution.value = author.value.last_known_institution.display_name
+    h_index.value = author.value.summary_stats.h_index
+    authorName.value = author.value.display_name
+    works_count.value = author.value.works_count
+    cited_by_count.value = author.value.cited_by_count
+    avatar.value = author.value.avatar
+
+    console.log(avatar.value)
+  }else {
+    let promise = Swal.fire({
+      icon: 'error',
+      title:'该作者不存在'
+    })
+  }
 
 })
 const headerStyle = {
@@ -219,8 +281,20 @@ img{
   height: 50px;
 }
 .card-content {
+
   display: flex;
   align-items: center;
+}
+.card-H{
+  text-align: center;
+  font-size: 20px;
+
+}
+.card-H-content{
+  text-align: center;
+  color: #4B70E2;
+  margin-top: 5px;
+  font-size: 30px;
 }
 .card-content div {
   margin-left: 20px;

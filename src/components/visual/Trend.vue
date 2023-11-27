@@ -87,7 +87,7 @@ function init() {
         emphasis: {
           focus: 'series'
         },
-        data: [320, 332, 301, 334, 390, 330, 320]
+        data: [400, 332, 301, 334, 390, 330, 320]
       },
       {
         name: 'Search Engine',
