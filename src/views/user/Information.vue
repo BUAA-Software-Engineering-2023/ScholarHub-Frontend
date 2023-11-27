@@ -1,6 +1,6 @@
 <script setup>
 import UserApi from "@/api/user.js";
-import SideBar from "@/views/user/sideBar.vue";
+import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
 import {useGlobalStore} from "@/stores/global.js";
 
@@ -106,28 +106,14 @@ const buttonItemLayout = computed(() => {
                   name="邮箱"
                   :rules="[{ required: true, message: '请输入您的邮箱' }]"
               >
-                <a-input v-model:value="formState.username">
+                <a-input :disabled="true" v-model:value="formState.email">
                   <template #prefix>
                     <UserOutlined class="site-form-item-icon" />
                   </template>
                 </a-input>
               </a-form-item>
-              <a-form-item
-                  label="密码"
-                  name="密码"
-                  :rules="[{ required: true, message: '请输入您的密码' }]"
-              >
-                <a-input-password v-model:value="formState.password">
-                  <template #prefix>
-                    <LockOutlined class="site-form-item-icon" />
-                  </template>
-                </a-input-password>
-              </a-form-item>
               <a-form-item>
-                <a-form-item name="remember" no-style>
-                  <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
-                </a-form-item>
-                <a class="login-form-forgot" href="">Forgot password</a>
+                <a class="login-form-forgot" href="">Forgot password?</a>
               </a-form-item>
               <a-form-item>
                 <a-button :disabled="disabled" type="primary" html-type="submit" class="login-form-button">
@@ -204,6 +190,7 @@ const buttonItemLayout = computed(() => {
   background-color: white;
 }
 .title{
+  color: #18181b;
   font-weight: 800;
   font-size: 25px;
 }

@@ -7,7 +7,7 @@ import {
   AppstoreOutlined,
   SettingOutlined,
 } from '@ant-design/icons-vue';
-import SideBar from "@/views/user/sideBar.vue";
+import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
 const collections = ref([])
 const authorInfo = ref()

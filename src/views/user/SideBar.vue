@@ -18,8 +18,8 @@ const items = ref([
   {
     key: 'sub1',
     icon: () => h(MailOutlined),
-    label: '学术主页',
-    title: '学术主页',
+    label: '主页',
+    title: '主页',
     children: [
       {
         key: '1',
@@ -27,6 +27,13 @@ const items = ref([
         title: '个人信息',
         path: 'client/user/information',
         icon: () => h(UserOutlined),
+      },
+      {
+        key: '4',
+        label: '学术门户',
+        title: '学术门户',
+        path: 'client/user/scholar',
+        icon: () =>h(UserOutlined),
       }
     ]
   },
@@ -77,6 +84,7 @@ function handleMenuClick({ item, key, keyPath }) {
 <style scoped>
 
 .sideBar{
+  text-align: left;
   width: 100%;
   padding: 10px;
   flex: none;
@@ -84,6 +92,7 @@ function handleMenuClick({ item, key, keyPath }) {
   background-color: white;
   border-radius: 10px;
   margin-top: 20px;
-  margin-left: 5vw;
+  margin-left: 8vw;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
 }
 </style>
