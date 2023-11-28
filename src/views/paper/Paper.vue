@@ -14,8 +14,20 @@ onMounted(async () => {
     console.log(result.data.data)
     paperInfo.value = [result.data.data]
   }
-  reference_works.value = paperInfo.value[0].referenced_works
-  console.log(reference_works.value)
+  const list = paperInfo.value[0].referenced_works
+  for (let i = 0; i < list.length; i++) {
+    const url = list[i].id;
+// 使用字符串分割方法，以 '/' 分割URL，并选择最后一个部分
+    const parts = url.split('/');
+    const paperId = parts[parts.length - 1]; // 获取最后一个部分
+    console.log(paperId); // 输出 W1775749144
+    reference_works.value.push({
+      href: paperId,
+      title: list[i].display_name,
+      avatar: 'https://joeschmoe.io/api/v1/random',
+      description: list[i].publication_year,
+    });
+  }
 });
 const referencedWorks = ref([
   {
