@@ -30,7 +30,7 @@
           </div>
           <transition  name="slide">
             <div v-if="authorInfo && authorInfo.id === author.author.id" class="author-info">
-              <img src="@/assets/icons/default_avatar.png" alt="Author Avatar">
+              <img src="@/assets/imgs/default.jpg" alt="Author Avatar">
               <div class="author-details">
                 <div class="author-name">{{ authorInfo.display_name }}</div>
                 <div class="author-stats">
@@ -77,7 +77,8 @@ onMounted( async () => {
   const result =  await HomeAPI.get_recommendation();
   userName.value = getName();
     // 在异步操作成功时处理数据
-  recommendations.value = result.data.data[0].result
+  recommendations.value = result.data.data
+  console.log(recommendations.value)
 });
 function showAuthorInfo(author) {
   authorInfo.value = author;
@@ -334,10 +335,9 @@ function handleScroll() {
   z-index: 10000;
 }
 .author-info img{
-  width: 90px;
+  width: 80px;
   height: 80px;
-  margin-right: 30px;
-  padding-right: 20px;
+  border-radius: 20px;
 }
 // 动画
 .slide-enter-from,
@@ -359,6 +359,7 @@ function handleScroll() {
   font-size: 12px;
 }
 .author-details{
+  padding-right: 20px;
   margin-left: 20px;
 }
 .recommendation-stats{
