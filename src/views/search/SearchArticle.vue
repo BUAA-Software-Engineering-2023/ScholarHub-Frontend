@@ -33,33 +33,36 @@
           </ul>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
-	        <a-table :columns="columns" :data-source="data" size="small" :pagination="false" class="filterBar" bordered>
-		        <template #headerCell="{ column }">
-			        <template v-if="column.key === 'name'" >
-				        <span>
-					        <a class="filter">
-					            筛选项
-				            </a>
-				        </span>
-			        </template>
-		        </template>
-		        <template #bodyCell="{ column, record }">
-			        <template v-if="column.key === 'tags'">
-				        <span>
-				          <a-checkable-tag
-					          v-for="tag in record.tags"
-					          :key="tag"
-					          @click=""
-					          class="filter"
-				          >
-				            {{ tag }}
-				          </a-checkable-tag>
-				        </span>
-			        </template>
-		        </template>
-	        </a-table>
+<!--	        <a-table :columns="columns" :data-source="data" size="small" :pagination="false" class="filterBar" bordered>-->
+<!--		        <template #headerCell="{ column }">-->
+<!--			        <template v-if="column.key === 'name'">-->
+<!--				        <span>-->
+<!--				          筛选项-->
+<!--				        </span>-->
+<!--			        </template>-->
+<!--		        </template>-->
+<!--		        <template #bodyCell="{ column, record }">-->
+<!--			        <template v-if="column.key === 'name'">-->
+<!--				        <a>-->
+<!--					        {{ record.name }}-->
+<!--				        </a>-->
+<!--			        </template>-->
+<!--			        <template v-else-if="column.key === 'tags'">-->
+<!--				        <span>-->
+<!--				          <a-checkable-tag-->
+<!--					          v-for="tag in record.tags"-->
+<!--					          :key="tag"-->
+<!--					          @click=""-->
+<!--					          class="filter"-->
+<!--				          >-->
+<!--				            {{ tag }}-->
+<!--				          </a-checkable-tag>-->
+<!--				        </span>-->
+<!--			        </template>-->
+<!--			    </template>-->
+<!--	        </a-table>-->
 	        <a-layout>
-		        <a-layout-sider :style="siderStyle" width="330" >
+		        <a-layout-sider :style="siderStyle" width="500" >
 			        <div class = "slideSearch">
 				        <a-menu
 					        v-model:selectedKeys="state.selectedKeys"
@@ -68,13 +71,14 @@
 					        :open-keys="state.openKeys"
 					        :items="items"
 					        @openChange="onOpenChange"
+					        @click="handleClick"
 				        >
 				        </a-menu>
 			        </div>
 		        </a-layout-sider>
 		        <a-layout-content :style="contentStyle">
-			        <li class = "ExpertRes" v-for="(item, index) in expertList">
-				        <a-card hoverable>
+			        <li class = "ExpertRes" v-for="item in expertList">
+				        <a-card hoverable style="width: 80%;">
 					        <ExpertCard :paper="item"/>
 				        </a-card>
 				    </li>
@@ -124,30 +128,70 @@ import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
-// const props = defineProps({
-//   paperList: Object,
-//   pageTotalSize: Number,
-// });
 const paperList = ref();
 const expertList = ref();
-
+const handleClick = async menuInfo => {
+	console.log('click ', menuInfo.keyPath[0]);
+	console.log('click ', menuInfo.keyPath[1]);
+	
+	if (menuInfo.keyPath[0] == "region") {
+		const filter ={
+			'concepts.display_name':menuInfo.keyPath[1]
+		}
+		await getExpertsFiltered(filter);
+	} else if (menuInfo.keyPath[0] == "country") {
+		const filter ={
+			'last_known_institution.country_code':menuInfo.keyPath[1]
+		}
+		await getExpertsFiltered(filter);
+	}
+};
 async function getPapers(){
-  console.log("searchRef.value.searchValue:"+searchRef.value.searchValue)
   result.value = await SearchAPI.search(searchRef.value.searchValue)
-  console.log("result:", result)
   paperList.value = result.value.data.data.result;
-  console.log("paperlist:", paperList.value);
 
 }
 async function getExperts(){
 	exResult.value = await SearchAPI.searchExpert(searchRef.value.searchValue)
+	expertList.value = exResult.value.data.data.result;
+	setFilterContent();
+}
+async function getExpertsFiltered(Region){
+	exResult.value = await SearchAPI.searchExpertFiltered(searchRef.value.searchValue,Region)
 	console.log("exResult:", exResult)
 	expertList.value = exResult.value.data.data.result;
 	console.log("expertList:", expertList.value);
-	
+	setFilterContent();
+}
+function setFilterContent(){
+	let ExpertInstitution = [];
+	let ExpertArea = [];
+	for(let i=0;i<expertList.value.length;i++){
+		const expert = expertList.value[i];
+		if(expert.last_known_institution !=null) {
+			if (!ExpertInstitution.includes(expert.last_known_institution.country_code)) {
+				ExpertInstitution.push(expert.last_known_institution.country_code);
+			}
+		}
+		if(expert.x_concepts !=null) {
+			for(let j=0;j<expert.x_concepts.length;j++) {
+				if (!ExpertArea.includes(expert.x_concepts[j].display_name)) {
+					ExpertArea.push(expert.x_concepts[j].display_name);
+				}
+			}
+		}
+	}
+	const titleItem = items.find(item => item.label === '国家');
+	const institutionItem = items.find(item => item.label === '领域');
+	// 将ExpertInstitution和ExpertArea添加到相应项的children属性中
+	if (titleItem) {
+		titleItem.children = ExpertInstitution.slice(0, 10).map(name => getItem(name, name,() => h(ExperimentOutlined)));
+	}
+	if (institutionItem) {
+		institutionItem.children = ExpertArea.slice(0, 10).map(type => getItem(type, type,() => h(ExperimentOutlined)));
+	}
 }
 onMounted(async ()=>{
-  console.log("@@@@@@@@@@@@")
   await getPapers()
   await getExperts()
 
@@ -161,58 +205,6 @@ const changePage = () => {
 };
 
 
-const columns = [
-	{
-		name: 'Name',
-		dataIndex: 'name',
-		key: 'name',
-	},
-	{
-		title: '标签',
-		dataIndex: 'tags',
-		key: 'tags',
-	}
-];
-const data = [
-	{
-		key: '1',
-		name: '性别',
-		tags: ['男(5)', '女(4)'],
-	},
-	{
-		key: '2',
-		name: '地区',
-		tags: ['美国(10)','日本','德国','意大利'],
-	},
-	{
-		key: '3',
-		name: '语言',
-		tags: ['英语', '法语'],
-	},
-];
-const people = [
-	{
-		key: '1',
-		title: 'one',
-		description: "好好好",
-	},
-	{
-		key: '2',
-		title: 'one',
-		description: "好好好",
-	},
-	{
-		key: '3',
-		title: 'one',
-		description: "好好好",
-	},
-	{
-		key: '4',
-		title: 'one',
-		description: "好好好",
-	},
-];
-
 import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined } from '@ant-design/icons-vue';
 import ExpertCard from "@/views/search/ExpertCard.vue";
 function getItem(label, key, icon, children, type) {
@@ -225,23 +217,14 @@ function getItem(label, key, icon, children, type) {
 	};
 }
 const items = reactive([
-	getItem('职称', 'sub1', () => h(PieChartOutlined), [
-		getItem('生命科学', '1', () => h(ExperimentOutlined)),
-		getItem('数学', '2', () => h(ExperimentOutlined)),
-		getItem('计算机科学', '3', () => h(ExperimentOutlined)),
-		getItem('人工智能', '4', () => h(ExperimentOutlined)),
+	getItem('领域', 'region', () => h(PieChartOutlined), [
 	]),
-	getItem('机构', 'sub2', () => h(BankOutlined), [
-		getItem('清华大学', '5'),
-		getItem('北京航空航天大学', '6'),
-		getItem('北京大学', '6'),
-		getItem('南京大学', '6'),
+	getItem('国家', 'country', () => h(BankOutlined), [
 	]),
-
 ]);
 const state = reactive({
-	rootSubmenuKeys: ['sub1', 'sub2'],
-	openKeys: ['sub1'],
+	rootSubmenuKeys: ['region', 'country'],
+	openKeys: ['region'],
 	selectedKeys: [],
 });
 const onOpenChange = openKeys => {
@@ -305,7 +288,7 @@ body{
 }
 
 .filterBar{
-	width: 90%;
+	width: 80%;
 	margin: auto;
 }
 .ExpertRes{
@@ -318,7 +301,7 @@ body{
 }
 .slideSearch{
 	margin-top: 20px;
-	margin-left: 20%;
+	margin-left: 35%;
 }
 
 </style>

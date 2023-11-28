@@ -32,7 +32,6 @@ const item = ref()
 item.value = props.paper
 
 onMounted(()=>{
-  console.log("aaa",item.value.id);
 })
 
 function show(){
