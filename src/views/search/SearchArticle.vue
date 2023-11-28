@@ -9,28 +9,42 @@
     <div class="paper-list-wrap">
       <a-tabs style="margin-left:10px" v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="论文">
-          <ul class="search-result__list">
-            <div>
-              <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
-                <el-menu-item index="1" @click="getUpdate">最新</el-menu-item>
-                <el-menu-item index="2">综合</el-menu-item>
-                <el-menu-item index="3">引用数</el-menu-item>
-              </el-menu>
-            </div>
-            <!--          <div class="hint">-->
-            <!--            *由于结果数量超过10,000，出于实用性考虑，列表只会展示相关度排序的前10,000条-->
-            <!--          </div>-->
-            <!-- 单个搜索结果卡片 -->
-            <li class="result-item" v-for="(item, index) in paperList">
-              <a-card hoverable>
-                <ArticleCard :paper="item"/>
-
-              </a-card>
-              <!--              <el-card shadow = "hover">-->
-              <!--                <test2 :item="item"/>-->
-              <!--              </el-card>-->
-            </li>
-          </ul>
+          <a-layout>
+            <a-layout-sider :style="siderStyle">
+              <div class = "slideSearch">
+                <a-menu
+                    v-model:selectedKeys="state.selectedKeys"
+                    style="width: 212px"
+                    mode="inline"
+                    :open-keys="state.openKeys"
+                    :items="ArticleItems"
+                    @openChange="onOpenChange"
+                >
+                </a-menu>
+              </div>
+            </a-layout-sider>
+            <a-layout>
+              <a-layout-header :style="headerStyle">
+                  <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
+                    <el-menu-item index="1">最新</el-menu-item>
+                    <el-menu-item index="2">综合</el-menu-item>
+                    <el-menu-item index="3">引用数</el-menu-item>
+                  </el-menu>
+              </a-layout-header>
+              <a-layout-content :style="contentStyle">
+                <ul class="search-result__list">
+                  <li class="result-item" v-for="(item, index) in paperList">
+                    <a-card hoverable>
+                      <ArticleCard :paper="item"/>
+                    </a-card>
+                  </li>
+                </ul>
+              </a-layout-content>
+            </a-layout>
+            <a-layout-sider :style="siderStyle">
+              To be added:ECharts
+            </a-layout-sider>
+          </a-layout>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
 	        <a-table :columns="columns" :data-source="data" size="small" :pagination="false" class="filterBar" bordered>
@@ -106,39 +120,45 @@
 </template>
 
 <script setup>
-import SearchBar from "@/components/Search/SearchBar.vue";
+import SearchBar from "@/views/search/Search/SearchBar.vue";
 import NavBar from "@/views/search/NavBar/NavBar.vue";
-const contentStyle = {
-	paddingleft:'200px',
-	textAlign: 'center',
-	minHeight: 120,
-	lineHeight: '120px',
-	
-	backgroundColor: '#fff',
-};
-const siderStyle = {
-	textAlign: 'center',
-	lineHeight: '120px',
-	backgroundColor: '#fff',
-};
 import ArticleCard from "@/views/search/ArticleCard.vue";
 import SearchAPI from "@/api/search.js"
 
+const contentStyle = {
+  paddingleft:'200px',
+  textAlign: 'center',
+  minHeight: 120,
+  lineHeight: '120px',
+
+  backgroundColor: '#fff',
+};
+const siderStyle = {
+  textAlign: 'center',
+  lineHeight: '120px',
+  backgroundColor: '#fff',
+};
+const headerStyle = {
+  textAlign: 'center',
+  color: '#fff',
+  height: 64,
+  paddingInline: 50,
+  lineHeight: '64px',
+  backgroundColor: '#fff',
+};
 const result = ref();
 const searchRef = ref(null);
 import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
-// const props = defineProps({
-//   paperList: Object,
-//   pageTotalSize: Number,
-// });
-const paperList = ref();
+const paperList = ref([]);
+const sortKey = ref(['1'])
+const searchContent = ref();
 
 async function getPapers(){
   console.log("searchRef.value.searchValue:"+searchRef.value.searchValue)
-  result.value = await SearchAPI.search(searchRef.value.searchValue)
+  result.value = await SearchAPI.search(searchRef.value.ifSearch)
   console.log("result:", result)
   paperList.value = result.value.data.data.result;
   console.log("paperlist:", paperList.value);
@@ -146,13 +166,16 @@ async function getPapers(){
 }
 
 onMounted(async ()=>{
-  console.log("@@@@@@@@@@@@")
   await getPapers()
-
 })
-async function getUpdate(){
-  await getPapers()
-}
+
+
+watch(
+    () => searchRef.value && searchRef.value.ifSearch,
+    async (value) => {
+        await getPapers();
+    }
+);
 
 const changePage = () => {
   emit("changePage", pageCurrent.value);
@@ -221,6 +244,8 @@ function getItem(label, key, icon, children, type) {
 		type,
 	};
 }
+
+
 const items = reactive([
 	getItem('职称', 'sub1', () => h(PieChartOutlined), [
 		getItem('生命科学', '1', () => h(ExperimentOutlined)),
