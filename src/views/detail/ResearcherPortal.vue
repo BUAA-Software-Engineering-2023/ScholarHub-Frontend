@@ -98,7 +98,7 @@
 <!--                      <div class="research-abstract">-->
 <!--                        这里是研究成果的摘要内容，可以是一段文字。-->
 <!--                      </div>-->
-                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
+                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="works">
                         <template #footer>
 
                         </template>
@@ -140,7 +140,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script  setup>
 import Search from "@/api/search.js"
 import { useRoute } from "vue-router";
 import Core from "@/assets/icons/Core.vue";
@@ -161,29 +161,18 @@ const collapsed = ref(false)
 const avatar = ref()
 const works_count = ref()
 const cited_by_count = ref()
-const listData: Record<string, string>[] = [];
+const works = ref([])
 
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://d.wanfangdata.com.cn/periodical/ChlQZXJpb2RpY2FsQ0hJTmV3UzIwMjMwODMxEg1oa3hiMjAyMzAyMDE1GggydzljcXptbQ%3D%3D',
-    title: `科研成果 ${i + 1}`,
-    avatar: '/assets/icons/default_avatar.png',
-    description:
-        '作者1，作者2，作者3',
-    content:
-        '这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,',
-  });
-}
 const pagination = {
-  onChange: (page: number) => {
+  onChange: page => {
     console.log(page);
   },
+  style:{height: '32px', lineHeight: '32px', textAlign: 'center !important'},
   pageSize: 3,
 };
-const actions: Record<string, any>[] = [
+const actions = [
   { icon: LinkOutlined , text: '2' },
   { icon: VerticalAlignBottomOutlined, text: '2' },
-
 ];
 const changeShowSide = (collapsed, type)=>{
   showSide.value = !showSide.value;
@@ -203,8 +192,18 @@ onMounted(async () => {
     works_count.value = author.value.works_count
     cited_by_count.value = author.value.cited_by_count
     avatar.value = author.value.avatar
-
-    console.log(avatar.value)
+    const listData = author.value.works
+    for (let i = 0; i < 23; i++) {
+      works.value.push({
+        href: listData[i].,
+        title: listData[i].display_name,
+        avatar: '/assets/icons/default_avatar.png',
+        description:
+            '作者1，作者2，作者3',
+        content:
+            '这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,',
+      });
+    }
   }else {
     let promise = Swal.fire({
       icon: 'error',
