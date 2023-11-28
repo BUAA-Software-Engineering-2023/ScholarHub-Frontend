@@ -11,16 +11,9 @@
               <img src="@/assets/imgs/scholarHub.png" alt="#">
             </div>
             <!-- 左侧导航栏 -->
-            <ul class="left-ul">
+            <div class="left-ul">
               <li title=""><router-link active-class="active" to="#"> 博客 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 开发者文库 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 课程 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 问答 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 社区 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 插件 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 认证 </router-link></li>
-              <li title=""><router-link active-class="active" to="#"> 开源 </router-link></li>
-            </ul>
+            </div>
           </div>
 
           <!-- 中间搜索框 -->
@@ -49,9 +42,9 @@
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links">
-                        <a href="#" class="profile-link">学术主页</a>
-                        <a href="#" class="profile-link">我的收藏</a>
-                        <a href="#" class="profile-link">个人信息</a>
+                        <a  @click="goto" class="profile-link">学术主页</a>
+                        <a  @click="gotoCollection" class="profile-link">我的收藏</a>
+                        <a  @click="gotoInfo" class="profile-link">个人信息</a>
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links" @click.prevent="logout">
@@ -92,6 +85,13 @@ import {clearToken, getName} from "@/utils/token.js";
   function mouseLeave() {
     showProfile.value = false;
   }
+  function gotoCollection(){
+    router.push('/client/user/collections')
+  }
+  function gotoInfo(){
+    router.push('/client/user/information')
+  }
+
   function logout(){
     clearToken();
     searchStore.setSearchHistory([]);
@@ -185,7 +185,7 @@ a{
 }
 .navbar-search-container{
   width: 100%;
-  max-width: 720px;
+  max-width: 780px;
   color: #4B70E2;
   height: 32px;
   line-height: 20px;
@@ -377,6 +377,9 @@ a:hover {
 }
 .el-divider--horizontal{
   margin: 15px;
+}
+a:hover{
+  cursor: pointer;
 }
 </style>
 

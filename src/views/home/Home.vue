@@ -30,7 +30,7 @@
           </div>
           <transition  name="slide">
             <div v-if="authorInfo && authorInfo.id === author.author.id" class="author-info">
-              <img src="@/assets/icons/default_avatar.png" alt="Author Avatar">
+              <img src="@/assets/imgs/default.jpg" alt="Author Avatar">
               <div class="author-details">
                 <div class="author-name">{{ authorInfo.display_name }}</div>
                 <div class="author-stats">
@@ -72,20 +72,16 @@ const recommendations = ref([])
 const showSearch = ref(false); // 根据你的需求将其设置为 true 或 false
 const authorInfo = ref(null);
 const userName = ref('')
-onMounted(() => {
+onMounted( async () => {
   window.addEventListener('scroll', handleScroll);
-  const result =  HomeAPI.get_recommendation();
-  console.log(result)
+  const result =  await HomeAPI.get_recommendation();
   userName.value = getName();
-  result.then(data => {
     // 在异步操作成功时处理数据
-    recommendations.value = data.data.data[0].result
-    console.log(recommendations.value)
-  });
+  recommendations.value = result.data.data
+  console.log(recommendations.value)
 });
 function showAuthorInfo(author) {
   authorInfo.value = author;
-  console.log(authorInfo.value.id)
 }
 
 function hideAuthorInfo() {
@@ -339,10 +335,9 @@ function handleScroll() {
   z-index: 10000;
 }
 .author-info img{
-  width: 90px;
+  width: 80px;
   height: 80px;
-  margin-right: 30px;
-  padding-right: 20px;
+  border-radius: 20px;
 }
 // 动画
 .slide-enter-from,
@@ -364,6 +359,7 @@ function handleScroll() {
   font-size: 12px;
 }
 .author-details{
+  padding-right: 20px;
   margin-left: 20px;
 }
 .recommendation-stats{
