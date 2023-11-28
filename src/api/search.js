@@ -155,5 +155,14 @@ export default {
                 author_id
             }
         })
+    },
+    get_article_detail(work_id){
+        return requests({
+            url: "/work/detail",
+            method:"POST",
+            data:{
+                work_id
+            }
+        })
     }
 }
