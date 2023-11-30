@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons-vue';
 import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
-const collections = ref([])
+const historyInfo = ref([])
 const authorInfo = ref()
 function showAuthorInfo(author) {
   authorInfo.value = author;
@@ -20,7 +20,7 @@ function hideAuthorInfo() {
   authorInfo.value = null;
 }
 onMounted( async () => {
-  const result =  await UserApi.get_favorite();
+  const result =  await UserApi.get_history();
   console.log(result.data)
   if (!result.data.success){
     let promise = Swal.fire({
@@ -28,7 +28,7 @@ onMounted( async () => {
       title:'服务器错误'
     });
   }
-  collections.value = result.data.data
+  historyInfo.value = result.data.data
 });
 
 </script>
@@ -38,10 +38,55 @@ onMounted( async () => {
     <div class="sidebar">
       <SideBar select-keys="3"></SideBar>
     </div>
+
     <div class="content">
       <div class="header">
-        <div class="title">我的收藏</div>
-        <div class="header-content">总共收藏{{collections.length}}篇论文</div>
+        <div class="title">浏览历史</div>
+        <div class="header-content">总共浏览共{{historyInfo.length}}篇论文</div>
+      </div>
+      <div class="history">
+        <div class="empty" v-if="!historyInfo.length">
+          <a-empty description="暂无浏览记录" />
+        </div>
+        <div v-else class="history">
+          <div v-for="(history, index) in historyInfo" :key="index" class="history-item">
+            <div  @click="jumpToarticle"> <span class="history-title">{{ history.display_name }}</span> </div>
+            <div  class="author" v-for="(author,index1) in history.authorships" :key="index1">
+              <div class="history-details">
+                <div   @mouseover="showAuthorInfo(author.author)"
+                       @mouseleave="hideAuthorInfo"
+                       class="author_container"
+                ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
+                  <span v-if="index1 !== history.authorships.length - 1">，</span>
+                </div>
+              </div>
+              <transition  name="slide">
+                <div v-if="authorInfo && authorInfo.id === author.author.id" class="author-info">
+                  <img src="@/assets/imgs/default.jpg" alt="Author Avatar">
+                  <div class="author-details">
+                    <div class="author-name">{{ authorInfo.display_name }}</div>
+                    <div class="author-stats">
+                      引用量: {{ authorInfo.citations }}&nbsp; | &nbsp; 论文数: {{ authorInfo.history_count }}
+                    </div>
+                    <div class="author-title">
+                      贡献： {{
+                        author.author_position === 'first' ? '第一作者' :
+                            author.author_position === 'middle' ? '中间作者' :
+                                author.author_position === 'last' ? '最后作者' :
+                                    '其他作者'
+                      }}
+                    </div>
+                    <div class="author-title">
+                    </div>
+                  </div>
+                </div>
+              </transition>
+            </div>
+            <div class="history-stats">
+              引用: <span class="count">{{ history.cited_by_count }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -52,8 +97,6 @@ onMounted( async () => {
 <style lang="scss" scoped>
 
 .header{
-  background-color: white;
-  padding: 20px;
   text-align: left;
   border-radius: 10px;
   margin-right: 10vw;
@@ -200,5 +243,26 @@ onMounted( async () => {
 #authorName:hover{
   text-decoration: none; /* 取消实线下划线 */
   border-bottom: 1px dashed #75a468; /* 添加虚线下划线 */
+}
+.empty {
+  background-color: #fff;
+  padding: 200px;
+  height: 70%;
+  width: 86%;
+  margin-top: 20px;
+  border-radius: 10px !important;
+  text-align: left;
+  color: #363c50 !important;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+}
+.header{
+  background-color: white;
+  padding: 20px;
+  text-align: left;
+  border-radius: 10px;
+  margin-right: 10vw;
+  color: #18181b;
+  margin-top: 20px;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
 }
 </style>
