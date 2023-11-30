@@ -3,6 +3,9 @@ import SearchAPI from "@/api/search.js"
 import {useRoute} from "vue-router";
 import ReferenceWork from "@/views/paper/ReferenceWork.vue";
 import router from "@/router/index.js";
+import ConceptCount from "@/assets/icons/ConceptCount.vue";
+import Concept from "@/assets/icons/Concept.vue";
+import Type from "@/assets/icons/Type.vue";
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
@@ -130,6 +133,24 @@ const handleChange = async value => {
               </div>
             </transition>
           </div>
+          <div v-if="paper.concepts" class="concepts">
+            <div class="concepts-text">
+              <Concept></Concept>
+              <div class="concept"  v-for="(concept,index1) in paper.concepts">
+                <span class="concept-content"> {{concept.display_name}}</span>
+                <span v-if="index1 !== paper.concepts.length - 1">，</span>
+              </div>
+            </div>
+          </div>
+          <div class="type"  v-if="paper.type">
+            <Type></Type>
+            <div class="concept">
+              <span class="concept-content"> {{paper.type}}</span>
+            </div>
+          </div>
+          <div class="paper-stats">
+            引用: <span class="count">{{ paper.cited_by_count }}</span>
+          </div>
           <div v-if="paper.abstract" class="paper-abstract">
             <div class="title">摘要</div>
             <div class="abstract-text" v-if="paper.abstract.length<500">
@@ -147,6 +168,7 @@ const handleChange = async value => {
             </div>
 
           </div>
+
           <div v-if="paper.keywords" class="keywords">
             <div class="title">关键词</div>
             <div class="keywords-text">
@@ -155,9 +177,6 @@ const handleChange = async value => {
                 <span v-if="index1 !== paper.keywords.length - 1">，</span>
               </div>
             </div>
-          </div>
-          <div class="paper-stats">
-            引用: <span class="count">{{ paper.cited_by_count }}</span>
           </div>
           <div class="buttons">
             <div @click="downloadPDF" @mouseover="showDownload" @mouseleave="hideDownload" class="download-pdf">
@@ -238,6 +257,9 @@ const handleChange = async value => {
 .keywords-text{
   display: flex;
 }
+.concepts-text{
+  display: flex;
+}
 .author_container{
   display: inline-block;
 }
@@ -315,6 +337,7 @@ const handleChange = async value => {
   margin-left: 20px;
 }
 .paper-stats{
+  margin-top: 10px;
   margin-bottom: 10px;
   font-size: 14px;
   color: #75a468;
@@ -390,6 +413,10 @@ const handleChange = async value => {
   margin-right: 6px;
   color: #666666;
 }
+.concept{
+  margin-left: 5px;
+  font-size: 14px;
+}
 /* 悬停添加箭头图标 */
 .download-pdf {
   font-size: 14px;
@@ -403,8 +430,8 @@ const handleChange = async value => {
   font-weight: 400;
   width: 80px;
   transition: all 0.5s;
-  margin: 5px;
   padding: 5px;
+  margin: 5px 5px 5px 0;
   vertical-align: middle;
 }
 .download-pdf span {
@@ -461,5 +488,13 @@ const handleChange = async value => {
 }
 .buttons{
   display: flex;
+}
+.type{
+  margin-top: 10px;
+  display: flex;
+  font-weight: 400;
+}
+.concepts{
+  margin-top: 10px;
 }
 </style>
