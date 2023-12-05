@@ -30,7 +30,7 @@ const pagination = {
     console.log(page);
   },
   style:{height: '32px', lineHeight: '32px', textAlign: 'center !important'},
-  pageSize: 3,
+  pageSize: 5,
 };
 const actions = [
   {

@@ -2,6 +2,10 @@
 import SearchAPI from "@/api/search.js"
 import {useRoute} from "vue-router";
 import ReferenceWork from "@/views/paper/ReferenceWork.vue";
+import router from "@/router/index.js";
+import ConceptCount from "@/assets/icons/ConceptCount.vue";
+import Concept from "@/assets/icons/Concept.vue";
+import Type from "@/assets/icons/Type.vue";
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
@@ -14,38 +18,44 @@ onMounted(async () => {
     console.log(result.data.data)
     paperInfo.value = [result.data.data]
   }
-  const list = paperInfo.value[0].referenced_works
-  for (let i = 0; i < list.length; i++) {
-    const url = list[i].id;
+  if (paperInfo.value[0].referenced_works)
+  {
+    const list = paperInfo.value[0].referenced_works
+    for (let i = 0; i < list.length; i++) {
+      const url = list[i].id;
 // 使用字符串分割方法，以 '/' 分割URL，并选择最后一个部分
-    const parts = url.split('/');
-    const paperId = parts[parts.length - 1]; // 获取最后一个部分
-    console.log(paperId); // 输出 W1775749144
-    reference_works.value.push({
-      href: paperId,
-      title: list[i].display_name,
-      avatar: 'https://joeschmoe.io/api/v1/random',
-      description: list[i].publication_year,
-    });
+      const parts = url.split('/');
+      const paperId = parts[parts.length - 1]; // 获取最后一个部分
+      console.log(paperId); // 输出 W1775749144
+      reference_works.value.push({
+        href: paperId,
+        title: "["+(i+1)+"] "+ list[i].display_name+" "+list[i].publication_year,
+        avatar: 'https://joeschmoe.io/api/v1/random',
+      });
+    }
   }
+  if (paperInfo.value[0].locations){
+    const locations = paperInfo.value[0].locations;
+    for (let i=0;i<locations.length;i++){
+      const landing_page_url = locations[i].landing_page_url
+      options.value.push(
+          {
+            value: landing_page_url,
+            label: landing_page_url,
+          },
+      )
+    }
+
+  }
+
 });
-const referencedWorks = ref([
-  {
-    id: 1,
-    display_name: "参考文献标题1",
-    publication_year: 2020
-    // 可以在这里添加其他字段的信息
-  },
-  {
-    id: 2,
-    display_name: "参考文献标题2",
-    publication_year: 2019
-    // 可以在这里添加其他字段的信息
-  },
-  // 可以根据需要继续添加其他参考文献的信息
-]);
 function showAuthorInfo(author) {
   authorInfo.value = author;
+}
+const isFavorite = ref(false); // 是否已经收藏，可以根据实际逻辑进行设置
+
+function toggleFavorite() {
+  isFavorite.value = !isFavorite.value; // 切换收藏状态的逻辑
 }
 function downloadPDF(){
   const url = paperInfo.value[0].open_access.oa_url // 下载文件的url
@@ -54,7 +64,7 @@ function downloadPDF(){
   link.download = 'file.pdf' // 下载文件的名称
   link.target="_blank"
   link.click()
-  console.log(paperInfo.value[0].open_access.oa_url)
+  // window.URL.revokeObjectURL(url)
 }
 function hideAuthorInfo() {
   authorInfo.value = null;
@@ -70,6 +80,20 @@ function showDownload(){
 function hideDownload(){
   download.value = false;
 }
+const options = ref([]);
+const value = ref();
+const handleChange = async value => {
+  console.log(value); // { key: "lucy", label: "Lucy (101)" }
+  const url = value.value // 下载文件的url
+  console.log(url.value)
+  const link = document.createElement('a') ;
+  link.href = url;
+  link.target="_blank"
+  link.click()
+  // window.URL.revokeObjectURL(url)
+};
+
+
 </script>
 
 <template>
@@ -109,6 +133,24 @@ function hideDownload(){
               </div>
             </transition>
           </div>
+          <div v-if="paper.concepts" class="concepts">
+            <div class="concepts-text">
+              <Concept></Concept>
+              <div class="concept"  v-for="(concept,index1) in paper.concepts">
+                <span class="concept-content"> {{concept.display_name}}</span>
+                <span v-if="index1 !== paper.concepts.length - 1">，</span>
+              </div>
+            </div>
+          </div>
+          <div class="type"  v-if="paper.type">
+            <Type></Type>
+            <div class="concept">
+              <span class="concept-content"> {{paper.type}}</span>
+            </div>
+          </div>
+          <div class="paper-stats">
+            引用: <span class="count">{{ paper.cited_by_count }}</span>
+          </div>
           <div v-if="paper.abstract" class="paper-abstract">
             <div class="title">摘要</div>
             <div class="abstract-text" v-if="paper.abstract.length<500">
@@ -126,6 +168,7 @@ function hideDownload(){
             </div>
 
           </div>
+
           <div v-if="paper.keywords" class="keywords">
             <div class="title">关键词</div>
             <div class="keywords-text">
@@ -135,16 +178,28 @@ function hideDownload(){
               </div>
             </div>
           </div>
-          <div class="paper-stats">
-            引用: <span class="count">{{ paper.cited_by_count }}</span>
-          </div>
           <div class="buttons">
             <div @click="downloadPDF" @mouseover="showDownload" @mouseleave="hideDownload" class="download-pdf">
               <span class="pdf"> PDF</span>
               <transition  name="slide1">
-                <span class="arrow" v-if="download"><ArrowDownOutlined /></span>
+                <span class="arrow" v-if="download"><EyeOutlined /></span>
               </transition>
             </div>
+            <div class="paper-link">
+              <a-select
+                  :autoClearSearchValue="true"
+                  v-model:value="value"
+                  label-in-value
+                  placeholder="原文链接"
+                  style="width: 120px;box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;margin: 5px;border-radius: 5px"
+                  :options="options"
+                  @change="handleChange"
+              ></a-select>
+            </div>
+            <button class="favorite-button" @click="toggleFavorite">
+              <span v-if="isFavorite">已收藏<StarFilled style="color:#efa247" /></span>
+              <span v-else>收藏 <StarOutlined  style="color:#efa247"/></span>
+            </button>
           </div>
         </div>
       </div>
@@ -200,6 +255,9 @@ function hideDownload(){
   color: #5a5a5a;
 }
 .keywords-text{
+  display: flex;
+}
+.concepts-text{
   display: flex;
 }
 .author_container{
@@ -279,6 +337,7 @@ function hideDownload(){
   margin-left: 20px;
 }
 .paper-stats{
+  margin-top: 10px;
   margin-bottom: 10px;
   font-size: 14px;
   color: #75a468;
@@ -354,21 +413,25 @@ function hideDownload(){
   margin-right: 6px;
   color: #666666;
 }
+.concept{
+  margin-left: 5px;
+  font-size: 14px;
+}
 /* 悬停添加箭头图标 */
 .download-pdf {
+  font-size: 14px;
   cursor: pointer;
   display: flex;
-  border-radius: 10px;
+  border-radius: 5px;
   background-color: #C51C01;
   border: none;
   color: #ffff;
   text-align: center;
-  font-size: 15px;
   font-weight: 400;
-  width: 70px;
+  width: 80px;
   transition: all 0.5s;
-  margin: 5px;
   padding: 5px;
+  margin: 5px 5px 5px 0;
   vertical-align: middle;
 }
 .download-pdf span {
@@ -379,10 +442,10 @@ function hideDownload(){
 }
 .pdf{
   font-weight: 600 ;
-  margin-left: 10px;
+  margin: auto 10px;
 }
 .arrow{
-  margin-left: 5px;
+  margin: auto 5px;
 }
 .reference_work {
   margin-top: 20px;
@@ -407,5 +470,31 @@ function hideDownload(){
 
 .publication-year {
   font-style: italic;
+}
+.favorite-button {
+  font-size: 14px;
+  margin: 5px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  outline: none;
+}
+
+.favorite-button:hover {
+  background-color: #2980b9;
+}
+.buttons{
+  display: flex;
+}
+.type{
+  margin-top: 10px;
+  display: flex;
+  font-weight: 400;
+}
+.concepts{
+  margin-top: 10px;
 }
 </style>
