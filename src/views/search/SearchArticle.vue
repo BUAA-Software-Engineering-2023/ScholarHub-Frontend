@@ -3,21 +3,21 @@
     <NavBar/>
     <div class="nav_outer">
       <div class="search-bar">
-        <searchBar ref="searchRef"/>
+        <searchBar :ifFirst="ifFirst" @getInput="getInput"/>
       </div>
     </div>
     <div class="paper-list-wrap">
       <a-tabs style="margin-left:10px" v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="论文">
           <a-layout>
-            <a-layout-sider :style="siderStyle">
+            <a-layout-sider :style="siderStyle" width="330" >
               <div class = "slideSearch">
                 <a-menu
                     v-model:selectedKeys="state.selectedKeys"
                     style="width: 212px"
                     mode="inline"
                     :open-keys="state.openKeys"
-                    :items="ArticleItems"
+                    :items="items"
                     @openChange="onOpenChange"
                 >
                 </a-menu>
@@ -26,18 +26,25 @@
             <a-layout>
               <a-layout-header :style="headerStyle">
                   <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
-                    <el-menu-item index="1">最新</el-menu-item>
+                    <el-menu-item index="1" @click="sortArticleByField">最新</el-menu-item>
                     <el-menu-item index="2">综合</el-menu-item>
                     <el-menu-item index="3">引用数</el-menu-item>
                   </el-menu>
               </a-layout-header>
               <a-layout-content :style="contentStyle">
                 <ul class="search-result__list">
-                  <li class="result-item" v-for="(item, index) in paperList">
-                    <a-card hoverable>
-                      <ArticleCard :paper="item"/>
-                    </a-card>
-                  </li>
+                  <div v-if="paperList">
+                    <li class="result-item" v-for="(item, index) in paperList">
+                      <a-card hoverable @click="getFullPaper(item)">
+                        <ArticleCard :paper="item"/>
+                      </a-card>
+                    </li>
+                  </div>
+                  <div v-else>
+                    <span >
+                      No results !
+                    </span>
+                  </div>
                 </ul>
               </a-layout-content>
             </a-layout>
@@ -120,7 +127,7 @@
 </template>
 
 <script setup>
-import SearchBar from "@/views/search/Search/SearchBar.vue";
+import SearchBar from "@/components/Search/SearchBar.vue";
 import NavBar from "@/views/search/NavBar/NavBar.vue";
 import ArticleCard from "@/views/search/ArticleCard.vue";
 import SearchAPI from "@/api/search.js"
@@ -146,7 +153,6 @@ const headerStyle = {
   lineHeight: '64px',
   backgroundColor: '#fff',
 };
-const result = ref();
 const searchRef = ref(null);
 import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
@@ -154,87 +160,55 @@ const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
 const paperList = ref([]);
 const sortKey = ref(['1'])
+const ifFirst = ref(true);
+const firstInput = ref();
 const searchContent = ref();
-
-async function getPapers(){
-  console.log("searchRef.value.searchValue:"+searchRef.value.searchValue)
-  result.value = await SearchAPI.search(searchRef.value.ifSearch)
+const getInput = (value) => {//获取输入框的输入
+  searchContent.value = value;
+  console.log("searchContent:::",searchContent.value);
+}
+async function getPapers(){//获取论文列表
+  console.log("searchContent:"+searchContent.value)
+  const result = await SearchAPI.search(searchContent.value)
   console.log("result:", result)
-  paperList.value = result.value.data.data.result;
+  paperList.value = result.data.data.result;
   console.log("paperlist:", paperList.value);
-
 }
 
-onMounted(async ()=>{
-  await getPapers()
+
+onMounted(async ()=>{//初始渲染论文列表
+  const route = useRoute();
+  console.log(route.query.content);
+  const result = await SearchAPI.search(route.query.content)
+  console.log("result:", result)
+  paperList.value = result.data.data.result;
+  console.log("paperlist:", paperList.value);
 })
 
+watch(searchContent, async (newVal, oldVal) => {
+  console.log("newVal:",newVal);
+  console.log("oldVal:",oldVal);
+  await getPapers();
+})
 
-watch(
-    () => searchRef.value && searchRef.value.ifSearch,
-    async (value) => {
-        await getPapers();
-    }
-);
+function getFullPaper(item){
+  const url = item.id;
+  const parts = url.split('/');
+  const paperId = parts[parts.length - 1]; // 获取最后一个部分
+  console.log(paperId);
+  router.push({
+    path:`/client/paper/${paperId}`
+  })
+}
 
 const changePage = () => {
   emit("changePage", pageCurrent.value);
 };
 
 
-const columns = [
-	{
-		name: 'Name',
-		dataIndex: 'name',
-		key: 'name',
-	},
-	{
-		title: '标签',
-		dataIndex: 'tags',
-		key: 'tags',
-	}
-];
-const data = [
-	{
-		key: '1',
-		name: '性别',
-		tags: ['男(5)', '女(4)'],
-	},
-	{
-		key: '2',
-		name: '地区',
-		tags: ['美国(10)','日本','德国','意大利'],
-	},
-	{
-		key: '3',
-		name: '语言',
-		tags: ['英语', '法语'],
-	},
-];
-const people = [
-	{
-		key: '1',
-		title: 'one',
-		description: "好好好",
-	},
-	{
-		key: '2',
-		title: 'one',
-		description: "好好好",
-	},
-	{
-		key: '3',
-		title: 'one',
-		description: "好好好",
-	},
-	{
-		key: '4',
-		title: 'one',
-		description: "好好好",
-	},
-];
-
 import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined } from '@ant-design/icons-vue';
+import {useRoute} from "vue-router";
+import router from "@/router/index.js";
 function getItem(label, key, icon, children, type) {
 	return {
 		key,
@@ -244,7 +218,15 @@ function getItem(label, key, icon, children, type) {
 		type,
 	};
 }
+const filter = ref({"publication_year": ">2020"})
+function setFilter(){
 
+}
+async function sortArticleByField(){
+  const result = await SearchAPI.searchWithFilter(searchRef.value.ifSearch,filter.value)
+  paperList.value = result.data.data.result;
+  console.log("paperlist111:",paperList.value)
+}
 
 const items = reactive([
 	getItem('职称', 'sub1', () => h(PieChartOutlined), [

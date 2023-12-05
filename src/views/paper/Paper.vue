@@ -14,6 +14,7 @@ const paperId = "https://openalex.org/"+route.params.paperId
 const reference_works = ref([]);
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
+  console.log("paper result:",result);
   if (result.data.success){
     console.log(result.data.data)
     paperInfo.value = [result.data.data]

@@ -17,6 +17,7 @@
     "axios": "^1.5.1",
     "echarts": "^5.4.3",
     "element-plus": "^2.4.0",
+    "mitt": "^3.0.1",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.7.32",
     "three": "^0.121.0",

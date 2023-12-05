@@ -115,12 +115,22 @@ export default {
             method: 'GET',
         })
     },
-    search(search,){
+    search(search){
         return requests({
             url:"/work/search",
             method: 'POST',
             data:{
                 search
+            },
+            showLoading:true,
+        })
+    },
+    searchWithFilter(search, filter){
+        return requests({
+            url:"/work/search",
+            method: 'POST',
+            data:{
+                search,filter
             },
             showLoading:true,
         })
