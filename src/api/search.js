@@ -125,6 +125,28 @@ export default {
             showLoading:true,
         })
     },
+    searchExpert(search,){
+        return requests({
+            url:"/author/search",
+            method: 'POST',
+            data:{
+                search
+            },
+            showLoading:true,
+        })
+    },
+    searchExpertFiltered(search,filter){
+        console.log("Region:",filter);
+        return requests({
+            url:"/author/search",
+            method: 'POST',
+            data:{
+                search,
+                filter,
+            },
+            showLoading:true,
+        })
+    },
     author_detail(author_id){
         return requests({
             url: "/author/detail",
