@@ -35,14 +35,10 @@ const item = ref()
 item.value = props.paper
 
 onMounted(()=>{
-  console.log("item.value.id:",item.value.id);
-  console.log("item.value.display_name:",item.value.display_name);
-  console.log("item.value.abstract:",item.value.abstract);
+
 })
 onUpdated(()=>{
-  console.log("item.value.id:",item.value.id);
-  console.log("item.value.display_name:",item.value.display_name);
-  console.log("item.value.abstract:",item.value.abstract);
+
 })
 
 </script>

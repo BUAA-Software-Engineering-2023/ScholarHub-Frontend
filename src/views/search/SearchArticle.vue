@@ -169,19 +169,20 @@ const handleClick = async menuInfo => {
 	}
 }
 async function getPapers(){
-  console.log("searchRef.value.searchValue:"+searchRef.value.searchValue)
+  console.log("searchRef.value.searchValue:"+searchRef.value.ifSearch)
   result.value = await SearchAPI.search(searchRef.value.ifSearch)
   console.log("result:", result)
   paperList.value = result.value.data.data.result;
 
 }
 async function getExperts(){
-	exResult.value = await SearchAPI.searchExpert(searchRef.value.searchValue)
+	exResult.value = await SearchAPI.searchExpert(searchRef.value.ifSearch)
 	expertList.value = exResult.value.data.data.result;
+	console.log(exResult.value.data.data);
 	setFilterContent();
 }
 async function getExpertsFiltered(Region){
-	exResult.value = await SearchAPI.searchExpertFiltered(searchRef.value.searchValue,Region)
+	exResult.value = await SearchAPI.searchExpertFiltered(searchRef.value.ifSearch,Region)
 	console.log("exResult:", exResult)
 	expertList.value = exResult.value.data.data.result;
 	console.log("expertList:", expertList.value);
@@ -220,11 +221,17 @@ onMounted(async ()=>{
   await getExperts()
 })
 
+onUpdated(async () => {
+	await getPapers()
+	await getExperts()
+})
+
 
 watch(
     () => searchRef.value && searchRef.value.ifSearch,
     async (value) => {
         await getPapers();
+		await getExperts();
     }
 );
 
