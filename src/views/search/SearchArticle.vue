@@ -90,8 +90,8 @@
 				        </a-menu>
 			        </div>
 		        </a-layout-sider>
-		        <a-layout-content :style="contentStyle">
-			        <li class = "ExpertRes" v-for="item in expertList">
+		        <a-layout-content :style="contentStyle" v-if="update">
+			        <li class = "ExpertRes" v-for="item in expertList" v-bind:key="item.id">
 				        <a-card hoverable style="width: 80%;">
 					        <ExpertCard :paper="item"/>
 				        </a-card>
@@ -152,6 +152,16 @@ const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
 const paperList = ref();
 const expertList = ref();
+const update = ref(true);
+
+// watch (expertList, async (newValue, oldValue) => {
+// 	update.value = false;
+// 	if (true) {
+// 		await nextTick(() => {
+// 			update.value = true;
+// 		})
+// 	}
+// })
 const handleClick = async menuInfo => {
 	console.log('click ', menuInfo.keyPath[0]);
 	console.log('click ', menuInfo.keyPath[1]);
