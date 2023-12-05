@@ -16,8 +16,17 @@
                     <AntDesignOutlined />
                   </template>
                 </a-avatar>
-                <p style="margin: 0;font-size: 15px">{{authorName}}</p >
-                <p>{{last_known_institution}}</p >
+
+                <div style="display: flex">
+                  <div style="margin: 0;font-size: 15px">{{authorName}}
+                    <br>
+                    {{last_known_institution}}</div >
+                  <div style="margin-left: 5%;margin-top: 3%;">
+                    <a-space wrap>
+                      <a-button type = "dashed"  style="background-color: #001529;color: white">认领门户</a-button>
+                    </a-space>
+                  </div>
+                </div>
               </div>
 <!--              <div class="h-index">-->
 <!--&lt;!&ndash;                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >&ndash;&gt;-->
@@ -162,13 +171,13 @@ const avatar = ref()
 const works_count = ref()
 const cited_by_count = ref()
 const works = ref([])
-
+const authorlist = ref([])
 const pagination = {
   onChange: page => {
     console.log(page);
   },
   style:{height: '32px', lineHeight: '32px', textAlign: 'center !important'},
-  pageSize: 3,
+  pageSize: 7,
 };
 const actions = [
   { icon: LinkOutlined , text: '2' },
@@ -193,16 +202,44 @@ onMounted(async () => {
     cited_by_count.value = author.value.cited_by_count
     avatar.value = author.value.avatar
     const listData = author.value.works
-    for (let i = 0; i < 23; i++) {
-      works.value.push({
-        href: listData[i].,
-        title: listData[i].display_name,
-        avatar: '/assets/icons/default_avatar.png',
-        description:
-            '作者1，作者2，作者3',
-        content:
-            '这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,',
-      });
+
+
+
+    console.log(authorlist)
+    for (let i = 0; i < listData.length; i++) {
+      const url = listData[i].id
+      const parts = url.split('/');
+      const paperId = parts[parts.length - 1]; // 获取最后一个部分
+      const authorships = author.value.works[i].authorships;
+      let string = '';
+      for (let j = 0; j < authorships.length; j++){
+        const authorname = authorships[j].author.display_name
+        if (j!==authorships.length-1)
+          string = string+authorname+',';
+        else
+          string +=authorname;
+      }
+      console.log(string)
+      authorlist.value.push(string)
+      if (listData[i].abstract){
+        works.value.push({
+          href: "/client/paper/"+ paperId,
+          title: listData[i].display_name,
+          avatar: listData[i].avatar,
+          description: authorlist.value[i],
+          content: listData[i].abstract.slice(0, 300) + "..."
+        });
+      }
+      else {
+        works.value.push({
+          href: "/client/paper/"+ paperId,
+          title: listData[i].display_name,
+          avatar: listData[i].avatar,
+          description: authorlist.value[i],
+          content: "No summary available"
+        });
+      }
+
     }
   }else {
     let promise = Swal.fire({
