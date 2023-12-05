@@ -36,13 +36,12 @@ onMounted( async () => {
 });
 async function handleSelect(){
   folderId.value = route.query.id
-  if (folderId === '') {
-
+  if (folderId.value === ''||folderId.value===undefined) {
   }else{
     const result = await UserApi.get_favorite_item(folderId.value);
     collections.value = result.data.data.items
     title.value = result.data.data.title
-    console.log(title.value)
+
   }
 }
 

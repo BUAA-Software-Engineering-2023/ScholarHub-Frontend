@@ -39,9 +39,10 @@ async function createNewFolder(title){
       icon: 'success',
       title:'创建成功！'
     });
+    result = await UserApi.get_favorite();
+    collections.value = result.data.data;
   }
-  result = await UserApi.get_favorite();
-  collections.value = result.data.data;
+
 }
 async function deleteFolder(folderId){
   let result =  await UserApi.delete_favorite(folderId)
@@ -132,10 +133,10 @@ const emits = defineEmits(['select']);
          </li>
        </div>
     </ul>
-    <div class="footer">
-      <span> <span class="pendingTasks"></span> Your Stars</span>
-      <button>Clear All</button>
-    </div>
+<!--    <div class="footer">-->
+<!--      <span> <span class="pendingTasks"></span> Your Stars</span>-->
+<!--      <button>Clear All</button>-->
+<!--    </div>-->
   </div>
 </template>
 

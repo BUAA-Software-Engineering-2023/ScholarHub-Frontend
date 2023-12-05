@@ -63,6 +63,15 @@ export default {
                 nickname
             }
         })
+    },
+    get_history(){
+        return requests({
+            url: '/history',
+            method: 'GET',
+            data:{
+
+            }
+        })
     }
 
 }
