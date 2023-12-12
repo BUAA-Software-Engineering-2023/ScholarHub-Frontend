@@ -85,6 +85,7 @@ import { onMounted } from 'vue';
 import router from "@/router/index.js";
 import {useSearchStore} from "@/stores/search.js";
 import SearchAPI from "@/api/search.js"
+import UserAPI from '@/api/user.js'
 import NavBar from "@/views/search/NavBar/NavBar.vue";
 onMounted(() => {
   if (getLogin()==='true'){
@@ -250,6 +251,10 @@ async function sendVerificationCode() {
 async function login (){
   const result = await useAccountStore().loginWithPassword(loginForm.value.email,loginForm.value.password);
   if (result==='登录成功'){
+    const favorite = await UserAPI.get_favorite();
+    console.log(favorite.data.data)
+    useAccountStore().setFavorite(favorite.data.data)
+    console.log(useAccountStore().favorites)
     await Swal.fire({
       icon: 'success', //error\warning\info\question
       title: result

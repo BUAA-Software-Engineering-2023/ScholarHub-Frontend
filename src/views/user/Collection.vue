@@ -5,14 +5,18 @@ import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
 import CollectionList from "@/views/user/CollectionList.vue";
 import {useRoute} from "vue-router";
+import router from "@/router/index.js";
 const collections = ref([])
 const authorInfo = ref()
 const route = useRoute();
 const title = ref('');
 const empty = ref('还没有收藏？，快去收藏论文吧！')
 const folderId = ref('')
-function showAuthorInfo(author) {
+const collection_id = ref()
+function showAuthorInfo(author,collectionId) {
   authorInfo.value = author;
+  console.log(collectionId)
+  collection_id.value = collectionId;
 }
 function hideAuthorInfo() {
   authorInfo.value = null;
@@ -34,6 +38,13 @@ onMounted( async () => {
     console.log(title.value)
   }
 });
+function jump_to_article(id){
+  console.log(id)
+  const parts = id.split('/');
+  const paperId = parts[parts.length - 1]; // 获取最后一个部分
+  console.log(`/client/paper/${paperId}`)
+  router.push(`/client/paper/${paperId}`)
+}
 async function handleSelect(){
   folderId.value = route.query.id
   if (folderId.value === ''||folderId.value===undefined) {
@@ -41,7 +52,7 @@ async function handleSelect(){
     const result = await UserApi.get_favorite_item(folderId.value);
     collections.value = result.data.data.items
     title.value = result.data.data.title
-
+    console.log(collections.value)
   }
 }
 
@@ -64,10 +75,10 @@ async function handleSelect(){
       </div>
       <div v-else class="collection">
         <div v-for="(collection, index) in collections" :key="index" class="collection-item">
-          <div  @click.prevent="jumpToarticle"> <span class="collection-title">{{ collection.display_name }}</span> </div>
+          <div  @click.prevent="jump_to_article(collection.work)"> <span class="collection-title">{{ collection.title }}</span> </div>
           <div  class="author" v-for="(author,index1) in collection.authorships" :key="index1">
             <div class="collection-details">
-              <div   @mouseover="showAuthorInfo(author.author)"
+              <div   @mouseover="showAuthorInfo(author.author,collection.id)"
                      @mouseleave="hideAuthorInfo"
                      class="author_container"
               ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
@@ -75,7 +86,7 @@ async function handleSelect(){
               </div>
             </div>
             <transition  name="slide">
-              <div v-if="authorInfo && authorInfo.id === author.author.id" class="author-info">
+              <div v-if="authorInfo && authorInfo.id === author.author.id&&collection_id===collection.id" class="author-info">
                 <img src="@/assets/icons/default_avatar.png" alt="Author Avatar">
                 <div class="author-details">
                   <div class="author-name">{{ authorInfo.display_name }}</div>
@@ -144,10 +155,9 @@ async function handleSelect(){
   /* 可添加其他样式 */
 }
 .collection {
-  margin: 20px;
-  border: 1px solid #5a5a5a;
+  margin-top: 20px;
   background-color: #fff;
-  width: 80%;
+  width: 86%;
   border-radius: 20px !important;
   text-align: left;
   color: #363c50 !important;
@@ -235,10 +245,8 @@ async function handleSelect(){
   z-index: 10000;
 }
 .author-info img{
-  width: 90px;
+  width: 80px;
   height: 80px;
-  margin-right: 30px;
-  padding-right: 20px;
 }
 // 动画
 .slide-enter-from,
@@ -274,4 +282,5 @@ async function handleSelect(){
   text-decoration: none; /* 取消实线下划线 */
   border-bottom: 1px dashed #75a468; /* 添加虚线下划线 */
 }
+
 </style>
