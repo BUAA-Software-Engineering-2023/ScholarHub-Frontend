@@ -4,7 +4,7 @@
       <a-layout>
         <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">
           <transition name="slide">
-            <Trend v-show="showSide"></Trend>
+            <Trend v-if="pflag" :series="series" :years="years"  v-show="showSide"></Trend>
           </transition>
         </a-layout-sider>
         <a-layout>
@@ -16,50 +16,21 @@
                     <AntDesignOutlined />
                   </template>
                 </a-avatar>
-
-                <div style="display: flex">
-
-                  <div style="margin: 0;">
-                    <div style="font-size: 25px">
+                <div class="author-detail" style="display: flex">
+                  <div style="margin-top: 10px;">
+                    <div style="font-size: 25px;font-weight: 800">
                       {{authorName}}
                     </div>
-
-                    <br>
-                    <div style="font-size: 20px">
+                    <div style="font-size: 20px;margin-top: 10px;font-weight: 200">
                       {{last_known_institution}}
                     </div>
-
                   </div >
-                  <a href="#" id="button-claim" @click="showModal">认领</a>
-                  <a-modal v-model:open="open" title="Title" @ok="handleOk">
-                    <template #footer>
-                      <a-button key="back" @click="handleCancel">Return</a-button>
-                      <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
-                    </template>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                  </a-modal>
-
-<!--                  <div style="margin-left: 5%;margin-top: 3%;">-->
-<!--                    <a-space wrap>-->
-<!--                      <a-button type = "dashed"  style="background-color: #001529;color: white;font-size: 80%">认领门户</a-button>-->
-<!--                    </a-space>-->
-<!--                  </div>-->
+                  <div style="margin-left: 50px" href="#" id="button-claim" @click="showModal">认领</div>
                 </div>
               </div>
-<!--              <div class="h-index">-->
-<!--&lt;!&ndash;                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >&ndash;&gt;-->
-<!--                <a-card hoverable :bordered="false"   style="height: 55%; margin-top: 5px;">-->
-<!--                  <div class="card-H ">H指数</div>-->
-<!--                  <div class="card-H card-H-content">{{h_index}}</div>-->
-<!--                </a-card>-->
-<!--              </div>-->
             </div>
           </a-layout-header>
-          <a-layout-content :style="contentStyle" style="margin-left: 15%;min-width: 1100px">
+          <a-layout-content :style="contentStyle" style="margin-left: 15%;min-width: 1200px">
             <div class="author-total">
               <a-row :gutter="16">
                 <a-col :span="5">
@@ -67,7 +38,7 @@
                     <div class="card-content">
                       <Paper style="font-size: 50px" />
                       <div style="text-align: center;margin-left: 25%;">
-                        <p>学术发文总量</p >
+                        <p>发文总量</p >
                         <h2 style="font-weight: bold;color: #53cda5">{{ works_count }}</h2>
                       </div>
                     </div>
@@ -196,6 +167,9 @@ const works_count = ref()
 const cited_by_count = ref()
 const works = ref([])
 const authorlist = ref([])
+const series = ref([])
+const years = ref([])
+const pflag = ref(false)
 const pagination = {
   onChange: page => {
     console.log(page);
@@ -214,6 +188,7 @@ const changeShowSide = (collapsed, type)=>{
 // const AuthorId = "https://openalex.org/A5067833651"
 const AuthorId ="https://openalex.org/"+route.params.authorId
 onMounted(async () => {
+  pflag.value = false;
   const result =  await Search.author_detail(AuthorId)
   if (result.data.success){
     const response = result.data.data
@@ -226,10 +201,40 @@ onMounted(async () => {
     cited_by_count.value = author.value.cited_by_count
     avatar.value = author.value.avatar
     const listData = author.value.works
-
-
-
-    console.log(authorlist)
+    let paperData = [];
+    let cited_by_counts = [];
+    let yearArr = [];
+    for (let i = 0;i<response.counts_by_year.length;i++){
+      paperData.push(response.counts_by_year[i].works_count);
+      cited_by_counts.push(response.counts_by_year[i].cited_by_count);
+      yearArr.push(response.counts_by_year[i].year)
+    }
+    console.log(yearArr);
+    for (let i=yearArr.length-1;i>=0;i--){
+      years.value.push(yearArr[i]);
+    }
+    console.log(paperData)
+    series.value.push( {
+      name: '发文量',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: paperData
+    });
+    series.value.push( {
+      name: '引用频次',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: cited_by_counts
+    });
+    pflag.value = true;
     for (let i = 0; i < listData.length; i++) {
       const url = listData[i].id
       const parts = url.split('/');
@@ -243,7 +248,6 @@ onMounted(async () => {
         else
           string +=authorname;
       }
-      console.log(string)
       authorlist.value.push(string)
       if (listData[i].abstract){
         works.value.push({
@@ -331,6 +335,7 @@ body{
   text-align: left;
 }
 .author-details{
+  display: flex;
   margin-left: 10px;
 }
 .author-total{
