@@ -3,15 +3,20 @@ import accountAPI from "@/api/account";
 import { getToken, setToken, clearToken,setName } from "@/utils/token";
 import {ref} from "vue";
 import {useSearchStore} from "@/stores/search.js";
+import {useLocalStorage} from "@vueuse/core";
 const state = () => {
     return {
         code: '',
         token: getToken(),
         userInfo: {},
+        favorites:useLocalStorage("favorites",[]),
         unreadMessage: false,
     }
 }
 const actions = {
+    setFavorite(favorite){
+      this.favorites = favorite;
+    },
     async loginWithCode(phone_number, code) {
         const result = await accountAPI.loginWithCode(phone_number, code);
         if (result.response.status === 200) {
@@ -33,8 +38,6 @@ const actions = {
             setToken(this.token);
             console.log(this.token);
             setName(response.data.data.username);
-            // setUser(response.data.id);
-            // setName(response.data.name);
             return "登录成功";
 
         }else{

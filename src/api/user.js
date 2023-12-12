@@ -72,6 +72,16 @@ export default {
 
             }
         })
+    },
+    add_favorite_item(favorite_id,work_id){
+        return requests({
+            url: '/favoriteitem',
+            method: 'POST',
+            data:{
+                favorite_id,
+                work_id
+            }
+        })
     }
 
 }
