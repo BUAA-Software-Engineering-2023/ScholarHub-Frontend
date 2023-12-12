@@ -18,14 +18,36 @@
                 </a-avatar>
 
                 <div style="display: flex">
-                  <div style="margin: 0;font-size: 15px">{{authorName}}
+
+                  <div style="margin: 0;">
+                    <div style="font-size: 25px">
+                      {{authorName}}
+                    </div>
+
                     <br>
-                    {{last_known_institution}}</div >
-                  <div style="margin-left: 5%;margin-top: 3%;">
-                    <a-space wrap>
-                      <a-button type = "dashed"  style="background-color: #001529;color: white">认领门户</a-button>
-                    </a-space>
-                  </div>
+                    <div style="font-size: 20px">
+                      {{last_known_institution}}
+                    </div>
+
+                  </div >
+                  <a href="#" id="button-claim" @click="showModal">认领</a>
+                  <a-modal v-model:open="open" title="Title" @ok="handleOk">
+                    <template #footer>
+                      <a-button key="back" @click="handleCancel">Return</a-button>
+                      <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
+                    </template>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                  </a-modal>
+
+<!--                  <div style="margin-left: 5%;margin-top: 3%;">-->
+<!--                    <a-space wrap>-->
+<!--                      <a-button type = "dashed"  style="background-color: #001529;color: white;font-size: 80%">认领门户</a-button>-->
+<!--                    </a-space>-->
+<!--                  </div>-->
                 </div>
               </div>
 <!--              <div class="h-index">-->
@@ -44,7 +66,7 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Paper style="font-size: 50px" />
-                      <div >
+                      <div style="text-align: center;margin-left: 25%;">
                         <p>学术发文总量</p >
                         <h2 style="font-weight: bold;color: #53cda5">{{ works_count }}</h2>
                       </div>
@@ -66,7 +88,7 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Quote style="font-size: 50px" />
-                      <div >
+                      <div style="text-align: center;margin-left: 25%;">
                         <p>总被引频次</p >
                         <h2 style="color: rgb(145,236,252);font-weight: bold">{{ cited_by_count }}</h2>
                       </div>
@@ -77,7 +99,7 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Data style="font-size: 50px"  value=""/>
-                      <div >
+                      <div style="text-align: center;margin-left: 25%;">
                         <p>篇均被引频次</p >
                         <h2 style="color: rgb(217,144,175);font-weight: bold">{{ Math.floor(cited_by_count / works_count)}}</h2>
                       </div>
@@ -147,6 +169,7 @@
       <a-back-top :visibility-height="0" />
     </a-float-button-group>
   </div>
+
 </template>
 
 <script  setup>
@@ -160,6 +183,7 @@ import Trend from "@/components/visual/Trend.vue";
 import { AntDesignOutlined, LinkOutlined,  VerticalAlignBottomOutlined,CustomerServiceOutlined, CommentOutlined} from '@ant-design/icons-vue';
 import Swal from "sweetalert2";
 import {ref} from "vue";
+
 const route = useRoute()
 const showSide = ref(true)
 const authorName = ref('')
@@ -277,6 +301,7 @@ const researchResults = ref([
   { id: 3, title: '研究成果 3' },
   // 添加更多研究成果
 ]);
+
 </script>
 
 <style scoped>
@@ -423,5 +448,68 @@ img{
 }
 .slide-enter-active{
   transition: all .5s;
+}
+#button-claim {
+  position: relative;
+  width: 70px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  margin: 30px;
+  text-decoration: none;
+  color: #91ecfc;
+  font-size: 15px;
+  padding: 0 20px;
+  text-transform: uppercase;
+  transition: 0.5s;
+  overflow: hidden;
+  -webkit-box-reflect: below 1px linear-gradient(transparent, #1113);
+}
+#button-claim::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid #91ecfc;
+  border-left: 2px solid #91ecfc;
+  transition: 0.5s;
+  transition-delay: 0.5s;
+}
+#button-claim::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid #91ecfc;
+  border-right: 2px solid #91ecfc;
+  transition: 0.5s;
+  transition-delay: 0.5s;
+}
+#button-claim:hover::before, #button-claim:hover::after {
+  width: 100%;
+  height: 100%;
+  transition-delay: 0s;
+}
+#button-claim:hover {
+  background-color: #91ecfc;
+  color: #000;
+  box-shadow: 0 0 50px #91ecfc;
+  transition-delay: 0.3s;
+}
+#button-claim:nth-child(1) {
+  filter: hue-rotate(150deg);
+}
+#button-claim:nth-child(3) {
+  filter: hue-rotate(270deg);
+}
+#button-claim:nth-child(4) {
+  filter: hue-rotate(400deg);
+}
+#button-claim:nth-child(5) {
+  filter: hue-rotate(70deg);
 }
 </style>
