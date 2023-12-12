@@ -6,6 +6,7 @@ import router from "@/router/index.js";
 import ConceptCount from "@/assets/icons/ConceptCount.vue";
 import Concept from "@/assets/icons/Concept.vue";
 import Type from "@/assets/icons/Type.vue";
+import {StarFilled} from "@element-plus/icons-vue";
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
@@ -197,8 +198,8 @@ const handleChange = async value => {
               ></a-select>
             </div>
             <button class="favorite-button" @click="toggleFavorite">
-              <span v-if="isFavorite">已收藏<StarFilled style="color:#efa247" /></span>
-              <span v-else>收藏 <StarOutlined  style="color:#efa247"/></span>
+              <span v-if="isFavorite" >已收藏<el-icon class="icons"><StarFilled /></el-icon></span>
+              <span v-else >收藏 <el-icon class="icons"><Star /></el-icon></span>
             </button>
           </div>
         </div>
@@ -496,5 +497,10 @@ const handleChange = async value => {
 }
 .concepts{
   margin-top: 10px;
+}
+.icons{
+  top: 2px;
+  font-size: 15px;
+  color: #e7a43d;
 }
 </style>
