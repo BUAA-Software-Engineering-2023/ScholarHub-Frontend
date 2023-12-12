@@ -31,16 +31,37 @@
 
                   </div >
                   <a href="#" id="button-claim" @click="showModal">认领</a>
-                  <a-modal v-model:open="open" title="Title" @ok="handleOk">
+                  <a-modal v-model:open="open" title="Basic Modal" @ok="handleOk">
                     <template #footer>
                       <a-button key="back" @click="handleCancel">Return</a-button>
                       <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
                     </template>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
+                   <div>
+                     <a-form
+                         :model="formState"
+                         name="basic"
+                         :label-col="{ span: 8 }"
+                         :wrapper-col="{ span: 16 }"
+                         autocomplete="off"
+                         @finish="onFinish"
+                         @finishFailed="onFinishFailed"
+                     >
+
+                       <a-form-item
+                           label="Reason"
+                           name="reason"
+                       >
+                         <a-textarea v-model:value="formState.desc" />
+                       </a-form-item>
+
+                       <a-form-item
+                           label="Phone Number"
+                           name="phone number"
+                       >
+                         <a-input v-model:value="formState.phone_number" />
+                       </a-form-item>
+                     </a-form>
+                   </div>
                   </a-modal>
 
 <!--                  <div style="margin-left: 5%;margin-top: 3%;">-->
@@ -123,7 +144,7 @@
                           </div>
                         </div>
                         <div class="research-stats">
-                          <p>引用量: {{ cited_by_count }}&nbsp; | &nbsp; 论文数: 5</p >
+                          <p>引用量: {{ cited_by_count }}&nbsp; | &nbsp; 论文数: {{works_count}}</p >
                         </div>
                       </div>
 <!--                      <div class="research-abstract">-->
@@ -210,6 +231,36 @@ const actions = [
 const changeShowSide = (collapsed, type)=>{
   showSide.value = !showSide.value;
 }
+const loading = ref(false);
+const open = ref(false);
+const showModal = () => {
+  open.value = true;
+};
+const handleOk = () => {
+  loading.value = true;
+  setTimeout(() => {
+    loading.value = false;
+    open.value = false;
+  }, 2000);
+};
+const handleCancel = () => {
+  open.value = false;
+};
+
+
+const formState = reactive({
+  phone_number: '',
+
+  remember: true,
+});
+const onFinish = values => {
+  console.log('Success:', values);
+};
+const onFinishFailed = errorInfo => {
+  console.log('Failed:', errorInfo);
+};
+
+
 
 // const AuthorId = "https://openalex.org/A5067833651"
 const AuthorId ="https://openalex.org/"+route.params.authorId
@@ -449,6 +500,8 @@ img{
 .slide-enter-active{
   transition: all .5s;
 }
+
+
 #button-claim {
   position: relative;
   width: 70px;
