@@ -75,6 +75,7 @@ const userName = ref('')
 onMounted( async () => {
   window.addEventListener('scroll', handleScroll);
   const result =  await HomeAPI.get_recommendation();
+  console.log(result)
   userName.value = getName();
     // 在异步操作成功时处理数据
   recommendations.value = result.data.data

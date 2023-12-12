@@ -9,11 +9,13 @@ import {
 } from '@ant-design/icons-vue';
 import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
+import router from "@/router/index.js";
 const historyInfo = ref([])
 const authorInfo = ref()
-function showAuthorInfo(author) {
+function showAuthorInfo(author,collectionId) {
   authorInfo.value = author;
-  console.log(authorInfo.value.id)
+  console.log(collectionId)
+  collection_id.value = collectionId;
 }
 
 function hideAuthorInfo() {
@@ -30,7 +32,13 @@ onMounted( async () => {
   }
   historyInfo.value = result.data.data
 });
-
+function jump_to_article(id){
+  console.log(id)
+  const parts = id.split('/');
+  const paperId = parts[parts.length - 1]; // 获取最后一个部分
+  console.log(`/client/paper/${paperId}`)
+  router.push(`/client/paper/${paperId}`)
+}
 </script>
 
 <template>
@@ -44,19 +52,20 @@ onMounted( async () => {
         <div class="title">浏览历史</div>
         <div class="header-content">总共浏览共{{historyInfo.length}}篇论文</div>
       </div>
-      <div class="history">
         <div class="empty" v-if="!historyInfo.length">
           <a-empty description="暂无浏览记录" />
         </div>
         <div v-else class="history">
           <div v-for="(history, index) in historyInfo" :key="index" class="history-item">
-            <div  @click="jumpToarticle"> <span class="history-title">{{ history.display_name }}</span> </div>
+            <div  @click="jump_to_article(history.work)"> <span class="history-title">{{ history.title }}</span> </div>
             <div  class="author" v-for="(author,index1) in history.authorships" :key="index1">
               <div class="history-details">
                 <div   @mouseover="showAuthorInfo(author.author)"
                        @mouseleave="hideAuthorInfo"
                        class="author_container"
-                ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
+                ><span id="authorName" class="author-name-hover">
+                  {{ author.author.display_name }}
+                </span>
                   <span v-if="index1 !== history.authorships.length - 1">，</span>
                 </div>
               </div>
@@ -87,7 +96,6 @@ onMounted( async () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   </div>
 
@@ -124,45 +132,44 @@ onMounted( async () => {
   width: 80%; /* 右侧宽度，可以根据需求调整 */
   /* 可添加其他样式 */
 }
-.collection {
-  margin: 20px;
-  border: 1px solid #5a5a5a;
+.history {
+  margin-top: 20px;
   background-color: #fff;
-  width: 80%;
+  width: 86%;
   border-radius: 20px !important;
   text-align: left;
   color: #363c50 !important;
 }
 
-.collection h2 {
+.history h2 {
   font-size: 24px;
   font-weight: bold;
   color: white;
 }
 
-.collection-item {
+.history-item {
   font-size: 18px;
   padding: 10px;
   color: #363c50;
 }
 
-.collection-title {
+.history-title {
   cursor: pointer;
   font-size: 20px;
   font-weight: bold;
   color: #a0a5a8;
 }
 
-.collection-title:hover{
+.history-title:hover{
   color: #4B70E2;
 }
-.collection-details {
+.history-details {
   cursor: pointer;
   font-size: 14px;
   color: #75a468;
 }
 
-.collection-abstract {
+.history-abstract {
   margin-bottom: 10px;
   margin-top: 10px;
   font-size: 16px;
@@ -205,10 +212,8 @@ onMounted( async () => {
   z-index: 10000;
 }
 .author-info img{
-  width: 90px;
+  width: 80px;
   height: 80px;
-  margin-right: 30px;
-  padding-right: 20px;
 }
 // 动画
 .slide-enter-from,
@@ -232,7 +237,7 @@ onMounted( async () => {
 .author-details{
   margin-left: 20px;
 }
-.collection-stats{
+.history-stats{
   margin-bottom: 10px;
   font-size: 14px;
   color: #a0a5a8;
