@@ -26,11 +26,13 @@
                     </div>
                   </div >
 
-                 <div style="margin-left: 50px" href="#" id="button-claim" @click="showModal">认领</div>
+                 <div style="margin-left: 50px;cursor: pointer" href="#" id="button-claim" @click="showModal">认领</div>
                   <a-modal v-model:open="open" title="Basic Modal" @ok="handleOk">
                     <template #footer>
-                      <a-button key="back" @click="handleCancel">Return</a-button>
-                      <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
+
+                      <a-button style="height: 38px;" key="back" @click="handleCancel">Return</a-button>
+                      <a-button style="height: 38px;" key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
+
                     </template>
                    <div>
                      <a-form
