@@ -2,7 +2,7 @@
   <div class="container">
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
-        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">学者贡献
+        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">
           <transition name="slide">
             <Trend v-show="showSide"></Trend>
           </transition>
@@ -16,16 +16,47 @@
                     <AntDesignOutlined />
                   </template>
                 </a-avatar>
-                <p style="margin: 0;font-size: 15px">{{authorName}}</p >
-                <p>{{last_known_institution}}</p >
+
+                <div style="display: flex">
+
+                  <div style="margin: 0;">
+                    <div style="font-size: 25px">
+                      {{authorName}}
+                    </div>
+
+                    <br>
+                    <div style="font-size: 20px">
+                      {{last_known_institution}}
+                    </div>
+
+                  </div >
+                  <a href="#" id="button-claim" @click="showModal">认领</a>
+                  <a-modal v-model:open="open" title="Title" @ok="handleOk">
+                    <template #footer>
+                      <a-button key="back" @click="handleCancel">Return</a-button>
+                      <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
+                    </template>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                  </a-modal>
+
+<!--                  <div style="margin-left: 5%;margin-top: 3%;">-->
+<!--                    <a-space wrap>-->
+<!--                      <a-button type = "dashed"  style="background-color: #001529;color: white;font-size: 80%">认领门户</a-button>-->
+<!--                    </a-space>-->
+<!--                  </div>-->
+                </div>
               </div>
-              <div class="h-index">
-<!--                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >-->
-                <a-card hoverable :bordered="false"   style="height: 55%; margin-top: 5px;">
-                  <div class="card-H ">H指数</div>
-                  <div class="card-H card-H-content">{{h_index}}</div>
-                </a-card>
-              </div>
+<!--              <div class="h-index">-->
+<!--&lt;!&ndash;                <p style="margin: 0;font-size: 20px">H指数：{{h_index}}</p >&ndash;&gt;-->
+<!--                <a-card hoverable :bordered="false"   style="height: 55%; margin-top: 5px;">-->
+<!--                  <div class="card-H ">H指数</div>-->
+<!--                  <div class="card-H card-H-content">{{h_index}}</div>-->
+<!--                </a-card>-->
+<!--              </div>-->
             </div>
           </a-layout-header>
           <a-layout-content :style="contentStyle" style="margin-left: 15%;min-width: 1100px">
@@ -35,9 +66,9 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Paper style="font-size: 50px" />
-                      <div >
+                      <div style="text-align: center;margin-left: 25%;">
                         <p>学术发文总量</p >
-                        <h2>{{ works_count }}</h2>
+                        <h2 style="font-weight: bold;color: #53cda5">{{ works_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -46,9 +77,9 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Core style="font-size: 50px" />
-                      <div >
-                        <p>核心发文总量</p >
-                        <h2>168</h2>
+                      <div style="text-align: center;margin-left: 25%;">
+                        <p>H指数</p >
+                        <h2 style="color: #747bff;font-weight: bold">{{ h_index }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -57,9 +88,9 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Quote style="font-size: 50px" />
-                      <div >
+                      <div style="text-align: center;margin-left: 25%;">
                         <p>总被引频次</p >
-                        <h2>{{ cited_by_count }}</h2>
+                        <h2 style="color: rgb(145,236,252);font-weight: bold">{{ cited_by_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -68,9 +99,9 @@
                   <a-card hoverable :bordered="false">
                     <div class="card-content">
                       <Data style="font-size: 50px"  value=""/>
-                      <div >
+                      <div style="text-align: center;margin-left: 25%;">
                         <p>篇均被引频次</p >
-                        <h2>168</h2>
+                        <h2 style="color: rgb(217,144,175);font-weight: bold">{{ Math.floor(cited_by_count / works_count)}}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -98,7 +129,7 @@
 <!--                      <div class="research-abstract">-->
 <!--                        这里是研究成果的摘要内容，可以是一段文字。-->
 <!--                      </div>-->
-                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
+                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="works">
                         <template #footer>
 
                         </template>
@@ -138,9 +169,10 @@
       <a-back-top :visibility-height="0" />
     </a-float-button-group>
   </div>
+
 </template>
 
-<script lang="ts" setup>
+<script  setup>
 import Search from "@/api/search.js"
 import { useRoute } from "vue-router";
 import Core from "@/assets/icons/Core.vue";
@@ -151,6 +183,7 @@ import Trend from "@/components/visual/Trend.vue";
 import { AntDesignOutlined, LinkOutlined,  VerticalAlignBottomOutlined,CustomerServiceOutlined, CommentOutlined} from '@ant-design/icons-vue';
 import Swal from "sweetalert2";
 import {ref} from "vue";
+
 const route = useRoute()
 const showSide = ref(true)
 const authorName = ref('')
@@ -161,29 +194,18 @@ const collapsed = ref(false)
 const avatar = ref()
 const works_count = ref()
 const cited_by_count = ref()
-const listData: Record<string, string>[] = [];
-
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://d.wanfangdata.com.cn/periodical/ChlQZXJpb2RpY2FsQ0hJTmV3UzIwMjMwODMxEg1oa3hiMjAyMzAyMDE1GggydzljcXptbQ%3D%3D',
-    title: `科研成果 ${i + 1}`,
-    avatar: '/assets/icons/default_avatar.png',
-    description:
-        '作者1，作者2，作者3',
-    content:
-        '这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,这是一段论文简介,',
-  });
-}
+const works = ref([])
+const authorlist = ref([])
 const pagination = {
-  onChange: (page: number) => {
+  onChange: page => {
     console.log(page);
   },
-  pageSize: 3,
+  style:{height: '32px', lineHeight: '32px', textAlign: 'center !important'},
+  pageSize: 7,
 };
-const actions: Record<string, any>[] = [
+const actions = [
   { icon: LinkOutlined , text: '2' },
   { icon: VerticalAlignBottomOutlined, text: '2' },
-
 ];
 const changeShowSide = (collapsed, type)=>{
   showSide.value = !showSide.value;
@@ -203,8 +225,46 @@ onMounted(async () => {
     works_count.value = author.value.works_count
     cited_by_count.value = author.value.cited_by_count
     avatar.value = author.value.avatar
+    const listData = author.value.works
 
-    console.log(avatar.value)
+
+
+    console.log(authorlist)
+    for (let i = 0; i < listData.length; i++) {
+      const url = listData[i].id
+      const parts = url.split('/');
+      const paperId = parts[parts.length - 1]; // 获取最后一个部分
+      const authorships = author.value.works[i].authorships;
+      let string = '';
+      for (let j = 0; j < authorships.length; j++){
+        const authorname = authorships[j].author.display_name
+        if (j!==authorships.length-1)
+          string = string+authorname+',';
+        else
+          string +=authorname;
+      }
+      console.log(string)
+      authorlist.value.push(string)
+      if (listData[i].abstract){
+        works.value.push({
+          href: "/client/paper/"+ paperId,
+          title: listData[i].display_name,
+          avatar: listData[i].avatar,
+          description: authorlist.value[i],
+          content: listData[i].abstract.slice(0, 300) + "..."
+        });
+      }
+      else {
+        works.value.push({
+          href: "/client/paper/"+ paperId,
+          title: listData[i].display_name,
+          avatar: listData[i].avatar,
+          description: authorlist.value[i],
+          content: "No summary available"
+        });
+      }
+
+    }
   }else {
     let promise = Swal.fire({
       icon: 'error',
@@ -241,6 +301,7 @@ const researchResults = ref([
   { id: 3, title: '研究成果 3' },
   // 添加更多研究成果
 ]);
+
 </script>
 
 <style scoped>
@@ -387,5 +448,68 @@ img{
 }
 .slide-enter-active{
   transition: all .5s;
+}
+#button-claim {
+  position: relative;
+  width: 70px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  margin: 30px;
+  text-decoration: none;
+  color: #91ecfc;
+  font-size: 15px;
+  padding: 0 20px;
+  text-transform: uppercase;
+  transition: 0.5s;
+  overflow: hidden;
+  -webkit-box-reflect: below 1px linear-gradient(transparent, #1113);
+}
+#button-claim::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid #91ecfc;
+  border-left: 2px solid #91ecfc;
+  transition: 0.5s;
+  transition-delay: 0.5s;
+}
+#button-claim::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid #91ecfc;
+  border-right: 2px solid #91ecfc;
+  transition: 0.5s;
+  transition-delay: 0.5s;
+}
+#button-claim:hover::before, #button-claim:hover::after {
+  width: 100%;
+  height: 100%;
+  transition-delay: 0s;
+}
+#button-claim:hover {
+  background-color: #91ecfc;
+  color: #000;
+  box-shadow: 0 0 50px #91ecfc;
+  transition-delay: 0.3s;
+}
+#button-claim:nth-child(1) {
+  filter: hue-rotate(150deg);
+}
+#button-claim:nth-child(3) {
+  filter: hue-rotate(270deg);
+}
+#button-claim:nth-child(4) {
+  filter: hue-rotate(400deg);
+}
+#button-claim:nth-child(5) {
+  filter: hue-rotate(70deg);
 }
 </style>
