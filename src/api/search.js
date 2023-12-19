@@ -136,13 +136,24 @@ export default {
         })
     },
     searchExpertFiltered(search,filter){
-        console.log("Region:",filter);
         return requests({
             url:"/author/search",
             method: 'POST',
             data:{
                 search,
                 filter,
+            },
+            showLoading:true,
+        })
+    },
+    searchExpertSorted(search,sort){
+        console.log("Region:",sort);
+        return requests({
+            url:"/author/search",
+            method: 'POST',
+            data:{
+                search,
+                sort,
             },
             showLoading:true,
         })
