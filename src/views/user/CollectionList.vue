@@ -259,6 +259,7 @@ body {
    transition: all 0.2s ease;
 }
  .actions{
+   display: flex;
    position: absolute;
    right: -100px;
    top: 50%;
