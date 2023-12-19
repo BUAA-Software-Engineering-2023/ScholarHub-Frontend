@@ -41,12 +41,14 @@ function init() {
       {
         type: 'category',
         boundaryGap: false,
-        data: props.years
+        data: props.years,
+        minInterval: 1,
       }
     ],
     yAxis: [
       {
-        type: 'value'
+        type: 'value',
+        minInterval: 1,
       }
     ],
     series: props.series
