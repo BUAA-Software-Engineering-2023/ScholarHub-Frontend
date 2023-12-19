@@ -32,24 +32,35 @@ import {getToken} from "@/utils/token.js";
 import Swal from "sweetalert2";
 import {useRouter} from "vue-router"
 import {defineEmits} from 'vue'
+import emitter from '@/utils/bus.js';
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
 const router = useRouter();
 
-defineExpose({searchValue})
+const ifSearch = ref();
+defineExpose({ifSearch})
+const emit = defineEmits(["getInput"])
 
 async function handleSearch(InputValue){
-    searchValue.value = InputValue;
-    console.log("input:"+searchValue.value)
+  searchValue.value = InputValue;
+  console.log("input:"+searchValue.value)
 
-    if (InputValue)
-    {
-      const result = await Search.search(InputValue);
-      searchStore.addHistory(InputValue);
-      searchStore.setSearchInput(InputValue)
-      await router.push('/search/article')
-    }
+  if (InputValue)
+  {
+    // const result = await Search.search(InputValue);
+    ifSearch.value = InputValue;
+    emit('getInput', ifSearch.value);
+    console.log("!!!!!");
+    searchStore.addHistory(InputValue);
+    searchStore.setSearchInput(InputValue);
+    await router.push({
+      path:"/search/article/",
+      query:{
+        content:InputValue
+      }
+    });
+  }
 }
 const handleClear = () => {
   searchValue.value = '';

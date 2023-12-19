@@ -17,6 +17,7 @@ const reference_works = ref([]);
 const favorites = ref([])
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
+  console.log("paper result:",result);
   favorites.value = await (await UserAPI.get_favorite()).data.data;
   console.log(result)
   if (result.data.success){
