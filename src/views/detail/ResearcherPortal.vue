@@ -258,6 +258,11 @@ const handleClaim = async () => {
         formState.value.reason,
         formState.value.phone_number
     );
+    loading.value = true;
+    setTimeout(() => {
+      loading.value = false;
+      open.value = false;
+    }, 1500);
     console.log('认领成功', response);
     // 这里可以添加一些成功后的逻辑，比如弹出通知或清空表单
   } catch (error) {
