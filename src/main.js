@@ -12,12 +12,17 @@ import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import * as Icons from '@ant-design/icons-vue'
 const app = createApp(App)
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    app.component(key, component);
-}
 // 注册 AntDesignIcon
 for (const [key,component] of Object.entries(Icons)){
-    app.component(key,component)
+    if (!app._context.components[key]) {
+        app.component(key, component);
+    }
 }
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    if (!app._context.components[key]) {
+        app.component(key, component);
+    }
+}
+
 app.use(createPinia()).use(router).use(I18n).use(ElementPlus).use(Antd).mount('#app')
 

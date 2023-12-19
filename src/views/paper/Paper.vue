@@ -2,19 +2,24 @@
 import SearchAPI from "@/api/search.js"
 import {useRoute} from "vue-router";
 import ReferenceWork from "@/views/paper/ReferenceWork.vue";
-import router from "@/router/index.js";
-import ConceptCount from "@/assets/icons/ConceptCount.vue";
 import Concept from "@/assets/icons/Concept.vue";
 import Type from "@/assets/icons/Type.vue";
+import {StarFilled} from "@element-plus/icons-vue";
+import UserAPI from "@/api/user.js"
+import { message } from 'ant-design-vue';
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
 const download = ref(false)
+const showFavorite = ref(false);
 const paperId = "https://openalex.org/"+route.params.paperId
 const reference_works = ref([]);
+const favorites = ref([])
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
   console.log("paper result:",result);
+  favorites.value = await (await UserAPI.get_favorite()).data.data;
+  console.log(result)
   if (result.data.success){
     console.log(result.data.data)
     paperInfo.value = [result.data.data]
@@ -81,6 +86,9 @@ function showDownload(){
 function hideDownload(){
   download.value = false;
 }
+function showFavoriteList(){
+  showFavorite.value = true;
+}
 const options = ref([]);
 const value = ref();
 const handleChange = async value => {
@@ -93,8 +101,12 @@ const handleChange = async value => {
   link.click()
   // window.URL.revokeObjectURL(url)
 };
-
-
+async function add_favorite(foldId,paperId){
+  // message.success('收藏成功！', 10);
+  const result = await UserAPI.add_favorite_item(foldId,paperId);
+  message.success('收藏成功！', 10);
+  toggleFavorite();
+}
 </script>
 
 <template>
@@ -197,11 +209,18 @@ const handleChange = async value => {
                   @change="handleChange"
               ></a-select>
             </div>
-            <button class="favorite-button" @click="toggleFavorite">
-              <span v-if="isFavorite">已收藏<StarFilled style="color:#efa247" /></span>
-              <span v-else>收藏 <StarOutlined  style="color:#efa247"/></span>
+            <button @mouseover="showFavoriteList" class="favorite-button" >
+              <span v-if="isFavorite">已收藏<el-icon class="icons"><StarFilled /></el-icon></span>
+              <span v-else >收藏 <el-icon class="icons"><Star /></el-icon></span>
             </button>
+            <div v-show="showFavorite&&!isFavorite" @mouseover="showFavoriteList" @mouseleave="showFavorite = false" class="favorite-list" >
+              <div v-for="(favorite,index) in favorites" :key="index">
+                <div class="favorite-list-item" @click="add_favorite(favorite.id,paperId)"> {{favorite.title}}</div>
+              </div>
+              <!-- 这里放置你的收藏列表内容 -->
+            </div>
           </div>
+
         </div>
       </div>
       <div class="reference_work">
@@ -497,5 +516,37 @@ const handleChange = async value => {
 }
 .concepts{
   margin-top: 10px;
+}
+.icons{
+  top: 2px;
+  font-size: 15px;
+  color: #e7a43d;
+}
+.buttons {
+  position: relative; /* 确保父元素是相对定位 */
+}
+.favorite-list {
+  position: absolute; /* 绝对定位 */
+  top: 100%; /* 位于按钮的下方 */
+  left: 210px; /* 从左边开始 */
+  width: 100px;
+  z-index: 1000; /* 确保它在其他元素上方 */
+  background-color: white; /* 可选：背景颜色 */
+  border: 1px solid #ccc; /* 可选：边框 */
+  border-radius: 5px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* 可选：阴影效果 */
+  /* 其他样式 */
+}
+.favorite-list-item{
+  color: black;
+  font-size: 14px;
+  padding: 0 10px;
+  margin: 5px 5px;
+  border-radius: 5px;
+}
+.favorite-list-item:hover{
+  color: black;
+  background-color: #f2f4f7;
+
 }
 </style>

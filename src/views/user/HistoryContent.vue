@@ -2,12 +2,12 @@
   <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="props.reference_works">
     <template #renderItem="{ item }">
       <a-list-item key="item.title">
-<!--        <template #actions>-->
-<!--          <span v-for="{ icon, text } in actions" :key="icon">-->
-<!--            <component :is="icon" style="margin-right: 8px" />-->
-<!--            {{ text }}-->
-<!--          </span>-->
-<!--        </template>-->
+        <!--        <template #actions>-->
+        <!--          <span v-for="{ icon, text } in actions" :key="icon">-->
+        <!--            <component :is="icon" style="margin-right: 8px" />-->
+        <!--            {{ text }}-->
+        <!--          </span>-->
+        <!--        </template>-->
         <template #extra>
         </template>
         <a-list-item-meta :description="item.description">
