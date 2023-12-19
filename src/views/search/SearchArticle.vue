@@ -47,35 +47,8 @@
           </a-layout>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
-<!--	        <a-table :columns="columns" :data-source="data" size="small" :pagination="false" class="filterBar" bordered>-->
-<!--		        <template #headerCell="{ column }">-->
-<!--			        <template v-if="column.key === 'name'">-->
-<!--				        <span>-->
-<!--				          筛选项-->
-<!--				        </span>-->
-<!--			        </template>-->
-<!--		        </template>-->
-<!--		        <template #bodyCell="{ column, record }">-->
-<!--			        <template v-if="column.key === 'name'">-->
-<!--				        <a>-->
-<!--					        {{ record.name }}-->
-<!--				        </a>-->
-<!--			        </template>-->
-<!--			        <template v-else-if="column.key === 'tags'">-->
-<!--				        <span>-->
-<!--				          <a-checkable-tag-->
-<!--					          v-for="tag in record.tags"-->
-<!--					          :key="tag"-->
-<!--					          @click=""-->
-<!--					          class="filter"-->
-<!--				          >-->
-<!--				            {{ tag }}-->
-<!--				          </a-checkable-tag>-->
-<!--				        </span>-->
-<!--			        </template>-->
-<!--			    </template>-->
-<!--	        </a-table>-->
 	        <a-layout>
+		        
 		        <a-layout-sider :style="siderStyle" width="500" >
 			        <div class = "slideSearch">
 				        <a-menu
@@ -85,33 +58,34 @@
 					        :open-keys="state.openKeys"
 					        :items="items"
 					        @openChange="onOpenChange"
-					        @click="handleClick"
+					        @click="ExFilterClick"
 				        >
 				        </a-menu>
 			        </div>
 		        </a-layout-sider>
 		        <a-layout-content :style="contentStyle" v-if="update">
-			        <li class = "ExpertRes" v-for="item in expertList" v-bind:key="item.id">
+				        <a-menu :default-active="activeIndex" :items="ExpertSortitems" class="result-item_1" mode="horizontal" @click="ExSortClick">
+					        <a-menu-item index="1" icon="DownOutlined">姓名</a-menu-item>
+					        <a-menu-item index="2">引用量</a-menu-item>
+					        <a-menu-item index="3">论文数量</a-menu-item>
+				        </a-menu>
+			        <li class = "ExpertRes" v-for="item in expertListPerPage" v-bind:key="item.id">
 				        <a-card hoverable style="width: 80%;">
 					        <ExpertCard :paper="item"/>
 				        </a-card>
 				    </li>
+			        <a-pagination
+				        v-model:current="current"
+				        :total="25"
+				        show-less-items />
 		        </a-layout-content>
+		        
 	        </a-layout>
         </a-tab-pane>
 		
       </a-tabs>
 	    
-      <div class="pagination-wrap">
-        <el-pagination
-            layout="prev, pager, next"
-            :total="pageTotalSize <= 10000 ? pageTotalSize : 10000"
-            @current-change="changePage"
-            v-model:current-page="pageCurrent"
-            hide-on-single-page
-            :page-sizes="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-        />
-      </div>
+
     </div>
   </div>
 </template>
@@ -121,7 +95,7 @@ import SearchBar from "@/views/search/Search/SearchBar.vue";
 import NavBar from "@/views/search/NavBar/NavBar.vue";
 import ArticleCard from "@/views/search/ArticleCard.vue";
 import SearchAPI from "@/api/search.js"
-
+const current = ref(1);
 const contentStyle = {
   paddingleft:'200px',
   textAlign: 'center',
@@ -146,57 +120,72 @@ const headerStyle = {
 const result = ref();
 const exResult = ref();
 const searchRef = ref(null);
-import { AntDesignOutlined } from '@ant-design/icons-vue';
 const activeKey = ref('1');
 const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
 const paperList = ref();
 const expertList = ref();
+const expertListPerPage = ref();
 const update = ref(true);
+let LastKeyPath = null;
 
-// watch (expertList, async (newValue, oldValue) => {
-// 	update.value = false;
-// 	if (true) {
-// 		await nextTick(() => {
-// 			update.value = true;
-// 		})
-// 	}
-// })
-const handleClick = async menuInfo => {
-	console.log('click ', menuInfo.keyPath[0]);
-	console.log('click ', menuInfo.keyPath[1]);
-	
-	if (menuInfo.keyPath[0] == "region") {
-		const filter ={
-			'concepts.display_name':menuInfo.keyPath[1]
+
+watch (current, async (newValue, oldValue) => {
+	const tmp = expertList.value.slice((current.value-1)*10,current.value*10);
+	expertListPerPage.value = tmp;
+})
+const ExFilterClick = async menuInfo => {
+	if(LastKeyPath === menuInfo.keyPath){
+		state.selectedKeys = [];
+		await getExperts();
+		LastKeyPath = null;
+	}else {
+		if (menuInfo.keyPath[0] == "region") {
+			const filter = {
+				'concepts.display_name': menuInfo.keyPath[1]
+			}
+			await getExpertsFiltered(filter);
+		} else if (menuInfo.keyPath[0] == "country") {
+			const filter = {
+				'last_known_institution.country_code': menuInfo.keyPath[1]
+			}
+			await getExpertsFiltered(filter);
 		}
-		await getExpertsFiltered(filter);
-	} else if (menuInfo.keyPath[0] == "country") {
-		const filter ={
-			'last_known_institution.country_code':menuInfo.keyPath[1]
-		}
-		await getExpertsFiltered(filter);
+		LastKeyPath = menuInfo.keyPath;
 	}
 }
+const ExSortClick = async menuInfo => {
+	let key = menuInfo.key;
+	if(key === "name"){
+		const sorted = {
+			'display_name' : 'name'
+		}
+	}
+	console.log(menuInfo);
+	console.log("heiheihei");
+}
 async function getPapers(){
-  console.log("searchRef.value.searchValue:"+searchRef.value.ifSearch)
   result.value = await SearchAPI.search(searchRef.value.ifSearch)
-  console.log("result:", result)
   paperList.value = result.value.data.data.result;
 
 }
 async function getExperts(){
 	exResult.value = await SearchAPI.searchExpert(searchRef.value.ifSearch)
 	expertList.value = exResult.value.data.data.result;
-	console.log(exResult.value.data.data);
 	setFilterContent();
+	//cut
+	initExpertPage();
+}
+function initExpertPage(){
+	const slice = expertList.value.slice(1, 10);
+	expertListPerPage.value = slice;
+	current.value = 1;
 }
 async function getExpertsFiltered(Region){
 	exResult.value = await SearchAPI.searchExpertFiltered(searchRef.value.ifSearch,Region)
-	console.log("exResult:", exResult)
 	expertList.value = exResult.value.data.data.result;
-	console.log("expertList:", expertList.value);
 	setFilterContent();
+	initExpertPage();
 }
 function setFilterContent(){
 	let ExpertInstitution = [];
@@ -236,7 +225,6 @@ onUpdated(async () => {
 	await getExperts()
 })
 
-
 watch(
     () => searchRef.value && searchRef.value.ifSearch,
     async (value) => {
@@ -245,12 +233,8 @@ watch(
     }
 );
 
-const changePage = () => {
-  emit("changePage", pageCurrent.value);
-};
 
-
-import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined } from '@ant-design/icons-vue';
+import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined,DownOutlined } from '@ant-design/icons-vue';
 import ExpertCard from "@/views/search/ExpertCard.vue";
 function getItem(label, key, icon, children, type) {
 	return {
@@ -261,13 +245,16 @@ function getItem(label, key, icon, children, type) {
 		type,
 	};
 }
-
-
 const items = reactive([
 	getItem('领域', 'region', () => h(PieChartOutlined), [
 	]),
 	getItem('国家', 'country', () => h(BankOutlined), [
 	]),
+]);
+const ExpertSortitems = reactive([
+	getItem('姓名', 'name',  ),
+	getItem('引用量', 'cite',),
+	getItem('论文数量', 'number',),
 ]);
 const state = reactive({
 	rootSubmenuKeys: ['region', 'country'],
