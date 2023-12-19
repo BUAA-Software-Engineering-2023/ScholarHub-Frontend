@@ -377,12 +377,6 @@ const ExFilterClick = async menuInfo => {
 		LastKeyPath = menuInfo.keyPath;
 	}
 }
-async function getExperts(){
-	exResult.value = await SearchAPI.searchExpert(searchRef.value.ifSearch)
-	expertList.value = exResult.value.data.data.result;
-  console.log("expertList");
-	console.log(exResult.value.data.data);
-	setExpertFilterContent();
 const ExSortClick = async menuInfo => {
 	let key = menuInfo.key;
 	if(key === "name"){
@@ -393,15 +387,10 @@ const ExSortClick = async menuInfo => {
 	console.log(menuInfo);
 	console.log("heiheihei");
 }
-async function getPapers(){
-  result.value = await SearchAPI.search(searchRef.value.ifSearch)
-  paperList.value = result.value.data.data.result;
-
-}
 async function getExperts(){
 	exResult.value = await SearchAPI.searchExpert(searchRef.value.ifSearch)
 	expertList.value = exResult.value.data.data.result;
-	setFilterContent();
+	setExpertFilterContent();
 	//cut
 	initExpertPage();
 }
@@ -413,7 +402,7 @@ function initExpertPage(){
 async function getExpertsFiltered(Region){
 	exResult.value = await SearchAPI.searchExpertFiltered(searchRef.value.ifSearch,Region)
 	expertList.value = exResult.value.data.data.result;
-	setFilterContent();
+	setExpertFilterContent();
 	initExpertPage();
 }
 function setExpertFilterContent(){
@@ -464,18 +453,18 @@ function setArticlesFilterContent(){//设置论文过滤条件
     const paper = paperList.value[i];
     console.log("???")
 
-    for(let j=0; j<paper.authorships.length; j++){//add institution
+    for(let j=0; j<paper.authorships.length; j++) {//add institution
       console.log("@@@")
-      if(paper.authorships[j].institutions != null){
-        for(let k=0; k<paper.authorships[j].institutions.length; k++){
+      if (paper.authorships[j].institutions != null) {
+        for (let k = 0; k < paper.authorships[j].institutions.length; k++) {
           let institution = paper.authorships[j].institutions[k].display_name;
-          console.log("institution:",institution);
-          if(!ArticleInstitution.includes(institution)){
+          console.log("institution:", institution);
+          if (!ArticleInstitution.includes(institution)) {
             ArticleInstitution.push(institution);
           }
         }
       }
-
+    }
     if(paper.language != null){//add language
       if(!ArticleLanguage.includes(paper.language)){
         ArticleLanguage.push(paper.language);
@@ -568,9 +557,6 @@ function getFullPaper(item){//进入论文详情
   })
 }
 
-
-import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined,DownOutlined } from '@ant-design/icons-vue';
-import ExpertCard from "@/views/search/ExpertCard.vue";
 function getItem(label, key, icon, children, type) {
 	return {
 		key,
@@ -622,7 +608,7 @@ const onOpenChange = openKeys => {
 	} else {
 		state.openKeys = latestOpenKey ? [latestOpenKey] : [];
 	}
-};
+}
 </script>
 
 <style scoped>
