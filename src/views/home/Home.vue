@@ -18,7 +18,7 @@
     </div>
     <div class="recommendation">
       <div v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
-        <div  @click="jumpToarticle"> <span class="recommendation-title">{{ recommendation.display_name }}</span> </div>
+        <div  @click="jump_to_article(recommendation.id)"> <span class="recommendation-title">{{ recommendation.display_name }}</span> </div>
         <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
           <div class="recommendation-details">
             <div   @mouseover="showAuthorInfo(author.author)"
@@ -67,6 +67,7 @@ import NavBar from "@/components/NavBar/NavBar.vue";
 import StatisticsComponent from "@/components/visual/StatisticsComponent.vue";
 import HomeAPI from "@/api/home.js";
 import {getName} from "@/utils/token.js";
+import router from "@/router/index.js";
 // const { width, height } = useWindowSize();
 const recommendations = ref([])
 const showSearch = ref(false); // 根据你的需求将其设置为 true 或 false
@@ -91,6 +92,13 @@ function hideAuthorInfo() {
 function handleScroll() {
   const threshold = 350; // 你可以根据实际需要调整这个值
   showSearch.value = window.scrollY > threshold;
+}
+function jump_to_article(id){
+  console.log(id)
+  const parts = id.split('/');
+  const paperId = parts[parts.length - 1]; // 获取最后一个部分
+  console.log(`/client/paper/${paperId}`)
+  router.push(`/client/paper/${paperId}`)
 }
 </script>
 <style lang="scss" scoped>

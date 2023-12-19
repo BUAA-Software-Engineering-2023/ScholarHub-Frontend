@@ -6,10 +6,13 @@ import {useRoute} from "vue-router";
 import {defineEmits} from "vue";
 const title = ref('')
 const collections = ref()
-const selectedId = ref(null);
+
 const route = useRoute();
+const isMounted = ref(false);
+const selectedId = ref(route.query.id);
 const props = defineProps('folderSelected')
 onMounted( async () => {
+  console.log(selectedId.value)
   selectedId.value = route.query.id
   const result =  await UserApi.get_favorite();
   console.log(result.data)
@@ -25,6 +28,8 @@ onMounted( async () => {
   }else{
     await query(selectedId.value)
   }
+  console.log(collections.value)
+  isMounted.value = true;
 });
 async function createNewFolder(title){
   console.log(title);
@@ -61,6 +66,7 @@ async function deleteFolder(folderId){
   collections.value = result.data.data;
 }
 async function query(folderId){
+  console.log(folderId)
   if (folderId){
     selectedId.value = folderId;
     await router.push({name: 'Collections', query: {id: folderId}})
@@ -105,6 +111,7 @@ async function renameFolder(folderId,title){
       });
     }
   });
+
   let result = await UserApi.get_favorite();
   collections.value = result.data.data;
 }
@@ -118,10 +125,15 @@ const emits = defineEmits(['select']);
       <input  v-model="title" type="text" placeholder="添加新的收藏夹">
       <button @click="createNewFolder(title)" v-if="title.length" ><PlusOutlined /></button>
     </div>
-    <ul class="todoList" >
-      <div  class="li-container" :class="{ 'selected':  !selectedId }"><img src="@/assets/icons/default_avatar.png" alt=""> <li  @click="query()">所有收藏</li></div>
-         <div class="li-container" @click="query(collection.id)" :class="{ 'selected': collection.id === selectedId }" v-for="(collection, index) in collections" :key="index">
-           <img src="@/assets/icons/default_avatar.png" alt=""> <li >{{collection.title}}
+    <ul class="CollectionList">
+      <div  class="li-container" :class="{ 'selected': !selectedId }"><img src="@/assets/icons/default_avatar.png" alt="">
+        <li  @click="query()">
+          所有收藏
+        </li>
+      </div>
+      <div v-show="isMounted" class="li-container" @click="query(collection.id)" :class="{ 'selected': collection.id === selectedId }" v-for="(collection, index) in collections" :key="index">
+           <img src="@/assets/icons/default_avatar.png" alt="">
+           <li >{{collection.title}}
            <span class="actions">
             <span class="edit" @click.prevent="renameFolder(collection.id, collection.title)">
               <EditOutlined />
@@ -233,12 +245,12 @@ body {
   pointer-events: auto;
 }
 
-.wrapper .todoList {
+.wrapper .CollectionList {
   max-height: 250px;
   overflow-y: auto;
 }
 
-.todoList li {
+.CollectionList li {
   width: 80%;
   position: relative;
   list-style: none;
@@ -267,7 +279,7 @@ body {
    transition: all 0.2s ease;
  }
 
-.todoList li:hover .actions{
+.CollectionList li:hover .actions{
     right: 0;
 }
 
@@ -306,7 +318,7 @@ li:hover{
   transition: all 0.3s ease;
   cursor: pointer;
 }
-.todoList li.selected {
+.CollectionList li.selected {
   color: white;
 }
 .li-container{

@@ -37,6 +37,7 @@ onMounted( async () => {
     }
     console.log(title.value)
   }
+  isMounted.value = true;
 });
 function jump_to_article(id){
   console.log(id)
@@ -55,14 +56,14 @@ async function handleSelect(){
     console.log(collections.value)
   }
 }
-
+const isMounted = ref(false);
 </script>
 
 <template>
   <div class="main-container">
     <div class="sidebar">
       <SideBar  select-keys="2"></SideBar>
-      <CollectionList @select="handleSelect"></CollectionList>
+      <CollectionList v-show="isMounted" @select="handleSelect"></CollectionList>
     </div>
     <div class="content">
       <div class="header">

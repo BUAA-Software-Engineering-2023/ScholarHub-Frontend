@@ -87,6 +87,7 @@ import {useSearchStore} from "@/stores/search.js";
 import SearchAPI from "@/api/search.js"
 import UserAPI from '@/api/user.js'
 import NavBar from "@/views/search/NavBar/NavBar.vue";
+import UserApi from "@/api/user.js";
 onMounted(() => {
   if (getLogin()==='true'){
     console.log(getLogin())
@@ -254,6 +255,8 @@ async function login (){
     const favorite = await UserAPI.get_favorite();
     console.log(favorite.data.data)
     useAccountStore().setFavorite(favorite.data.data)
+    const info =  (await UserApi.get_info()).data.data;
+    useAccountStore().setInfo(info)
     console.log(useAccountStore().favorites)
     await Swal.fire({
       icon: 'success', //error\warning\info\question

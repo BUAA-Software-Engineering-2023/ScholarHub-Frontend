@@ -7,7 +7,6 @@
           :bordered=false
           style="width: 100px;"
           :options="options1"
-          @focus="focus"
           @change="handleChange"
       >
       </a-select>
