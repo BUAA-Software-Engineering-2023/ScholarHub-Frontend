@@ -123,6 +123,7 @@
                   <div class="research-container">
 <!--                    <span class="title">研究成果</span>-->
                     <div class="research-item">
+                      <div class="line"></div>
                       <div class="research-title">研究成果</div>
                       <div class="research-details">
                         <div class="research-authors">
@@ -169,7 +170,7 @@
               </a-row>
             </div>
           </a-layout-content>
-          <a-layout-footer :style="footerStyle">Footer</a-layout-footer>
+<!--          <a-layout-footer :style="footerStyle">Footer</a-layout-footer>-->
         </a-layout>
       </a-layout>
     </a-space>
@@ -464,6 +465,7 @@ img{
 
 .research-title {
   font-size: 24px;
+  margin-left: 15px;
   font-weight: bold;
   color: #333;
   margin-bottom: 10px;
@@ -586,5 +588,14 @@ img{
 }
 #button-claim:nth-child(5) {
   filter: hue-rotate(70deg);
+}
+.line{
+  background:black;/*背景色为浅灰色*/
+  width:5px;/*设置宽高*/
+  margin-top: 3px;
+  height:25px;
+  left:150px;
+  border-radius: 2px;
+  float:left;/*让此div与前面的并排显示*/
 }
 </style>
