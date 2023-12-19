@@ -21,6 +21,7 @@
 			</div>
 		</a-typography>
 	</div>
+	
 
 </template>
 
