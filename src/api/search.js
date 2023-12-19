@@ -125,6 +125,16 @@ export default {
             showLoading:true,
         })
     },
+    searchWithSort(search, sort){
+        return requests({
+            url:"/work/search",
+            method: 'POST',
+            data:{
+                search,sort
+            },
+            showLoading:true,
+        })
+    },
     searchWithFilter(search, filter){
         return requests({
             url:"/work/search",
