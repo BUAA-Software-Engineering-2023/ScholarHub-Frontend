@@ -17,6 +17,12 @@ const actions = {
     setFavorite(favorite){
       this.favorites = favorite;
     },
+    setInfo(info){
+      this.userInfo = info;
+    },
+    setAvatar(url){
+        this.userInfo.avatar = url;
+    },
     async loginWithCode(phone_number, code) {
         const result = await accountAPI.loginWithCode(phone_number, code);
         if (result.response.status === 200) {
