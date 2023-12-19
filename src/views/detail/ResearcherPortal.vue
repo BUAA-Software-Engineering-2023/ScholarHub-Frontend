@@ -26,12 +26,12 @@
                     </div>
                   </div >
 
-                 <div style="margin-left: 50px;cursor: pointer" href="#" id="button-claim" @click="showModal">认领</div>
+                 <div style="margin-left: 50px;cursor: pointer" href="#" id="button-claim" @click="showModal " >认领</div>
                   <a-modal v-model:open="open" title="Basic Modal" @ok="handleOk">
                     <template #footer>
 
                       <a-button style="height: 38px;" key="back" @click="handleCancel">Return</a-button>
-                      <a-button style="height: 38px;" key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
+                      <a-button style="height: 38px;" key="submit" type="primary" :loading="loading"  @click="handleClaim">Submit</a-button>
 
                     </template>
                    <div>
@@ -49,7 +49,7 @@
                            label="Reason"
                            name="reason"
                        >
-                         <a-textarea v-model:value="formState.desc" />
+                         <a-textarea v-model:value="formState.reason" />
                        </a-form-item>
 
                        <a-form-item
@@ -146,7 +146,7 @@
                         <template #renderItem="{ item }">
                           <a-list-item key="item.title">
                             <template #actions>
-                            <span v-for="{ icon, text } in actions" :key="icon">
+                              <span v-for="{ icon, text } in item.actions" :key="icon">
                               <component :is="icon" style="margin-right: 8px" />
                               {{ text }}
                             </span>
@@ -190,10 +190,10 @@ import Paper from "@/assets/icons/Paper.vue";
 import Quote from "@/assets/icons/Quote.vue";
 import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
-import { AntDesignOutlined, LinkOutlined,  VerticalAlignBottomOutlined,CustomerServiceOutlined, CommentOutlined} from '@ant-design/icons-vue';
+import { AntDesignOutlined, LinkOutlined,  CalendarOutlined,CustomerServiceOutlined, CommentOutlined} from '@ant-design/icons-vue';
+import { ApplyForClaim } from '@/api/author.js';
 import Swal from "sweetalert2";
 import {ref} from "vue";
-
 const route = useRoute()
 const showSide = ref(true)
 const authorName = ref('')
@@ -216,10 +216,7 @@ const pagination = {
   style:{height: '32px', lineHeight: '32px', textAlign: 'center !important'},
   pageSize: 7,
 };
-const actions = [
-  { icon: LinkOutlined , text: '2' },
-  { icon: VerticalAlignBottomOutlined, text: '2' },
-];
+
 const changeShowSide = (collapsed, type)=>{
   showSide.value = !showSide.value;
 }
@@ -240,16 +237,33 @@ const handleCancel = () => {
 };
 
 
-const formState = reactive({
-  phone_number: '',
 
-  remember: true,
-});
 const onFinish = values => {
   console.log('Success:', values);
 };
 const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo);
+};
+
+const formState = ref({
+  author_id: route.params.authorId,
+  reason: '',
+  phone_number: '',
+});
+
+const handleClaim = async () => {
+  try {
+    const response = await ApplyForClaim(
+        formState.value.author_id,
+        formState.value.reason,
+        formState.value.phone_number
+    );
+    console.log('认领成功', response);
+    // 这里可以添加一些成功后的逻辑，比如弹出通知或清空表单
+  } catch (error) {
+    console.error('认领失败', error);
+    // 这里可以添加错误处理逻辑
+  }
 };
 
 
@@ -309,6 +323,10 @@ onMounted(async () => {
       const parts = url.split('/');
       const paperId = parts[parts.length - 1]; // 获取最后一个部分
       const authorships = author.value.works[i].authorships;
+      const paperActions = [
+        { icon: LinkOutlined, text: listData[i].cited_by_count.toString() },
+        { icon: CalendarOutlined, text: listData[i].publication_date.toString() },
+      ];
       let string = '';
       for (let j = 0; j < authorships.length; j++){
         const authorname = authorships[j].author.display_name
@@ -324,7 +342,8 @@ onMounted(async () => {
           title: listData[i].display_name,
           avatar: listData[i].avatar,
           description: authorlist.value[i],
-          content: listData[i].abstract.slice(0, 300) + "..."
+          content: listData[i].abstract.slice(0, 300) + "...",
+          actions: paperActions
         });
       }
       else {
@@ -333,7 +352,8 @@ onMounted(async () => {
           title: listData[i].display_name,
           avatar: listData[i].avatar,
           description: authorlist.value[i],
-          content: "No summary available"
+          content: "No summary available",
+          actions: paperActions
         });
       }
 
@@ -367,13 +387,7 @@ const footerStyle = {
   backgroundColor: '#7dbcea',
 };
 
-// 添加研究成果列表的数据
-const researchResults = ref([
-  { id: 1, title: '研究成果 1' },
-  { id: 2, title: '研究成果 2' },
-  { id: 3, title: '研究成果 3' },
-  // 添加更多研究成果
-]);
+
 
 </script>
 
