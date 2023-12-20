@@ -1,12 +1,15 @@
 <script setup>
+import Comments from "@/views/paper/Comments.vue";
 import SearchAPI from "@/api/search.js"
 import {useRoute} from "vue-router";
 import ReferenceWork from "@/views/paper/ReferenceWork.vue";
+import RelatedWork from "@/views/paper/RelatedWork.vue";
 import Concept from "@/assets/icons/Concept.vue";
 import Type from "@/assets/icons/Type.vue";
 import {StarFilled} from "@element-plus/icons-vue";
 import UserAPI from "@/api/user.js"
 import { message } from 'ant-design-vue';
+
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
@@ -14,6 +17,7 @@ const download = ref(false)
 const showFavorite = ref(false);
 const paperId = "https://openalex.org/"+route.params.paperId
 const reference_works = ref([]);
+const related_works = ref([]);
 const favorites = ref([])
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
@@ -35,6 +39,21 @@ onMounted(async () => {
       reference_works.value.push({
         href: paperId,
         title: "["+(i+1)+"] "+ list[i].display_name+" "+list[i].publication_year,
+        avatar: 'https://joeschmoe.io/api/v1/random',
+      });
+    }
+  }
+  if (paperInfo.value[0].related_works)
+  {
+    const list = paperInfo.value[0].related_works
+    for (let i = 0; i < list.length; i++) {
+      const url = list[i].id;
+      const parts = url.split('/');
+      const paperId = parts[parts.length - 1]; // 获取最后一个部分
+      console.log(paperId); // 输出 W1775749144
+      related_works.value.push({
+        href: paperId,
+        title: "["+(i+1)+"] "+ list[i].display_name,
         avatar: 'https://joeschmoe.io/api/v1/random',
       });
     }
@@ -107,6 +126,7 @@ async function add_favorite(foldId,paperId){
   toggleFavorite();
 }
 </script>
+
 
 <template>
   <div class="main-container">
@@ -222,12 +242,24 @@ async function add_favorite(foldId,paperId){
 
         </div>
       </div>
+
       <div class="reference_work">
         <div class="title"> 参考文献</div>
         <ReferenceWork :reference_works="reference_works"></ReferenceWork>
       </div>
+      <div class="reference_work">
+        <div class="title"> 评论区</div>
+        <Comments :comments="comments"></Comments>
+      </div>
     </div>
     <div class="sideBar">
+      <div class="relatedwork">
+        <div class="title">相关文献</div>
+        <RelatedWork :related_works="related_works"></RelatedWork>
+      </div>
+      <div class="reference_graph">
+        <div class="title">引用量</div>
+      </div>
     </div>
   </div>
 </template>
@@ -547,5 +579,43 @@ async function add_favorite(foldId,paperId){
   color: black;
   background-color: #f2f4f7;
 
+}
+
+.sideBar{
+  border-radius: 10px;
+  min-width: 280px;
+  margin-top: 30px;
+  margin-left: 3%;
+  /* 左侧导航栏样式 */
+  width: 15%; /* 左侧宽度，可以根据需求调整 */
+  background-color: #f0f1f4; /* 侧边栏背景色 */
+}
+
+.reference_graph{
+  margin-top: 20px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px !important;
+  text-align: left;
+  color: #363c50 !important;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+  height: 30%;
+}
+
+.relatedwork{
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px !important;
+  text-align: left;
+  color: #363c50 !important;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+  height: 630px;
+  overflow-y: scroll;
+}
+
+#chart-container {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
 }
 </style>
