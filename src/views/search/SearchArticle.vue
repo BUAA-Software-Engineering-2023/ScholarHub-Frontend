@@ -92,7 +92,7 @@
 
 <script setup>
 import SearchBar from "@/views/search/Search/SearchBar.vue";
-import NavBar from "@/views/search/NavBar/NavBar.vue";
+import NavBar from "@/components/NavBar/NavBar.vue";
 import ArticleCard from "@/views/search/ArticleCard.vue";
 import SearchAPI from "@/api/search.js"
 const current = ref(1);
@@ -172,7 +172,7 @@ async function getPapers(){
 async function getExperts(){
 	exResult.value = await SearchAPI.searchExpert(searchRef.value.ifSearch)
 	expertList.value = exResult.value.data.data.result;
-	setFilterContent();
+	setExpertFilterContent();
 	//cut
 	initExpertPage();
 }
@@ -184,10 +184,10 @@ function initExpertPage(){
 async function getExpertsFiltered(Region){
 	exResult.value = await SearchAPI.searchExpertFiltered(searchRef.value.ifSearch,Region)
 	expertList.value = exResult.value.data.data.result;
-	setFilterContent();
+	setExpertFilterContent();
 	initExpertPage();
 }
-function setFilterContent(){
+function setExpertFilterContent(){
 	let ExpertInstitution = [];
 	let ExpertArea = [];
 	for(let i=0;i<expertList.value.length;i++){
