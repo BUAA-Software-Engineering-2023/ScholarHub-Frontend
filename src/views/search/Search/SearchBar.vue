@@ -39,6 +39,7 @@ const router = useRouter();
 
 const ifSearch = ref();
 defineExpose({ifSearch})
+const emit = defineEmits(["getInput"])
 
 async function handleSearch(InputValue){
     searchValue.value = InputValue;
@@ -46,8 +47,10 @@ async function handleSearch(InputValue){
 
     if (InputValue)
     {
-      const result = await Search.search(InputValue);
+      // const result = await Search.search(InputValue);
       ifSearch.value = InputValue;
+      emit('getInput', ifSearch.value);
+      console.log("!!!!!");
       searchStore.addHistory(InputValue);
       searchStore.setSearchInput(InputValue)
     }
