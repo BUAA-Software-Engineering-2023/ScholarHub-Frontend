@@ -4,8 +4,9 @@ import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
 import {useGlobalStore} from "@/stores/global.js";
 import Avatar from "@/components/Account/Avatar.vue";
+import {useAccountStore} from "@/stores/account.js";
 
-const globalStore  = useGlobalStore();
+const globalStore  = useAccountStore();
 
 async function handleChange(){
     const result = await UserApi.update_info(formState.nickname);

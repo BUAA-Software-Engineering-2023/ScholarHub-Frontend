@@ -1,365 +1,110 @@
 <template>
-    <div>
-        <div v-clickoutside="hideReplyBtn" @click="inputFocus" class="my-reply">
-            <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
-            <div class="reply-info" >
-                <div 
-                tabindex="0" 
-                contenteditable="true" 
-                id="replyInput" 
-                spellcheck="false" 
-                placeholder="输入评论..." 
-                class="reply-input" 
-                @focus="showReplyBtn"  
-                @input="onDivInput($event)"
-                >
-                </div>
-            </div>
-            <div class="reply-btn-box" v-show="btnShow">
-                <el-button class="reply-btn" size="medium" @click="sendComment" type="primary">发表评论</el-button>
-            </div>
-        </div>
-        <div v-for="(item,i) in comments" :key="i" class="author-title reply-father">
-            <el-avatar class="header-img" :size="40" :src="item.headImg"></el-avatar>
-            <div class="author-info">
-                <span class="author-name">{{item.name}}</span>
-                <span class="author-time">{{item.time}}</span>
-            </div>
-            <div class="icon-btn">
-                <span @click="showReplyInput(i,item.name,item.id)"><i class="iconfont el-icon-s-comment"></i>{{item.commentNum}}</span>
-                <i class="iconfont el-icon-caret-top"></i>{{item.like}}
-            </div>
-            <div class="talk-box">
-                <p>
-                    <span class="reply">{{item.comment}}</span>
-                </p>
-            </div>
-            <div class="reply-box">
-                <div v-for="(reply,j) in item.reply" :key="j" class="author-title">
-                    <el-avatar class="header-img" :size="40" :src="reply.fromHeadImg"></el-avatar>
-                    <div class="author-info">
-                        <span class="author-name">{{reply.from}}</span>
-                        <span class="author-time">{{reply.time}}</span>
-                    </div>
-                    <div class="icon-btn">
-                        <span @click="showReplyInput(i,reply.from,reply.id)"><i class="iconfont el-icon-s-comment"></i>{{reply.commentNum}}</span>
-                        <i class="iconfont el-icon-caret-top"></i>{{reply.like}}
-                    </div>
-                    <div class="talk-box">
-                        <p>
-                            <span>回复 {{reply.to}}:</span>
-                            <span class="reply">{{reply.comment}}</span>
-                        </p>
-                    </div>
-                    <div class="reply-box">
- 
-                    </div>
-                </div>
-            </div>
-            <div  v-show="_inputShow(i)" class="my-reply my-comment-reply">
-                <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
-                <div class="reply-info" >
-                    <div tabindex="0" contenteditable="true" spellcheck="false" placeholder="输入评论..."   @input="onDivInput($event)"  class="reply-input reply-comment-input"></div>
-                </div>
-                <div class=" reply-btn-box">
-                    <el-button class="reply-btn" size="medium" @click="sendCommentReply(i,j)" type="primary">发表评论</el-button>
-            </div>
-        </div>
-        </div>
-    </div>
+  <u-comment-scroll>
+  <u-comment :config="config" @submit="submit" @like="like" upload relative-time>
+    <!-- <template>用户信息导航栏卡槽</template> -->
+    <!-- <template #info>用户信息卡槽</template> -->
+    <!-- <template #card>用户信息卡片卡槽</template> -->
+    <u-comment-nav v-model="latest" @sorted="sorted"></u-comment-nav>
+  </u-comment>
+  </u-comment-scroll>
 </template>
 
-<script>
-// import NavBar from "@/components/NavBar/NavBar.vue";
-const clickoutside = {
-    // 初始化指令
-    bind(el, binding, vnode) {
-    function documentHandler(e) {
-        if (el.contains(e.target)) {
-            return false;
-        }
-        if (binding.expression) {
-            binding.value(e);
-        }
-    }
-    el.vueClickOutside = documentHandler;
-    document.addEventListener('click', documentHandler);
-    },
-    update() {},
-    unbind(el, binding) {
-    document.removeEventListener('click', el.vueClickOutside);
-    delete el.vueClickOutside;
+<script setup lang="ts">
+// 下载表情包资源emoji.zip https://readpage.lanzouy.com/b04duelxg 密码:undraw
+// static文件放在public下,引入emoji.ts文件可以移动assets下引入,也可以自定义到指定位置
+import emoji from '@/assets/emoji/emoji'
+import { reactive, ref } from 'vue'
+import {
+  CommentApi,
+  ConfigApi,
+  SubmitParamApi,
+  UToast,
+  createObjectURL,
+  dayjs,
+  UComment,
+  UCommentNav,
+  UCommentScroll
+} from 'undraw-ui'
+import CommentSAPI from "@/api/comments"
+import {useRoute} from "vue-router";
+import {useAccountStore} from "@/stores/account"
+const route = useRoute()
+const paperId = ref("https://openalex.org/"+route.params.paperId)
+const props = defineProps(['comments'])
+const user = ref(useAccountStore())
+const config = reactive<ConfigApi>({
+  user: {
+    id: user.value.userInfo.id,
+    username: user.value.userInfo.nickname,
+    avatar: user.value.avatar,
+    // 评论id数组 建议:存储方式用户uid和评论id组成关系,根据用户uid来获取对应点赞评论id,然后加入到数组中返回
+    likeIds: [1, 2, 3]
   },
-};
-export default {
-    name:'ArticleComment',
-    data(){
-        return{
-            btnShow: false,
-            index:'0',
-            replyComment:'',
-            myName:'张三',
-            myHeader:'',//当前用户头像
-            myId:19870621,
-            to:'',
-            toId:-1,
-            comments:[
-                {
-                    name:'张三',
-                    id:19870621,
-                    headImg:'',//评论用户头像
-                    comment:'评论1',
-                    time:'2023年9月16日 18:43',
-                    commentNum:2,
-                    like:15,
-                    inputShow:false,
-                    reply:[
-                        {
-                            from:'李四',
-                            fromId:19891221,
-                            fromHeadImg:'',
-                            to:'张三',
-                            toId:19870621,
-                            comment:'评论2',
-                            time:'2023年9月16日 18:43',
-                            commentNum:1,
-                            like:15,
-                            inputShow:false
-                        },
-                        {
-                            from:'王五',
-                            fromId:1123,
-                            fromHeadImg:'',
-                            to:'张三',
-                            toId:19870621,
-                            comment:'评论3',
-                            time:'2023年9月16日 18:43',
-                            commentNum:0,
-                            like:5,
-                            inputShow:false
- 
-                        }
-                    ]
-                },
-            ]
-        }
-    },
-    directives: {clickoutside},
-    methods: {
-        inputFocus(){
-            var replyInput = document.getElementById('replyInput');
-            replyInput.style.padding= "8px 8px"
-            replyInput.style.border ="2px solid blue"
-            replyInput.focus()
-        },  
-        showReplyBtn(){
-            this.btnShow = true
-        },
-        hideReplyBtn(){
-            this.btnShow = false
-            replyInput.style.padding= "10px"
-            replyInput.style.border ="none"
-        },
-        showReplyInput(i,name,id){
-            this.comments[this.index].inputShow = false
-            this.index =i
-            this.comments[i].inputShow = true
-            this.to = name
-            this.toId = id
-        },
-        _inputShow(i){
-            return this.comments[i].inputShow 
-        },
-        sendComment(){
-            if(!this.replyComment){
-                 this.$message({
-                    showClose: true,
-                    type:'warning',
-                    message:'评论不能为空'
-                })
-            }else{
-                let a ={}
-                let input =  document.getElementById('replyInput')
-                let timeNow = new Date().getTime();
-                let time= this.dateStr(timeNow);
-                a.name= this.myName
-                a.comment =this.replyComment
-                a.headImg = this.myHeader
-                a.time = time
-                a.commentNum = 0
-                a.like = 0
-                this.comments.push(a)
-                this.replyComment = ''
-                input.innerHTML = '';
- 
-            }
-        },
-        sendCommentReply(i,j){
-            if(!this.replyComment){
-                 this.$message({
-                    showClose: true,
-                    type:'warning',
-                    message:'评论不能为空'
-                })
-            }else{
-                let a ={}
-                let timeNow = new Date().getTime();
-                let time= this.dateStr(timeNow);
-                a.from= this.myName
-                a.to = this.to
-                a.fromHeadImg = this.myHeader
-                a.comment =this.replyComment
-                a.time = time
-                a.commentNum = 0
-                a.like = 0
-                this.comments[i].reply.push(a)
-                this.replyComment = ''
-                document.getElementsByClassName("reply-comment-input")[i].innerHTML = ""
-            }
-        },
-        onDivInput: function(e) {
-            this.replyComment = e.target.innerHTML;
-        },
-        dateStr(date){
-            var time=new Date().getTime();
-            time=parseInt((time-date)/1000);
-            //存储转换值 
-            var s;
-            if(time<60*10){//十分钟内
-                return '刚刚';
-            }else if((time<60*60)&&(time>=60*10)){
-                s = Math.floor(time/60);
-                return  s+"分钟前";
-            }else if((time<60*60*24)&&(time>=60*60)){ 
-                s = Math.floor(time/60/60);
-                return  s+"小时前";
-            }else if((time<60*60*24*30)&&(time>=60*60*24)){ 
-                s = Math.floor(time/60/60/24);
-                return s+"天前";
-            }else{ 
-                var date= new Date(parseInt(date));
-                return date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
-            }
-        }
-    },    
-}
-</script>
+  emoji: emoji,
+  comments: props.comments,
+  total: 10
+})
 
-<style>
-    .my-reply {
-        padding: 10px;
-        background-color: #fafbfc;
-    }
-    .my-reply .header-img {
-        display: inline-block;
-        vertical-align: top;
-    }
-    .my-reply .reply-info {
-        display: inline-block;
-        margin-left: 5px;
-        width: 90%;
-    }
-    @media screen and (max-width: 1200px) {
-        .my-reply .reply-info {
-            width: 80%;
-        }
-    }
-    .my-reply .reply-info .reply-input {
-        min-height: 20px;
-        line-height: 22px;
-        padding: 10px 10px;
-        color: #ccc;
-        background-color: #fff;
-        border-radius: 5px;
-    }
-    .my-reply .reply-info .reply-input:empty:before {
-        content: attr(placeholder);
-    }
-    .my-reply .reply-info .reply-input:focus:before {
-        content: none;
-    }
-    .my-reply .reply-info .reply-input:focus {
-        padding: 8px 8px;
-        border: 2px solid #00f;
-        box-shadow: none;
-        outline: none;
-    }
-    .my-reply .reply-btn-box {
-        height: 25px;
-        margin: 10px 0;
-    }
-    .my-reply .reply-btn-box .reply-btn {
-        position: relative;
-        float: right;
-        margin-right: 15px;
-    }
-    .my-comment-reply {
-        margin-left: 50px;
-    }
-    .my-comment-reply .reply-input {
-        width: flex;
-    }
-    .author-title:not(:last-child) {
-        border-bottom: 1px solid rgba(178,186,194,0.3);
-    }
-    .author-title {
-        padding: 10px;
-    }
-    .author-title .header-img {
-        display: inline-block;
-        vertical-align: top;
-    }
-    .author-title .author-info {
-        display: inline-block;
-        margin-left: 5px;
-        width: 60%;
-        height: 40px;
-        line-height: 20px;
-    }
-    .author-title .author-info >span {
-        display: block;
-        cursor: pointer;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-    .author-title .author-info .author-name {
-        color: #000;
-        font-size: 18px;
-        font-weight: bold;
-    }
-    .author-title .author-info .author-time {
-        font-size: 14px;
-    }
-    .author-title .icon-btn {
-        width: 30%;
-        padding: 0 !important;
-        float: right;
-    }
-    @media screen and (max-width: 1200px) {
-        .author-title .icon-btn {
-            width: 20%;
-            padding: 7px;
-        }
-    }
-    .author-title .icon-btn >span {
-        cursor: pointer;
-    }
-    .author-title .icon-btn .iconfont {
-        margin: 0 5px;
-    }
-    .author-title .talk-box {
-        margin: 0 50px;
-    }
-    .author-title .talk-box >p {
-        margin: 0;
-    }
-    .author-title .talk-box .reply {
-        font-size: 16px;
-        color: #000;
-    }
-    .author-title .reply-box {
-        margin: 10px 0 0 50px;
-        background-color: #efefef;
-    }
-</style>
+//排序
+const latest = ref(true)
+const sorted = (latest: boolean) => {
+  console.log(latest)
+}
+
+let temp_id = 100
+// 提交评论事件
+const submit = async ({ content, parentId, files, finish }: SubmitParamApi) => {
+  console.log(config.user.username)
+  console.log('提交评论: ' + content, parentId, files)
+  /**
+   * 上传文件后端返回图片访问地址，格式以'||'为分割; 如:  '/static/img/program.gif||/static/img/normal.webp'
+   */
+  let contentImg = files?.map(e => createObjectURL(e)).join('||')
+
+  temp_id += 1
+  const comment: {
+    uid: string | number;
+    address: string;
+    createTime: string;
+    id: string;
+    reply: null;
+    user: { homeLink: string; avatar: string; username: string };
+    parentId: undefined;
+    content: undefined;
+    contentImg: any;
+    likes: number
+  } = {
+    id: String(temp_id),
+    parentId: parentId,
+    uid: config.user.id,
+    address: '来自北京',
+    content: content,
+    likes: 0,
+    createTime: dayjs().subtract(5, 'seconds').toString(),
+    contentImg: contentImg,
+    user: {
+      username: config.user.username,
+      avatar: config.user.avatar,
+      homeLink: `/${temp_id}`
+    },
+    reply: null
+  }
+
+  const result = await CommentSAPI.send_comments(paperId.value,content,parentId);
+  console.log(result)
+  setTimeout(() => {
+    finish(comment)
+    UToast({ message: '评论成功!', type: 'info' })
+  }, 200)
+}
+// 点赞按钮事件 将评论id返回后端判断是否点赞，然后在处理点赞状态
+const like = (id: string, finish: () => void) => {
+  console.log('点赞: ' + id)
+  setTimeout(() => {
+    finish()
+  }, 200)
+}
+
+config.comments = props.comments
+
+</script>
