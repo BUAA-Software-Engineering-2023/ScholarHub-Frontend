@@ -28,6 +28,7 @@ const series = ref([])
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
   const response = result.data.data
+  console.log("paper result:",result);
   favorites.value = await (await UserAPI.get_favorite()).data.data;
   let paperData = [];
   let yearArr = [];
