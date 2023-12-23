@@ -87,6 +87,10 @@
 	    
 
     </div>
+    <a-float-button-group shape="circle" :style="{ right: '24px' }">
+
+      <a-back-top :visibility-height="0" />
+    </a-float-button-group>
   </div>
 </template>
 
