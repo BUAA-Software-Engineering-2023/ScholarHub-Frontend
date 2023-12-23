@@ -30,7 +30,7 @@
               <div class="userPhoto" @mouseover="mouseOver" @mouseleave="mouseLeave">
                 <!-- 用户头像 -->
                 <a class="hasAvatar">
-                  <img src="@/assets/icons/default_avatar.png" alt="用户头像">
+                  <img :src="avatar" alt="用户头像">
                 </a>
 
                 <transition  name="slide">
@@ -38,7 +38,7 @@
                   <div id="test"></div>
                     <div class="profile-user">
                       <div class="profile-nickName">
-                        <img class="profile-avatar" src="@/assets/icons/default_avatar.png" alt="用户头像"> <span class="nickName">您好，{{name}}</span> <!-- 显示用户姓名 -->
+                        <img class="profile-avatar" :src="avatar" alt="用户头像"> <span class="nickName">您好，{{name}}</span> <!-- 显示用户姓名 -->
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links">
@@ -72,12 +72,14 @@ import {clearToken, getName} from "@/utils/token.js";
   import router from "@/router/index.js";
   import SearchBar from "@/components/Search/SearchBar.vue";
   import {useSearchStore} from "@/stores/search.js";
-  import Notification from "@/components/NavBar/Message.vue";
+  import {useAccountStore} from "@/stores/account.js";
+import Notification from "@/components/NavBar/Message.vue";
   import Message from "@/components/NavBar/Message.vue";
   const searchStore = useSearchStore();
   const showProfile = ref(false)
   const props = defineProps(["showSearch"])
   const name = getName();
+  const avatar = ref(useAccountStore().userInfo.avatar)
   function mouseOver() {
     showProfile.value = true;
   }

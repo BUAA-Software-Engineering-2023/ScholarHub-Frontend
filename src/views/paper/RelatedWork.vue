@@ -12,7 +12,7 @@
           </template>
           <a-list-item-meta :description="item.description">
             <template #title>
-              <a :href="item.href">{{ item.title }}</a>
+              <a :href="item.href" class="ellipsis-text">{{ item.title }}</a>
             </template>
           </a-list-item-meta>
           {{ item.content }}
@@ -30,8 +30,16 @@
       console.log(page);
     },
     style:{height: '32px', lineHeight: '32px', textAlign: 'center !important',text:'9px !important'},
-    pageSize: 3,
+    pageSize: 8,
   };
   </script>
-  
+  <style scoped>
+  .ellipsis-text {
+    display: inline-block;
+    width: 100%; /* 设置文本显示的宽度 */
+    white-space: nowrap; /* 禁止换行 */
+    overflow: hidden; /* 隐藏溢出部分 */
+    text-overflow: ellipsis; /* 显示省略号 */
+  }
+  </style>
   

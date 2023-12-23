@@ -9,7 +9,9 @@ import Type from "@/assets/icons/Type.vue";
 import {StarFilled} from "@element-plus/icons-vue";
 import UserAPI from "@/api/user.js"
 import { message } from 'ant-design-vue';
-
+import CitedByYear from "@/components/visual/CitedByYear.vue";
+import CommentsAPI from "@/api/comments.js"
+import {dayjs} from "undraw-ui";
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
@@ -19,15 +21,41 @@ const paperId = "https://openalex.org/"+route.params.paperId
 const reference_works = ref([]);
 const related_works = ref([]);
 const favorites = ref([])
+const year = ref([])
+const Mounted = ref(false);
+const comments = ref([])
+const series = ref([])
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
+  const response = result.data.data
   console.log("paper result:",result);
   favorites.value = await (await UserAPI.get_favorite()).data.data;
+  let paperData = [];
+  let yearArr = [];
   console.log(result)
+  for (let i = 0;i<response.counts_by_year.length;i++){
+    paperData.push(response.counts_by_year[i].cited_by_count);
+    yearArr.push(response.counts_by_year[i].year)
+  }
+  series.value.push( {
+    name: '引用量',
+    type: 'line',
+    stack: 'Total',
+    areaStyle: {},
+    emphasis: {
+      focus: 'series'
+    },
+    data: paperData
+  });
+  console.log(yearArr);
+  for (let i=yearArr.length-1;i>=0;i--){
+    year.value.push(yearArr[i]);
+  }
   if (result.data.success){
     console.log(result.data.data)
     paperInfo.value = [result.data.data]
   }
+
   if (paperInfo.value[0].referenced_works)
   {
     const list = paperInfo.value[0].referenced_works
@@ -73,6 +101,58 @@ onMounted(async () => {
 
   }
 
+  const commentsResult = (await CommentsAPI.get_comments(paperId, true)).data;
+  console.log(commentsResult)
+  if (commentsResult.success){
+    for (let i=0;i<commentsResult.data.length;i++){
+      let tmp = commentsResult.data[i];
+      let list = []
+      let total = tmp.comments.length
+      let reply = null;
+      if(tmp.comments!==[]){
+        for (let j=0;j<tmp.comments.length;j++){
+            let tem = tmp.comments[j];
+            list.push({
+              id: String(tem.comment_id),
+              parentId: String(tem.reply_id),
+              uid: tem.sender_id,
+              address: '来自北京',
+              content: tem.content,
+              likes: 233,
+              createTime: tem.created_at,
+              user: {
+                username: tem.sender_nickname,
+                avatar: tem.sender_avatar,
+              },
+              reply:null,
+            })
+        }
+        reply = {
+          total:total,
+          list:list
+        }
+      }
+      if (tmp.reply_id==null){
+        comments.value.push({
+          id: String(tmp.comment_id),
+          parentId: String(tmp.reply_id),
+          uid: tmp.sender_id,
+          address: '来自北京',
+          content: tmp.content,
+          likes: 233,
+          createTime: tmp.created_at,
+          user: {
+            username: tmp.sender_nickname,
+            avatar: tmp.sender_avatar,
+          },
+          reply:reply,
+        })
+      }
+    console.log()
+    }
+  }
+
+  Mounted.value = true
 });
 function showAuthorInfo(author) {
   authorInfo.value = author;
@@ -134,7 +214,7 @@ async function add_favorite(foldId,paperId){
     <div class="content">
       <div class="paper">
         <div v-for="(paper, index) in paperInfo" :key="index" class="paper-item">
-          <div  @click="jumpToarticle"> <span class="paper-title">{{ paper.display_name }}</span> </div>
+          <div> <span class="paper-title">{{ paper.display_name }}</span> </div>
           <div  class="author" v-for="(author,index1) in paper.authorships" :key="index1">
             <div class="paper-details">
               <div   @mouseover="showAuthorInfo(author.author)"
@@ -250,17 +330,18 @@ async function add_favorite(foldId,paperId){
       </div>
       <div class="reference_work">
         <div class="title"> 评论区</div>
-        <Comments :comments="comments"></Comments>
+        <Comments v-show="Mounted" :comments="comments"></Comments>
       </div>
     </div>
     <div class="sideBar">
-      <div class="relatedwork">
+      <div class="reference_graph">
+        <CitedByYear v-if="Mounted" :years="year" :series="series"></CitedByYear>
+      </div>
+      <div class="related_work">
         <div class="title">相关文献</div>
         <RelatedWork :related_works="related_works"></RelatedWork>
       </div>
-      <div class="reference_graph">
-        <div class="title">引用量</div>
-      </div>
+
     </div>
   </div>
 </template>
@@ -307,9 +388,6 @@ async function add_favorite(foldId,paperId){
   color: #5a5a5a;
 }
 .keywords-text{
-  display: flex;
-}
-.concepts-text{
   display: flex;
 }
 .author_container{
@@ -436,13 +514,13 @@ async function add_favorite(foldId,paperId){
   border-radius: 10px;
   min-width: 300px;
   /* 左侧导航栏样式 */
-  width: 20%; /* 左侧宽度，可以根据需求调整 */
+  width: 30%; /* 左侧宽度，可以根据需求调整 */
   background-color: #f0f1f4; /* 侧边栏背景色 */
 }
 .content{
   margin-left: 10vw;
   margin-top: 30px;
-  width: 60%;
+  width: 55%;
 }
 .main-container{
   min-height: 900px;
@@ -468,6 +546,7 @@ async function add_favorite(foldId,paperId){
 .concept{
   margin-left: 5px;
   font-size: 14px;
+  display: flex;
 }
 /* 悬停添加箭头图标 */
 .download-pdf {
@@ -548,6 +627,7 @@ async function add_favorite(foldId,paperId){
 }
 .concepts{
   margin-top: 10px;
+  display: flex;
 }
 .icons{
   top: 2px;
@@ -588,29 +668,32 @@ async function add_favorite(foldId,paperId){
   margin-top: 30px;
   margin-left: 3%;
   /* 左侧导航栏样式 */
-  width: 15%; /* 左侧宽度，可以根据需求调整 */
+  width: 25%; /* 左侧宽度，可以根据需求调整 */
   background-color: #f0f1f4; /* 侧边栏背景色 */
 }
 
 .reference_graph{
-  margin-top: 20px;
+  min-width: 400px;
+  margin-bottom: 20px;
   padding: 10px;
   background-color: white;
   border-radius: 10px !important;
   text-align: left;
   color: #363c50 !important;
   box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
-  height: 30%;
+
 }
 
-.relatedwork{
+.related_work{
   padding: 10px;
+  min-width: 400px;
   background-color: white;
   border-radius: 10px !important;
   text-align: left;
   color: #363c50 !important;
   box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
-  height: 630px;
+  text-align: left;
+  width: 100%;
   overflow-y: scroll;
 }
 
@@ -619,4 +702,16 @@ async function add_favorite(foldId,paperId){
   height: 100%;
   overflow: hidden;
 }
+.concept-content {
+  text-overflow: ellipsis; /* 文本溢出时显示省略号 */
+  overflow: hidden; /* 隐藏溢出的文本 */
+  white-space: nowrap; /* 防止文本换行 */
+}
+.concepts{
+  overflow: hidden;
+  text-overflow:ellipsis;
+}
+.concepts-text{
+  display: flex;
+ }
 </style>
