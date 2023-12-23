@@ -19,7 +19,7 @@
 					title="确定要通过?"
 					@confirm="onPass(record)"
 				>
-					<a-button type="primary" :size="size" v-if="record.status === 'no'">
+					<a-button type="primary" :size="size" v-if="record.status === '待审核'">
 						<template #icon>
 							<CheckOutlined />
 						</template>
@@ -31,7 +31,7 @@
 					@confirm="onRefuse(record)"
 					class="rightButton"
 				>
-					<a-button type="primary" :size="size" v-if="record.status === 'no'" danger>
+					<a-button type="primary" :size="size" v-if="record.status === '待审核'" danger>
 						<template #icon>
 							<CloseOutlined />
 						</template>
@@ -54,7 +54,7 @@ const columns = [
 	},
 	{
 		title: '电话号码',
-		dataIndex: 'phoneNumber',
+		dataIndex: 'phone_number',
 	},
 	{
 		title: '申请状态',
@@ -62,7 +62,7 @@ const columns = [
 	},
 	{
 		title: '申请时间',
-		dataIndex: 'time',
+		dataIndex: 'created_at',
 	},
 	{
 		title: '操作',
@@ -70,90 +70,7 @@ const columns = [
 	},
 ];
 const dataSource = ref([
-	{
-		key: '0',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'yes',
-	},
-	{
-		key: '1',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '2',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '3',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '4',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '5',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '6',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '7',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '8',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '9',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '10',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '11',
-		reason: 'Edward King 0',
-		phoneNumber: 32,
-		time: '12:00',
-		status: 'no',
-	},
+
 ]);
 const count = computed(() => dataSource.value.length + 1);
 const editableData = reactive({});
@@ -167,24 +84,26 @@ const save = key => {
 const onRefuse = async record => {
 	let key = record.key;
 	console.log("key", record);
-	dataSource.value = dataSource.value.filter(item => item.key !== key);
-	await reviewApply();
+	await reviewApply(record.application_id,false);
 };
 
 const onPass = async record => {
 	let key = record.key;
 	console.log("key", record);
-	dataSource.value = dataSource.value.filter(item => item.key !== key);
-	await reviewApply();
+	await reviewApply(record.application_id,true);
+	await getApply();
 };
 onMounted(async ()=>{
-	// await getApply();
+	await getApply();
 })
 async function reviewApply(id,pass){
-	const result = await AdminAPI.reviewPortalApply(id,pass);
+	 await AdminAPI.reviewPortalApply(id,pass);
+	 await getApply();
 }
 async function getApply(){
 	const result = await AdminAPI.getPortalApply();
+	dataSource.value = result.data.data;
+	console.log("result:",result.data);
 }
 </script>
 <style lang="less" scoped>

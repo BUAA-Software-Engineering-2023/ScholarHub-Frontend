@@ -3,8 +3,10 @@ import UserApi from "@/api/user.js";
 import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
 import {useGlobalStore} from "@/stores/global.js";
+import Avatar from "@/components/Account/Avatar.vue";
+import {useAccountStore} from "@/stores/account.js";
 
-const globalStore  = useGlobalStore();
+const globalStore  = useAccountStore();
 
 async function handleChange(){
     const result = await UserApi.update_info(formState.nickname);
@@ -21,17 +23,9 @@ async function handleChange(){
       });
     }
 }
-
+const avatar = ref(globalStore.userInfo.avatar);
 onMounted( async () => {
-  const result =  await UserApi.get_info();
-  globalStore.setUserInfo(result.data.data);
-  console.log(globalStore.userInfo);
-  if (!result.data.success){
-    let promise = Swal.fire({
-      icon: 'error',
-      title:'服务器错误'
-    });
-  }
+  console.log(globalStore.userInfo)
 });
 const onFinish = values => {
   console.log('Success:', values);
@@ -54,6 +48,7 @@ const formItemLayout = computed(() => {
 const buttonItemLayout = computed(() => {
   return {};
 });
+
 </script>
 
 <template>
@@ -63,7 +58,9 @@ const buttonItemLayout = computed(() => {
     </div>
     <div class="content">
       <div class="header">
-        <div class="avatar"><img class="avatar" src="@/assets/icons/default_avatar.png" alt="user_avatar"></div>
+        <div class="avatar">
+          <Avatar :initial-avatar="avatar"></Avatar>
+        </div>
         <div class="header-content">{{globalStore.userInfo.nickname}}</div>
       </div>
       <div class="information">

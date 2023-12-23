@@ -8,7 +8,7 @@ const state = () => {
     return {
         code: '',
         token: getToken(),
-        userInfo: {},
+        userInfo: useLocalStorage("userInfo", {}, localStorage),
         favorites:useLocalStorage("favorites",[]),
         unreadMessage: false,
     }
@@ -16,6 +16,12 @@ const state = () => {
 const actions = {
     setFavorite(favorite){
       this.favorites = favorite;
+    },
+    setInfo(info){
+      this.userInfo = info;
+    },
+    setAvatar(url){
+        this.userInfo.avatar = url;
     },
     async loginWithCode(phone_number, code) {
         const result = await accountAPI.loginWithCode(phone_number, code);
@@ -65,51 +71,10 @@ const actions = {
 
     },
     logout() {
-        this.token = undefined;
+        this.token = '';
         this.userInfo = {};
         clearToken();
     },
-    // async getUserInfo() {
-    //     let result = await accountAPI.requestUserInfo();
-    //     if (result.result === '1') {
-    //         this.userInfo = result.data;
-    //     } else {
-    //         return Promise.reject(result.message);
-    //     }
-    //     result = await accountAPI.requestUnread();
-    //     if (result.result === '1') {
-    //         this.unreadMessage = result.unread;
-    //     } else {
-    //         return Promise.reject(result.message);
-    //     }
-    // },
-    // async updatePassword(old_password, new_password) {
-    //     const result = await accountAPI.updatePassword(old_password, new_password);
-    //     if (result.response.status === 200) {
-    //         return '修改成功'
-    //     } else {
-    //         return Promise.reject(result.message);
-    //     }
-    // },
-    // async resetPassword(phone_number, vertification_code, new_password) {
-    //     const result = await accountAPI.resetPassword(phone_number, vertification_code, new_password);
-    //     if (result.response.status === 200) {
-    //         return '修改成功'
-    //     } else {
-    //         return Promise.reject(result.message);
-    //     }
-    // },
-    // async updatePhone(new_phone_number, vertification_code) {
-    //     const result = await accountAPI.updatePhone(new_phone_number, vertification_code);
-    //     if (result.response.status === 200) {
-    //         this.token = result.token;
-    //         clearToken();
-    //         setToken(result.token);
-    //         return '修改成功'
-    //     } else {
-    //         return Promise.reject(result.message);
-    //     }
-    // },
 }
 
 export const useAccountStore = defineStore("account", {

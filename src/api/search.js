@@ -145,7 +145,7 @@ export default {
             showLoading:true,
         })
     },
-    searchExpert(search,){
+    searchExpert(search){
         return requests({
             url:"/author/search",
             method: 'POST',
