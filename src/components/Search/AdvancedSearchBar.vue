@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {defineEmits, ref} from 'vue';
 import SearchFrame from "@/components/Search/SearchFrame.vue";
 import SearchHistory from "@/components/Search/SearchHistory.vue";
 import SearchHint from "@/components/Search/SearchHint.vue";
@@ -28,16 +28,34 @@ import router from "@/router/index.js";
 import Swal from "sweetalert2";
 import AdvancedSearchFrame from "@/components/Search/AdvancedSearchFrame.vue";
 import AdvancedSearchHint from "@/components/Search/AdvancedSearchHint.vue";
+import {useRouter} from "vue-router";
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
+
+
+const ifSearch = ref();
+defineExpose({ifSearch})
+const emit = defineEmits(["getInput"])
+
 async function handleSearch(InputValue){
   searchValue.value = InputValue;
+  console.log("input:"+searchValue.value)
+
   if (InputValue)
   {
+    ifSearch.value = InputValue;
+    emit('getInput', ifSearch.value);
+    console.log("!!!!!");
     const result = await Search.search(InputValue);
     searchStore.addHistory(InputValue);
     searchStore.setSearchInput(InputValue)
+    await router.push({
+      path:"/search/article/",
+      query:{
+        content:InputValue
+      }
+    });
   }
 }
 const handleClear = () => {
