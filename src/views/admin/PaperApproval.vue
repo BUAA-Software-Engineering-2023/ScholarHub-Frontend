@@ -1,3 +1,4 @@
+
 <template>
 	<a-table bordered :data-source="dataSource" :columns="columns">
 		<template #bodyCell="{ column, text, record }">

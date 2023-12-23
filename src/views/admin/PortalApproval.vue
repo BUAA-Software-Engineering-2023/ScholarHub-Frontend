@@ -48,13 +48,27 @@ import { cloneDeep } from 'lodash-es';
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons-vue";
 const columns = [
 	{
+		title: '申请人',
+		dataIndex: 'user_nickname',
+		width: '10%',
+	},
+	{
+		title: '申领门户',
+		dataIndex: 'author_name',
+		width: '10%',
+	},
+	{
 		title: '原因',
 		dataIndex: 'reason',
-		width: '30%',
+		width: '25%',
 	},
 	{
 		title: '电话号码',
 		dataIndex: 'phone_number',
+	},
+	{
+		title: '邮箱',
+		dataIndex: 'user_email',
 	},
 	{
 		title: '申请状态',
@@ -67,6 +81,7 @@ const columns = [
 	{
 		title: '操作',
 		dataIndex: 'operation',
+		width: '12%',
 	},
 ];
 const dataSource = ref([
