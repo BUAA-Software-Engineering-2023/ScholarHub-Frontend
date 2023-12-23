@@ -104,14 +104,32 @@
 			        </div>
 		        </a-layout-sider>
 		        <a-layout-content :style="contentStyle" v-if="update">
-				        <a-menu :default-active="activeIndex" :items="ExpertSortitems" class="result-item_1" mode="horizontal" @click="ExSortClick">
-					        <a-menu-item index="1" icon="DownOutlined">姓名</a-menu-item>
-					        <a-menu-item index="2">引用量</a-menu-item>
-					        <a-menu-item index="3">论文数量</a-menu-item>
-				        </a-menu>
+			        <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
+					        <el-menu-item index="1" class="parent-container" @click="switchExpertOrder(1)">
+						        <span class="left-span">姓名</span>
+						        <div class="right-icons">
+							        <CaretUpOutlined v-show="Exarrow1 % 3 === 1" class="control-icon"/>
+							        <CaretDownOutlined v-show="Exarrow1 % 3 === 2" class="control-icon"/>
+						        </div>
+					        </el-menu-item>
+					        <el-menu-item index="2" class="parent-container" @click="switchExpertOrder(2)">
+						        <span class="left-span">引用量</span>
+						        <div class="right-icons">
+							        <CaretUpOutlined v-show="Exarrow2 % 3 === 1" class="control-icon"/>
+							        <CaretDownOutlined v-show="Exarrow2 % 3 === 2" class="control-icon"/>
+						        </div>
+					        </el-menu-item>
+					        <el-menu-item index="3" class="parent-container" @click="switchExpertOrder(3)">
+						        <span class="left-span">论文数量</span>
+						        <div class="right-icons">
+							        <CaretUpOutlined v-show="Exarrow3 % 3 === 1" class="control-icon"/>
+							        <CaretDownOutlined v-show="Exarrow3 % 3 === 2" class="control-icon"/>
+						        </div>
+					        </el-menu-item>
+				        </el-menu>
 			        <li class = "ExpertRes" v-for="item in expertListPerPage" v-bind:key="item.id">
 				        <a-card hoverable style="width: 80%;">
-					        <ExpertCard :paper="item"/>
+					        <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
 				        </a-card>
 				    </li>
 			        <a-pagination
@@ -197,6 +215,10 @@ const arrow1 = ref(0)
 const arrow2 = ref(0)
 const arrow3 = ref(0)
 const arrow4 = ref(0)
+const Exarrow1 = ref(0)
+const Exarrow2 = ref(0)
+const Exarrow3 = ref(0)
+
 // const arrow5 = ref(0)
 const activeIndex = ref("1")
 async function switchOrder(sortType){
@@ -249,6 +271,48 @@ async function switchOrder(sortType){
   //   }
   // }
   await searchWithSort(sortType, order);
+}
+
+function jumpToExDetail(info){
+	console.log("jump");
+	console.log(info.id);
+	let url = info.id;
+	let parts = url.split('/'); // 使用斜杠分割字符串
+	let lastPart = parts[parts.length - 1]; // 获取数组中的最后一个元素
+	router.push("/client/author/"+lastPart);
+}
+
+async function switchExpertOrder(sortType){
+	let order = "";
+	if(sortType === 1){
+		Exarrow1.value ++;
+		if(Exarrow1.value % 3 === 1){//上
+			order = "asc";
+		}else if(Exarrow1.value % 3 === 2){//下
+			order = "desc";
+		}else if(Exarrow1.value % 3 === 3){
+			order = "";
+		}
+	}else if(sortType === 2){
+		Exarrow2.value ++;
+		if(Exarrow2.value % 3 === 1){//上
+			order = "asc";
+		}else if(Exarrow2.value % 3 === 2){//下
+			order = "desc";
+		}else if(Exarrow2.value % 3 === 0){
+			order = "";
+		}
+	}else if(sortType === 3){
+		Exarrow3.value ++;
+		if(Exarrow3.value % 3 === 1){//上
+			order = "asc";
+		}else if(Exarrow3.value % 3 === 2){//下
+			order = "desc";
+		}else if(Exarrow3.value % 3 === 0){
+			order = "";
+		}
+	}
+	await searchExpertWithSort(sortType, order);
 }
 async function searchWithSort(sortType, order){
   if(sortType === 1){
@@ -324,6 +388,56 @@ async function searchWithSort(sortType, order){
   }
 
 
+}
+
+async function searchExpertWithSort(sortType, order){
+	if(sortType === 1){
+		let sort = {"display_name": "asc"}
+		if(order === ""){
+			const result = await SearchAPI.searchExpert(searchContent.value)
+			console.log("sortResult:",result);
+			console.log("res",result.data);
+			expertList.value = result.data.data.result;
+		}else{
+			sort.display_name = order;
+			const result = await SearchAPI.searchExpertSorted(searchContent.value, sort)
+			console.log("sortResult:",result);
+			console.log("res",result.data);
+			expertList.value = result.data.data.result;
+		}
+		
+	}else if(sortType === 2){
+		let sort = {"cited_by_count": "asc"}
+		if(order === ""){
+			const result = await SearchAPI.searchExpert(searchContent.value)
+			console.log("sortResult:",result);
+			console.log("res",result.data);
+			expertList.value = result.data.data.result;
+		}else{
+			sort.cited_by_count = order;
+			const result = await SearchAPI.searchExpertSorted(searchContent.value, sort)
+			console.log("sortResult:",result);
+			console.log("res",result.data.data.result);
+			expertList.value = result.data.data.result;
+		}
+	}else if(sortType === 3){
+		let sort = {"works_count": "asc"}
+		if(order === ""){
+			const result = await SearchAPI.searchExpert(searchContent.value)
+			console.log("works_count:",result);
+			console.log("res",result.data.data.result);
+			expertList.value = result.data.data.result;
+		}else{
+			sort.works_count = order;
+			const result = await SearchAPI.searchExpertSorted(searchContent.value, sort)
+			console.log("works_count:",result);
+			console.log("res",result.data);
+			expertList.value = result.data.data.result;
+		}
+	}
+	setExpertFilterContent();
+	initExpertPage();
+	
 }
 
 const handleClickArticle = async menuInfo => {

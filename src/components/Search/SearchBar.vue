@@ -32,7 +32,7 @@ import {getToken} from "@/utils/token.js";
 import Swal from "sweetalert2";
 import {useRouter} from "vue-router"
 import {defineEmits} from 'vue'
-import emitter from '@/utils/bus.js';
+// import emitter from '@/utils/bus.js';
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
