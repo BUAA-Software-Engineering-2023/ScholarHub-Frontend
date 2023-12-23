@@ -32,8 +32,6 @@ import {getToken} from "@/utils/token.js";
 import Swal from "sweetalert2";
 import {useRouter} from "vue-router"
 import {defineEmits} from 'vue'
-// import emitter from '@/utils/bus.js';
-
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
 const router = useRouter();
@@ -51,9 +49,7 @@ async function handleSearch(InputValue){
     // const result = await Search.search(InputValue);
     ifSearch.value = InputValue;
     emit('getInput', ifSearch.value);
-    console.log("!!!!!");
     searchStore.addHistory(InputValue);
-    searchStore.setSearchInput(InputValue);
     await router.push({
       path:"/search/article/",
       query:{

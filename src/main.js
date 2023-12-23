@@ -11,6 +11,9 @@ import 'element-plus/theme-chalk/el-loading.css'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import * as Icons from '@ant-design/icons-vue'
+import UndrawUi from 'undraw-ui'
+import 'undraw-ui/dist/style.css'
+
 const app = createApp(App)
 // 注册 AntDesignIcon
 for (const [key,component] of Object.entries(Icons)){
@@ -24,5 +27,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     }
 }
 
-app.use(createPinia()).use(router).use(I18n).use(ElementPlus).use(Antd).mount('#app')
+app.use(createPinia()).use(router).use(I18n).use(ElementPlus).use(Antd).use(UndrawUi).mount('#app')
 

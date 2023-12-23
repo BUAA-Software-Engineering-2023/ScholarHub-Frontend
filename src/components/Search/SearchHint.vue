@@ -5,8 +5,8 @@
         :key="item"
         class="history-item"
         @click="selectItem(item)"
+        v-html="item"
     >
-      <span>{{ item }}</span>
     </div>
   </div>
 </template>
