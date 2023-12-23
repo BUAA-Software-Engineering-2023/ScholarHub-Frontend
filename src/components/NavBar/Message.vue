@@ -11,11 +11,12 @@
       </a>
     </div>
     <div v-for="message in messages" :key="message.message_id">
-      <div  class="message" @click="showDetails(message)">
+      <div  class="message" @click.prevent="showDetails(message)">
         <img class="user-avatar" src="@/assets/icons/default_avatar.png" alt="User Avatar" />
         <div class="message-content">
-          <div class="message-sender"> <span>{{ message.receiver_username }}</span> <div class="send_time">10-1</div></div>
-          <div class="message-text">{{ message.content }}</div>
+          <div class="message-sender"> <span>{{ message.receiver_username }}</span> <div class="send_time">{{message.created_at}}</div></div>
+          <div class="message-text">{{ message.content }} <DeleteOutlined @click="deleteMessage(message)"/> </div>
+	        
         </div>
         <span class="unread-badge" v-if="!message.is_read"></span>
       </div>
@@ -27,28 +28,33 @@
 <script lang="js" setup>
 import Message from "@/assets/icons/Message.vue";
 import MessageAPI from "@/api/message.js"
+import { DeleteOutlined } from '@ant-design/icons-vue';
 const visible = ref(false)
 const messages = ref([
-  { message_id: 1, receiver: 1001, receiver_username: "John Doe", content: "消息内容1sadasdsdasdsadasdsadasdsas", is_read: false },
-  { message_id: 2, receiver: 1002, receiver_username: "Jane Doe", content: "消息内容2", is_read: true },
-  // ... 添加更多消息数据 ...
 ])
 const showDetails = async (message)=>{
     message.is_read = true;
     await MessageAPI.read_message(message.message_id);
+	await getMessages();
+}
+const getMessages = async ()=>{
+	const result = await MessageAPI.get_messages();
+	console.log("messages:",result.data.data);
+	messages.value = result.data.data;
 }
 const showSidebar = async ()=>{
-    // const result = await MessageAPI.get_messages();
-    // messages.value = result.data.data
     visible.value = true;
+	await getMessages();
 }
 const readAllMessages = async ()=>{
-  await MessageAPI.read_all_messages();
-  let message;
-  for (message in messages.value){
-    messages.value[message].is_read = true;
-  }
+    await MessageAPI.read_all_messages();
+	await getMessages();
 }
+const deleteMessage = async (message)=>{
+	await MessageAPI.delete_messages(message.message_id);
+	await getMessages();
+}
+
 </script>
 
 <style scoped>

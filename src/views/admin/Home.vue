@@ -26,7 +26,7 @@
 import { ref } from 'vue';
 import PortalApproval from '@/views/admin/PortalApproval.vue';
 import PaperApproval from '@/views/admin/PaperApproval.vue';
-import NavBar from "@/views/search/NavBar/NavBar.vue";
+import NavBar from "@/components/NavBar/NavBar.vue";
 const selectedKeys = ref(['1']);
 </script>
 <style scoped>
