@@ -84,15 +84,15 @@ export default {
             }
         })
     },
-    upload_paper(work_id,file) {
+    upload_paper(id,file) {
         const formData = new FormData();
         formData.append('file', file); // 'file' 是后端接收文件的字段名
         return requests({
             url: '/work/upload',
             method: 'POST',
             data: {
-                work_id,
-                formData
+                id,
+                file
             },
             headers: {
                 'Content-Type': 'multipart/form-data',

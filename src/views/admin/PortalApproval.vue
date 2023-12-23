@@ -1,17 +1,9 @@
 <template>
 	<a-table bordered :data-source="dataSource" :columns="columns">
 		<template #bodyCell="{ column, text, record }">
-			<template v-if="column.dataIndex === 'name'">
-				<div class="editable-cell">
-					<div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-						<a-input v-model:value="editableData[record.key].name" @pressEnter="save(record.key)" />
-						<check-outlined class="editable-cell-icon-check" @click="save(record.key)" />
-					</div>
-					<div v-else class="editable-cell-text-wrapper">
-						{{ text || ' ' }}
-						<edit-outlined class="editable-cell-icon" @click="edit(record.key)" />
-					</div>
-				</div>
+			<template v-if="column.dataIndex === 'author_name'">
+<!--				<a href="javascript:" @click="jumpAuthor(record)" >{{ text }}</a>-->
+				<router-link tag="a" target="_blank" :to="/client\author/+record.author_id">{{ text }}</router-link>
 			</template>
 			<template v-else-if="column.dataIndex === 'operation'">
 				<a-popconfirm
@@ -38,6 +30,7 @@
 					</a-button>
 				</a-popconfirm>
 			</template>
+
 		</template>
 	</a-table>
 </template>
@@ -103,7 +96,6 @@ const onRefuse = async record => {
 };
 
 const onPass = async record => {
-	let key = record.key;
 	console.log("key", record);
 	await reviewApply(record.application_id,true);
 	await getApply();
@@ -119,6 +111,9 @@ async function getApply(){
 	const result = await AdminAPI.getPortalApply();
 	dataSource.value = result.data.data;
 	console.log("result:",result.data);
+}
+function jumpAuthor(record){
+	console.log(record.author_id)
 }
 </script>
 <style lang="less" scoped>
