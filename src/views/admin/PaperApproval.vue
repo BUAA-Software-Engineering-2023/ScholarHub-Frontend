@@ -1,17 +1,9 @@
+
 <template>
 	<a-table bordered :data-source="dataSource" :columns="columns">
 		<template #bodyCell="{ column, text, record }">
 			<template v-if="column.dataIndex === 'name'">
-				<div class="editable-cell">
-					<div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-						<a-input v-model:value="editableData[record.key].name" @pressEnter="save(record.key)" />
-						<check-outlined class="editable-cell-icon-check" @click="save(record.key)" />
-					</div>
-					<div v-else class="editable-cell-text-wrapper">
-						{{ text || ' ' }}
-						<edit-outlined class="editable-cell-icon" @click="edit(record.key)" />
-					</div>
-				</div>
+				<router-link tag="a" target="_blank" :to="/client\paper/+record.paper_id">{{ text }}</router-link>
 			</template>
 			<template v-else-if="column.dataIndex === 'operation'">
 				<a-popconfirm
@@ -19,7 +11,7 @@
 					title="确定要通过?"
 					@confirm="onPass(record)"
 				>
-					<a-button type="primary" :size="size" v-if="record.status === 'no'">
+					<a-button type="primary" :size="size" v-if="record.status === '待审核'">
 						<template #icon>
 							<CheckOutlined />
 						</template>
@@ -31,7 +23,7 @@
 					@confirm="onRefuse(record)"
 					class="rightButton"
 				>
-					<a-button type="primary" :size="size" v-if="record.status === 'no'" danger>
+					<a-button type="primary" :size="size" v-if="record.status === '待审核'" danger>
 						<template #icon>
 							<CloseOutlined />
 						</template>
@@ -48,9 +40,8 @@ import AdminAPI from '@/api/admin.js'
 import { cloneDeep } from 'lodash-es';
 const columns = [
 	{
-		title: '标题',
-		dataIndex: 'title',
-		width: '30%',
+		title: '论文名称',
+		dataIndex: 'name',
 	},
 	{
 		title: '全文链接',
@@ -61,99 +52,13 @@ const columns = [
 		dataIndex: 'status',
 	},
 	{
-		title: '申请时间',
-		dataIndex: 'time',
-	},
-	{
 		title: '操作',
 		dataIndex: 'operation',
+		width: '15%',
 	},
 ];
+
 const dataSource = ref([
-	{
-		key: '0',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'yes',
-	},
-	{
-		key: '1',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '2',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '3',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '4',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '5',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '6',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '7',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '8',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '9',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '10',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
-	{
-		key: '11',
-		title: 'Edward King 0',
-		url: 32,
-		time: '12:00',
-		status: 'no',
-	},
 ]);
 const count = computed(() => dataSource.value.length + 1);
 const editableData = reactive({});
@@ -165,26 +70,25 @@ const save = key => {
 	delete editableData[key];
 };
 const onRefuse = async record => {
-	let key = record.key;
 	console.log("key", record);
-	dataSource.value = dataSource.value.filter(item => item.key !== key);
-	await reviewApply();
+	await reviewApply(record.id,false);
 };
 
 const onPass = async record => {
-	let key = record.key;
 	console.log("key", record);
-	dataSource.value = dataSource.value.filter(item => item.key !== key);
-	await reviewApply();
+	await reviewApply(record.id,true);
 };
 onMounted(async ()=>{
-	// await getApply();
+	await getApply();
 })
 async function reviewApply(id,pass){
 	const result = await AdminAPI.reviewPaperApply(id,pass);
+	dataSource.value = result.data.data;
 }
 async function getApply(){
 	const result = await AdminAPI.getSystemPaper();
+	dataSource.value = result.data.data;
+	console.log("res",result);
 }
 </script>
 <style lang="less" scoped>
