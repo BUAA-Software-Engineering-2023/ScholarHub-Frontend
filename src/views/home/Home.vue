@@ -21,7 +21,7 @@
         <div  @click="jump_to_article(recommendation.id)"> <span class="recommendation-title">{{ recommendation.display_name }}</span> </div>
         <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
           <div class="recommendation-details">
-            <div   @mouseover="showAuthorInfo(author.author)"
+            <div   @mouseover="showAuthorInfo(author.author,recommendation.id)"
                    @mouseleave="hideAuthorInfo"
                    class="author_container"
             ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
@@ -29,13 +29,13 @@
             </div>
           </div>
           <transition  name="slide">
-            <div v-if="authorInfo && authorInfo.id === author.author.id" class="author-info">
+            <div v-if="authorInfo && authorInfo.id === author.author.id && recommendation.id===selectedRecommendation" class="author-info">
               <img src="@/assets/imgs/default.jpg" alt="Author Avatar">
               <div class="author-details">
                 <div class="author-name">{{ authorInfo.display_name }}</div>
-                <div class="author-stats">
-                  引用量: {{ authorInfo.citations }}&nbsp; | &nbsp; 论文数: {{ authorInfo.paper_count }}
-                </div>
+<!--                <div class="author-stats">-->
+<!--                  引用量: {{ authorInfo.citations }}&nbsp; | &nbsp; 论文数: {{ authorInfo.paper_count }}-->
+<!--                </div>-->
                 <div class="author-title">
                   贡献： {{
                     author.author_position === 'first' ? '第一作者' :
@@ -73,17 +73,18 @@ const recommendations = ref([])
 const showSearch = ref(false); // 根据你的需求将其设置为 true 或 false
 const authorInfo = ref(null);
 const userName = ref('')
+const selectedRecommendation = ref('')
 onMounted( async () => {
   window.addEventListener('scroll', handleScroll);
   const result =  await HomeAPI.get_recommendation();
-  console.log(result)
   userName.value = getName();
     // 在异步操作成功时处理数据
   recommendations.value = result.data.data
   console.log(recommendations.value)
 });
-function showAuthorInfo(author) {
+function showAuthorInfo(author,recommendation) {
   authorInfo.value = author;
+  selectedRecommendation.value = recommendation
 }
 
 function hideAuthorInfo() {
@@ -94,10 +95,8 @@ function handleScroll() {
   showSearch.value = window.scrollY > threshold;
 }
 function jump_to_article(id){
-  console.log(id)
   const parts = id.split('/');
   const paperId = parts[parts.length - 1]; // 获取最后一个部分
-  console.log(`/client/paper/${paperId}`)
   router.push(`/client/paper/${paperId}`)
 }
 </script>

@@ -36,7 +36,7 @@ const config = reactive<ConfigApi>({
   user: {
     id: user.value.userInfo.id,
     username: user.value.userInfo.nickname,
-    avatar: user.value.avatar,
+    avatar: user.value.userInfo.avatar,
     // 评论id数组 建议:存储方式用户uid和评论id组成关系,根据用户uid来获取对应点赞评论id,然后加入到数组中返回
     likeIds: [1, 2, 3]
   },
