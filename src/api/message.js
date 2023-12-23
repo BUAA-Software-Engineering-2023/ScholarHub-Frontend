@@ -18,5 +18,12 @@ export default {
             url:"/message",
             method:"PUT",
         })
-    }
+    },
+    delete_messages(message_id){
+        return requests({
+            url:"/message",
+            method:"DELETE",
+            data:{message_id}
+        })
+    },
 }
