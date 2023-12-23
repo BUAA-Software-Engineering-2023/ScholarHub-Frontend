@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 //  按需引入 echarts
 import * as echarts from "echarts";
-const props = defineProps(["series","years"]);
+const props = defineProps(["cooperations","coauthors"]);
 const main = ref() // 使用ref创建虚拟DOM引用，使用时用main.value
 onMounted(
     async () => {
@@ -25,7 +25,7 @@ function init() {
       }
     },
     legend: {
-      data: ["发文量", '引用频次']
+      data: ["合作次数"]
     },
     toolbox: {
       feature: {
@@ -37,12 +37,17 @@ function init() {
       bottom: '3%',
       containLabel: true
     },
+
     xAxis: [
       {
         type: 'category',
-        boundaryGap: false,
-        data: props.years,
+        boundaryGap: true, // 尝试设置为 true
+        data: props.coauthors,
         minInterval: 1,
+        axisLabel: {
+          rotate: 45, // 标签倾斜角度
+          interval: 0, // 显示所有标签
+        }
       }
     ],
     yAxis: [
@@ -51,7 +56,7 @@ function init() {
         minInterval: 1,
       }
     ],
-    series: props.series
+    series: props.cooperations
   };
 
   // 使用刚指定的配置项和数据显示图表。
@@ -61,8 +66,8 @@ function init() {
 
 <template>
   <div class="TrendBox">
-    <div class="line"></div><div class="title">研究趋势</div>
-    <div ref="main" style="width: 350px; height: 350px;"></div>
+  <div class="line"></div><div class="title">合作学者</div>
+  <div ref="main" style="width: 350px; height: 330px;"></div>
   </div>
 </template>
 
@@ -86,11 +91,10 @@ function init() {
 }
 
 .TrendBox {
-  margin: 10px 10px 10px 10px;
+  margin: 30px 10px 10px 10px;
   background-color: white;
   border-radius: 5px;
   padding: 20px;
   position: relative; /* 为伪元素定位 */
 }
 </style>
-
