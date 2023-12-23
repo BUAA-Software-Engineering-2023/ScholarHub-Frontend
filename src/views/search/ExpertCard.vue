@@ -14,8 +14,8 @@
 <!--						<a-typography-text keyboard> <LinkOutlined />   引用数:{{item.cited_by_count}}</a-typography-text>-->
 <!--						<a-typography-text keyboard><ReadOutlined />    论文数:{{item.works_count}}</a-typography-text>-->
 						<code class="tagcolor">H-index:{{item.summary_stats.h_index}}</code>
-						<code class="tagcolor"><LinkOutlined />   引用数:{{item.cited_by_count}}</code>
-						<code class="tagcolor"><ReadOutlined /> 论文数:{{item.works_count}}</code>
+						<code class="tagcolor">引用数:{{item.cited_by_count}}</code>
+						<code class="tagcolor">论文数:{{item.works_count}}</code>
 					</a-space>
 					<a-space direction="horizontal">
 					<a-typography-text v-if="item.last_known_institution!=null">研究领域:</a-typography-text>
@@ -61,6 +61,7 @@ item.value = props.paper
 }
 .avatar{
 	margin-right: 20px;
-
 }
+
+
 </style>
