@@ -11,14 +11,23 @@ export default {
             }
         })
     },
-    send_comments(work_id,content,reply_id){
+    send_comments(work_id,content,reply_id) {
         return requests({
             url: '/comment/create',
             method: 'POST',
-            data:{
+            data: {
                 work_id,
                 content,
                 reply_id
+            }
+        })
+    },
+    delete_comments(comment_id){
+        return requests({
+            url: '/comment/delete',
+            method: 'DELETE',
+            data:{
+                comment_id
             }
         })
     }
