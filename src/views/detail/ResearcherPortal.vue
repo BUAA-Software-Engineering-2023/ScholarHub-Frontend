@@ -153,7 +153,6 @@
                               <template #title>
                                 <a :href="item.href">{{ item.title }}</a>
                               </template>
-                              <template #avatar><a-avatar :src="item.avatar" /></template>
                             </a-list-item-meta>
                             {{ item.content }}
                           </a-list-item>
@@ -408,7 +407,8 @@ const headerStyle = {
   width: '72%',
   backgroundColor: '#fff',
   borderRadius: '10px',
-  minWidth: '900px'
+  minWidth: '900px',
+  boxShadow:  '0 0 5px 0 hsla(0,0%,68.2%,.3)'
 };
 const contentStyle = {
   textAlign: 'center',
