@@ -13,6 +13,7 @@ import CitedByYear from "@/components/visual/CitedByYear.vue";
 import CommentsAPI from "@/api/comments.js"
 import {dayjs} from "undraw-ui";
 import UploadPaper from "@/views/paper/UploadPaper.vue";
+import router from "@/router/index.js";
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
@@ -27,6 +28,7 @@ const Mounted = ref(false);
 const comments = ref([])
 const series = ref([])
 const is_oa = ref(false)
+
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
   const response = result.data.data
@@ -161,6 +163,11 @@ onMounted(async () => {
 function showAuthorInfo(author) {
   authorInfo.value = author;
 }
+function  jump_to_author(id){
+  const parts = id.split('/');
+  const authorId = parts[parts.length - 1]; // 获取最后一个部分
+  router.push(`/client/author/${authorId}`)
+}
 const isFavorite = ref(false); // 是否已经收藏，可以根据实际逻辑进行设置
 
 function toggleFavorite() {
@@ -195,14 +202,12 @@ function showFavoriteList(){
 const options = ref([]);
 const value = ref();
 const handleChange = async value => {
-  console.log(value); // { key: "lucy", label: "Lucy (101)" }
   const url = value.value // 下载文件的url
-  console.log(url.value)
   const link = document.createElement('a') ;
   link.href = url;
   link.target="_blank"
   link.click()
-  // window.URL.revokeObjectURL(url)
+  value.value = '';
 };
 async function add_favorite(foldId,paperId){
   // message.success('收藏成功！', 10);
@@ -224,6 +229,7 @@ async function add_favorite(foldId,paperId){
               <div   @mouseover="showAuthorInfo(author.author)"
                      @mouseleave="hideAuthorInfo"
                      class="author_container"
+                     @click="jump_to_author(author.author.id)"
               ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
                 <span v-if="index1 !== paper.authorships.length - 1">，</span>
               </div>
@@ -313,7 +319,7 @@ async function add_favorite(foldId,paperId){
                   placeholder="原文链接"
                   style="width: 120px;box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;margin: 5px;border-radius: 5px"
                   :options="options"
-                  @change="handleChange"
+                  @select="handleChange"
               ></a-select>
             </div>
             <button @mouseover="showFavoriteList" class="favorite-button" >
@@ -721,7 +727,6 @@ async function add_favorite(foldId,paperId){
   text-align: left;
   color: #363c50 !important;
   box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
-  text-align: left;
   width: 100%;
   overflow-y: scroll;
 }
@@ -743,4 +748,7 @@ async function add_favorite(foldId,paperId){
 .concepts-text{
   display: flex;
  }
+.paper-link{
+
+}
 </style>
