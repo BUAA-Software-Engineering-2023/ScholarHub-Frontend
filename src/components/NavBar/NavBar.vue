@@ -45,6 +45,7 @@
                         <a  @click="goto" class="profile-link">学术主页</a>
                         <a  @click="gotoCollection" class="profile-link">我的收藏</a>
                         <a  @click="gotoInfo" class="profile-link">个人信息</a>
+                        <a  v-if="isAdmin" @click="gotoAdmin" class="profile-link">管理端</a>
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links" @click.prevent="logout">
@@ -76,6 +77,8 @@ import {clearToken, getName} from "@/utils/token.js";
 import Notification from "@/components/NavBar/Message.vue";
   import Message from "@/components/NavBar/Message.vue";
   const searchStore = useSearchStore();
+  const globalStore = useAccountStore();
+  const isAdmin = globalStore.userInfo.is_admin
   const showProfile = ref(false)
   const props = defineProps(["showSearch"])
   const name = getName();
@@ -92,6 +95,9 @@ import Notification from "@/components/NavBar/Message.vue";
   }
   function gotoInfo(){
     router.push('/client/user/information')
+  }
+  function  gotoAdmin(){
+    router.push('/test')
   }
 
   function logout(){
