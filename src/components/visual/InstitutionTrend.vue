@@ -37,21 +37,19 @@ function init() {
       bottom: '3%',
       containLabel: true
     },
-    xAxis: [
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
       {
-        type: 'category',
-        boundaryGap: false,
-        data: props.years,
-        minInterval: 1,
+        data: [150, 230, 224, 218, 135, 147, 260],
+        type: 'line'
       }
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        minInterval: 1,
-      }
-    ],
-    series: props.series
+    ]
   };
 
   // 使用刚指定的配置项和数据显示图表。
@@ -62,7 +60,7 @@ function init() {
 <template>
   <div class="TrendBox">
     <div class="line"></div><div class="title">研究趋势</div>
-    <div ref="main" style="width: 350px; height: 350px;"></div>
+    <div ref="main" style="width: 350px; height: 200px;"></div>
   </div>
 </template>
 
