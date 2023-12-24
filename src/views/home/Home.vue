@@ -24,6 +24,7 @@
             <div   @mouseover="showAuthorInfo(author.author,recommendation.id)"
                    @mouseleave="hideAuthorInfo"
                    class="author_container"
+                   @click="jump_to_author(author.author.id)"
             ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
               <span v-if="index1 !== recommendation.authorships.length - 1">，</span>
             </div>
@@ -98,6 +99,11 @@ function jump_to_article(id){
   const parts = id.split('/');
   const paperId = parts[parts.length - 1]; // 获取最后一个部分
   router.push(`/client/paper/${paperId}`)
+}
+function  jump_to_author(id){
+  const parts = id.split('/');
+  const authorId = parts[parts.length - 1]; // 获取最后一个部分
+  router.push(`/client/author/${authorId}`)
 }
 </script>
 <style lang="scss" scoped>
