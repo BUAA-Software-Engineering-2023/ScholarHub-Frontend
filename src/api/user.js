@@ -92,7 +92,7 @@ export default {
             method: 'POST',
             data: {
                 id,
-                file
+                file,
             },
             headers: {
                 'Content-Type': 'multipart/form-data',
