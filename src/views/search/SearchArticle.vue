@@ -185,9 +185,26 @@
 					        </el-menu-item>
 				        </el-menu>
 			        <li class = "ExpertRes" v-for="item in expertList" v-bind:key="item.id">
-				        <a-card hoverable style="width: 80%;">
-					        <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
-				        </a-card>
+                <div v-if="ifLoading===true">
+                  <a-card v-for="item in 9">
+                    <a-skeleton active/>
+                  </a-card>
+                </div>
+                <div v-else>
+                  <div v-if="expertList!=null && expertList.length !== 0">
+                    <li class="result-item" v-for="(item, index) in expertList" v-bind:key="item.id">
+                      <a-card hoverable style="width: 80%;">
+                        <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
+                      </a-card>
+                    </li>
+                  </div>
+                  <div v-else>
+                    <a-empty
+                        image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+                        :image-style="{height: '60px',}"
+                    />
+                  </div>
+                </div>
 				    </li>
 			        <a-pagination v-model:current="current" :total=totalExpertPage pageSize="25" :showSizeChanger="false" />
 		        </a-layout-content>
@@ -735,7 +752,7 @@ async function searchArticleWithAll(){
 }
 async function searchExpertWithAll(){
 	current.value = 1;
-	let res = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,current.value,ExFilter.value,ExSort.value);
+	let res = await SearchAPI.searchExpertWithAll(searchContent.value,current.value,ExFilter.value,ExSort.value);
 	console.log("hhhhhh",res.data.data);
 	console.log("filter",ExFilter.value);
 	console.log("sort",ExSort.value);
@@ -825,32 +842,34 @@ const ExFilterClick = async menuInfo => {
 	setExpertFilterContent();
 }
 async function getExperts(){
+  ifLoading.value = true;
 	current.value = 1;
 	let res = await searchExpertWithAll();
 	exResult.value = res;
 	expertList.value = exResult.value.data.data.result;
+  ifLoading.value = false;
 	totalExpert.value = exResult.value.data.data.total;
 	totalExpertPage.value = totalExpert.value/25;
 	console.log("total",exResult.value.data.data.total);
 	setExpertFilterContent();
 }
 async function getInstitution(){
-	let res = await SearchAPI.search_institution(searchRef.value.ifSearch);
+	let res = await SearchAPI.search_institution(searchContent.value);
 	institutionList.value = res.data.data.result;
 }
 async function getField(){
-	let res = await SearchAPI.search_concept(searchRef.value.ifSearch);
+	let res = await SearchAPI.search_concept(searchContent.value);
 	console.log("concept",res.data.data.result);
 	fieldList.value = res.data.data.result;
 }
 async function getExpertsWithPage(page){
-	let res = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,page,ExFilter.value,ExSort.value);
+	let res = await SearchAPI.searchExpertWithAll(searchContent.value,page,ExFilter.value,ExSort.value);
 	setExpertFilterContent();
 	exResult.value = res;
 	expertList.value = exResult.value.data.data.result;
 }
 async function getArticlesWithPage(page){
-  let res = await SearchAPI.searchArticleWithAll(searchRef.value.ifSearch,page,arFilter.value,arSort.value);
+  let res = await SearchAPI.searchArticleWithAll(searchContent.value,page,arFilter.value,arSort.value);
   setArticlesFilterContent();
   arResult.value = res;
   paperList.value = arResult.value.data.data.result;
@@ -862,7 +881,7 @@ function initArticlePage(){
 }
 async function getExpertsFiltered(Region){
 	current.value = 1;
-	exResult.value = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,current.value,ExFilter.value,ExSort.value);
+	exResult.value = await SearchAPI.searchExpertWithAll(searchContent.value,current.value,ExFilter.value,ExSort.value);
 	expertList.value = exResult.value.data.data.result;
 	setExpertFilterContent();
 }
@@ -1033,44 +1052,80 @@ onMounted(async ()=>{//初始渲染论文列表
   if(route.name === "SearchArticle"){
 	  console.log("art")
 	  activeKey.value = '1';
+	  ifLoading.value = true;
+	  console.log("route",route.query.content)
+	  currentArticle.value = 1;
+	  let res = await searchArticleWithAll();
+	  console.log("res-on",res);
+	  searchContent.value = route.query.content;
+	  arResult.value = res;
+	  paperList.value = arResult.value.data.data.result;
+	  console.log("paperList-mou",paperList.value);
+	  totalPaper.value = arResult.value.data.data.total;
+	  totalPaperPage.value = totalPaper.value/25;
+	  console.log("total",arResult.value.data.data.total);
+	  ifLoading.value = false;
+	  console.log("paperlist:", paperList.value);
+	  setArticlesFilterContent();
+	  console.log("art")
   }else if(route.name === "SearchExpert"){
+	  await getExperts();
 	  console.log("expert")
 	  activeKey.value = '2';
   }else if(route.name === "SearchInstitution"){
+	  await getInstitution();
 	  activeKey.value = '3';
   }else if(route.name === "SearchField"){
-		activeKey.value = '4';
+	  await getField();
+	  activeKey.value = '4';
   }
-  const result = await SearchAPI.search(route.query.content)
-  ifLoading.value = true;
-  console.log("route",route.query.content)
-  currentArticle.value = 1;
-  let res = await searchArticleWithAll();
-  console.log("res-on",res);
-  searchContent.value = route.query.content;
-  arResult.value = res;
-  paperList.value = arResult.value.data.data.result;
-  console.log("paperList-mou",paperList.value);
-  totalPaper.value = arResult.value.data.data.total;
-  totalPaperPage.value = totalPaper.value/25;
-  console.log("total",arResult.value.data.data.total);
-  ifLoading.value = false;
-  console.log("paperlist:", paperList.value);
-  setArticlesFilterContent();
+  // ifLoading.value = true;
+  // console.log("route",route.query.content)
+  // currentArticle.value = 1;
+  // let res = await searchArticleWithAll();
+  // console.log("res-on",res);
+  // searchContent.value = route.query.content;
+  // arResult.value = res;
+  // paperList.value = arResult.value.data.data.result;
+  // console.log("paperList-mou",paperList.value);
+  // totalPaper.value = arResult.value.data.data.total;
+  // totalPaperPage.value = totalPaper.value/25;
+  // console.log("total",arResult.value.data.data.total);
+  // ifLoading.value = false;
+  // console.log("paperlist:", paperList.value);
+  // setArticlesFilterContent();
   await getExperts();
   await getField();
   await getInstitution();
 })
 watch(route, async (newVal, oldVal) => {//监视输入框
 	if(route.name === "SearchArticle"){
+		ifLoading.value = true;
+		console.log("route",route.query.content)
+		currentArticle.value = 1;
+		let res = await searchArticleWithAll();
+		console.log("res-on",res);
+		searchContent.value = route.query.content;
+		arResult.value = res;
+		paperList.value = arResult.value.data.data.result;
+		console.log("paperList-mou",paperList.value);
+		totalPaper.value = arResult.value.data.data.total;
+		totalPaperPage.value = totalPaper.value/25;
+		console.log("total",arResult.value.data.data.total);
+		ifLoading.value = false;
+		console.log("paperlist:", paperList.value);
+		setArticlesFilterContent();
 		console.log("art")
 		activeKey.value = '1';
 	}else if(route.name === "SearchExpert"){
+		await getExperts();
 		console.log("expert")
 		activeKey.value = '2';
 	}else if(route.name === "SearchInstitution"){
+		await getInstitution();
 		activeKey.value = '3';
 	}else if(route.name === "SearchField"){
+		await getField();
 		activeKey.value = '4';
 	}
 })
