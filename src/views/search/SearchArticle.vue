@@ -3,9 +3,10 @@
     <NavBar/>
     <div class="nav_outer">
       <div class="search-bar">
-        <AdvancedSearchBar ref="searchRef" @getInput="getInput"/>
+        <AdvancedSearchBar :inputStr="searchContent" ref="searchRef" @getInput="getInput" @getAdv="getAdv"/>
       </div>
     </div>
+<!--      <a-skeleton active />-->
     <div class="paper-list-wrap">
       <a-tabs style="margin-left:10px" v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="论文">
@@ -73,17 +74,24 @@
                   </el-menu>
                 </div>
                 <ul class="search-result__list">
-                  <div v-if="paperList!=null && paperListPerPage.length !== 0">
-                    <li class="result-item" v-for="(item, index) in paperListPerPage" v-bind:key="item.id">
-                      <a-card hoverable @click="getFullPaper(item)">
-                        <ArticleCard :paper="item" :total="totalPaper"/>
-                      </a-card>
-                    </li>
+                  <div v-if="ifLoading===true">
+                    <a-card v-for="item in 9">
+                      <a-skeleton active/>
+                    </a-card>
                   </div>
                   <div v-else>
+                    <div v-if="paperList!=null && paperListPerPage.length !== 0">
+                      <li class="result-item" v-for="(item, index) in paperListPerPage" v-bind:key="item.id">
+                        <a-card hoverable @click="getFullPaper(item)">
+                          <ArticleCard :paper="item" :total="totalPaper"/>
+                        </a-card>
+                      </li>
+                    </div>
+                    <div v-else>
                     <span >
                       No results !
                     </span>
+                    </div>
                   </div>
                 </ul>
                 <a-pagination
@@ -234,10 +242,189 @@ const sortKey = ref(['1']);
 const searchContent = ref();
 const Efield = ref([]);
 const tranEfield = ref([]);
+const advDomains = ref([]);
+const getAdv = async (value) => {
+  advDomains.value = value;
+  console.log("outer", advDomains.value);
+  let count = 0;
+  if(advDomains.value !== 0){
+    count = advDomains.value.length;
+  }
+  let filter = {};
+  if(count !== 0) {
+    let tempArray = [];
+    let operator = advDomains.value[0].operator[0];
+    let type = advDomains.value[0].type[0];
+    let value = advDomains.value[0].value;
+    console.log('operator',operator);
+    console.log('type',type);
+    console.log('value',value);
+    if (type === '作者') {
+      filter['authorships.author.display_name'] = advDomains.value[0].value;
+    } else if (type === '机构') {
+      filter['authorships.institutions.display_name'] = advDomains.value[0].value;
+    } else if (type === '领域') {
+      filter['concepts.display_name'] = advDomains.value[0].value;
+    }
+    if (count === 1) {
+      console.log("filter",count,filter);
+      await getArticlesFiltered(filter);
+    } else if (count > 1) {
+      for(let i = 1 ; i < count ; i++){
+        const tempOp = advDomains.value[i].operator[i];
+        const tempTy = advDomains.value[i].type[i];
+        if(tempOp === '并且'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            let tempValue = filter[enTy];
+            console.log("tempValue",tempValue);
+            tempValue = tempValue+'+'+advDomains.value[i].value;
+            filter[enTy] = tempValue;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }else if(tempOp === '或者'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            if(!tempArray.includes(filter[enTy])){
+              tempArray.push(filter[enTy]);
+            }
+            console.log("tempArray",tempArray);
+            tempArray.push(advDomains.value[i].value);
+            filter[enTy] = tempArray;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }
+      }
+      console.log("filter",count,filter);
+      await getArticlesFiltered(filter);
+    }
+  }
+}
 const getInput = (value) => {//获取输入框的输入
   searchContent.value = value;
   console.log("searchContent:::",searchContent.value);
 }
+watch(advDomains, async ()=>{
+  console.log("outer",advDomains.value);
+  let count = 0;
+  if(advDomains.value !== 0){
+    count = advDomains.value.length;
+  }
+  let filter = {};
+  if(count !== 0) {
+    let tempArray = [];
+    let operator = advDomains.value[0].operator[0];
+    let type = advDomains.value[0].type[0];
+    let value = advDomains.value[0].value;
+    tempArray.push(value);
+    console.log('operator',operator);
+    console.log('type',type);
+    console.log('value',value);
+    if (type === '作者') {
+      filter['authorships.author.display_name'] = advDomains.value[0].value;
+    } else if (type === '机构') {
+      filter['authorships.institutions.display_name'] = advDomains.value[0].value;
+    } else if (type === '领域') {
+      filter['concepts.display_name'] = advDomains.value[0].value;
+    }
+    if (count === 1) {
+      console.log("filter",count,filter);
+      await getArticlesFiltered(filter);
+    } else if (count > 1) {
+      for(let i = 1 ; i < count ; i++){
+        const tempOp = advDomains.value[i].operator[i];
+        const tempTy = advDomains.value[i].type[i];
+        console.log("tempOp",tempOp);
+        if(tempOp === '并且'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            let tempValue = filter[enTy];
+            console.log("tempValue",tempValue);
+            tempValue = tempValue+'+'+advDomains.value[i].value;
+            filter[enTy] = tempValue;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }else if(tempOp === '或者'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            if(!tempArray.includes(filter[enTy])){
+              tempArray.push(filter[enTy]);
+            }
+            tempArray.push(advDomains.value[i].value);
+            filter[enTy] = tempArray;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }
+      }
+      console.log("filter",count,filter);
+      await getArticlesFiltered(filter);
+    }
+  }
+})
 async function getPapers(){//获取论文列表
   console.log("searchContent:"+searchContent.value)
   const result = await SearchAPI.search(searchContent.value)
@@ -602,7 +789,7 @@ function setArticlesFilterContent(){//设置论文过滤条件
   let ArticleInstitution = [];
   let ArticleType = [];
   let authors = [];
-  console.log("filter",paperList.value);
+  console.log("filter_set",paperList.value);
   for(let i=0;i<paperList.value.length;i++){
     const paper = paperList.value[i];
 
@@ -716,7 +903,9 @@ function setArticlesFilterContent(){//设置论文过滤条件
   }
 }
 
+const ifLoading = ref(false)
 onMounted(async ()=>{//初始渲染论文列表
+  ifLoading.value = true;
   const route = useRoute();
   console.log("route",route.query.content)
   const result = await SearchAPI.search(route.query.content)
@@ -724,6 +913,7 @@ onMounted(async ()=>{//初始渲染论文列表
   totalPaper.value = result.data.data.total;
   console.log("result:", result)
   paperList.value = result.data.data.result;
+  ifLoading.value = false;
   console.log("paperlist:", paperList.value);
   setArticlesFilterContent();
   initArticlePage();
