@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-//  按需引入 echarts
 import * as echarts from "echarts";
-const props = defineProps(["series","years"]);
-const main = ref() // 使用ref创建虚拟DOM引用，使用时用main.value
+const props = defineProps(["data"]);
+const main = ref()
 onMounted(
     async () => {
       init()
@@ -14,46 +13,32 @@ function init() {
   const myChart = echarts.init(main.value);
   // 指定图表的配置项和数据
   const option = {
-    backgroundColor: '',
+    title: {
+      text: '学术领域',
+      left: 'center'
+    },
     tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'cross',
-        label: {
-          backgroundColor: '#6a7985'
-        }
-      }
+      trigger: 'item'
     },
     legend: {
-      data: ["发文量"]
+      show: false // 设置图例不显示
     },
-    toolbox: {
-      feature: {
-      }
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: [
+    series: [
       {
-        type: 'category',
-        boundaryGap: false,
-        data: props.years,
-        minInterval: 1,
+        name: '领域比例',
+        type: 'pie',
+        radius: '50%',
+        data: props.data,
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
       }
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        minInterval: 1,
-      }
-    ],
-    series: props.series
+    ]
   };
-
   // 使用刚指定的配置项和数据显示图表。
   myChart.setOption(option);
 }
@@ -62,7 +47,7 @@ function init() {
 <template>
   <div class="TrendBox">
     <div class="line"></div><div class="title">研究趋势</div>
-    <div ref="main" style="width: 350px; height: 200px;"></div>
+    <div ref="main" style="width: 350px; height: 230px;"></div>
   </div>
 </template>
 
@@ -93,4 +78,3 @@ function init() {
   position: relative; /* 为伪元素定位 */
 }
 </style>
-

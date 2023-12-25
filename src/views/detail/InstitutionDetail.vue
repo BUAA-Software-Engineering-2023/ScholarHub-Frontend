@@ -10,10 +10,10 @@
               <div class="institution-details">
                 <!-- 机构相关信息展示 -->
                 <div style="font-size: 25px;font-weight: 800">
-                  institutionName
+                  {{ institutionname }}
                 </div>
                 <div style="font-size: 20px;margin-top: 10px;font-weight: 200">
-                  location
+                  {{ geo }}
                 </div>
               </div>
             </div>
@@ -31,7 +31,7 @@
                       <Paper style="font-size: 50px" />
                       <div style="text-align: center;margin-left: 25%;">
                         <p>发文总量</p >
-                        <h2 style="font-weight: bold;color: #53cda5">34543</h2>
+                        <h2 style="font-weight: bold;color: #53cda5">{{ works_count }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -42,7 +42,7 @@
                       <Core style="font-size: 50px" />
                       <div style="text-align: center;margin-left: 25%;">
                         <p>H指数</p >
-                        <h2 style="color: #747bff;font-weight: bold">34543543</h2>
+                        <h2 style="color: #747bff;font-weight: bold">{{ h_index }}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -53,7 +53,7 @@
                       <Quote style="font-size: 50px" />
                       <div style="text-align: center;margin-left: 25%;">
                         <p>总被引频次</p >
-                        <h2 style="color: rgb(145,236,252);font-weight: bold">435345</h2>
+                        <h2 style="color: rgb(145,236,252);font-weight: bold">{{cited_by_count}}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -64,7 +64,7 @@
                       <Data style="font-size: 50px"  value=""/>
                       <div style="text-align: center;margin-left: 20%;">
                         <p>篇均被引频次</p >
-                        <h2 style="color: rgb(217,144,175);font-weight: bold">345435</h2>
+                        <h2 style="color: rgb(217,144,175);font-weight: bold">{{ Math.floor(cited_by_count / works_count)}}</h2>
                       </div>
                     </div>
                   </a-card>
@@ -74,10 +74,10 @@
             <div style="margin-left: 10px;margin-bottom: 20px">
             <a-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 15 }">
               <a-col :xs="24" :sm="12" :md="12" :lg="10">
-                <InstitutionTrend style="width: 95%; height: 250px;"></InstitutionTrend>
+                <InstitutionTrend v-if="pflag" style="width: 95%; height: 250px;padding-left: 10%;padding-bottom: 10%" :series="series" :years="years"></InstitutionTrend>
               </a-col>
               <a-col :xs="24" :sm="12" :md="12" :lg="10">
-                <InstitutionTrend style="width: 95%; height: 250px;"></InstitutionTrend>
+                <Pie v-if="pflag" style="width: 95%; height: 250px;padding-left: 10%;padding-bottom: 10%" :data="data" ></Pie>
               </a-col>
             </a-row>
             </div>
@@ -97,7 +97,9 @@
                           </div>
                         </div>
                         <div class="research-stats">
-                          <p>引用量: 546456&nbsp; | &nbsp; 论文数: 234324</p >
+                          <p>引用量: {{cited_by_count}}&nbsp; | &nbsp; 论文数: {{works_count}}</p >
+
+
                         </div>
                       </div>
                       <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="works">
@@ -137,13 +139,13 @@
             <a-col :span="5">
               <div class="AuthorsBox">
                 <div class="line"></div>
-                <div class="reprsent-title">代表学者</div>
-              <a-list item-layout="vertical" size="small" :split="false" :data-source="listData">
+                <div class="reprsent-title">合作机构</div>
+              <a-list item-layout="vertical" size="small" :split="true" :data-source="associated_institutions">
 
                 <template #renderItem="{ item }">
                   <a-list-item key="item.title">
                     <template #actions>
-                    <span v-for="{ icon, text } in actions" :key="icon">
+                    <span v-for="{ icon, text } in item.actions" :key="icon">
                       <component :is="icon" style="margin-right: 8px" />
                       {{ text }}
                     </span>
@@ -153,39 +155,16 @@
                       <template #title>
                         <a :href="item.href" style="font-size: 15px">{{ item.title }}</a>
                       </template>
-                      <template #avatar><a-avatar :src="item.avatar" /></template>
+
                     </a-list-item-meta>
-                    {{ item.content }}
+                    <div style="margin-right: 100px">{{ item.content }}</div>
                   </a-list-item>
                 </template>
               </a-list>
               </div>
 
 
-              <div class="AuthorsBox">
-                <div class="line"></div>
-                <div class="reprsent-title">合作机构</div>
-                <a-list item-layout="vertical" size="small" :split="false" :data-source="listData">
 
-                  <template #renderItem="{ item }">
-                    <a-list-item key="item.title">
-                      <template #actions>
-                    <span v-for="{ icon, text } in actions2" :key="icon">
-                      <component :is="icon" style="margin-right: 8px" />
-                      {{ text }}
-                    </span>
-                      </template>
-
-                      <a-list-item-meta >
-                        <template #title>
-                          <a :href="item.href" style="font-size: 20px;text-align: left;">{{ item.title }}</a>
-                        </template>
-                      </a-list-item-meta>
-                      {{ item.content }}
-                    </a-list-item>
-                  </template>
-                </a-list>
-              </div>
 
 
             </a-col>
@@ -204,20 +183,102 @@ import Paper from "@/assets/icons/Paper.vue";
 import Core from "@/assets/icons/Core.vue";
 import Quote from "@/assets/icons/Quote.vue";
 import InstitutionTrend from "@/components/visual/InstitutionTrend.vue";
+
 import { useRoute } from "vue-router";
 import Trend from "@/components/visual/Trend.vue";
 import Relationship from "@/components/visual/Relationship.vue";
 import Search from "@/api/search.js";
 import Swal from "sweetalert2";
+import {CalendarOutlined, LinkOutlined} from "@ant-design/icons-vue";
+import {ref} from "vue";
+import Pie from "@/components/visual/Pie.vue";
 
 const route = useRoute()
-
+const institution = ref();
+const institutionname = ref();
+const works_count = ref();
+const cited_by_count = ref();
+const h_index = ref();
+const geo = ref();
+const associated_institutions = ref([]);
+const series = ref([]);
+const years = ref([]);
+const x_concepts = ref([]);
+const data = ref([]);
+const pflag = ref(false)
 const InstitutionId ="https://openalex.org/"+route.params.institutionId
 onMounted(async ()=>{
+  pflag.value = false;
   const result =  await Search.institution_detail(InstitutionId)
   if (result.data.success){
     const response = result.data.data
     console.log(response)
+    institution.value = result.data.data
+    institutionname.value = institution.value.display_name
+    works_count.value = institution.value.works_count
+    cited_by_count.value = institution.value.cited_by_count
+    h_index.value = institution.value.summary_stats.h_index
+    geo.value = institution.value.geo.city
+    x_concepts.value = institution.value.x_concepts
+
+    let paperData = [];
+    let cited_by_counts = [];
+    let yearArr = [];
+    data.value = x_concepts.value.map(concept => ({
+      value: concept.score,
+      name: concept.display_name
+    }));
+
+    console.log(data)
+
+
+    onMounted(() => {
+      data.value = x_concepts.map(concept => ({
+        value: concept.score,
+        name: concept.display_name
+      }));
+    });
+    console.log(data.value)
+    for (let i = 0;i<response.counts_by_year.length;i++){
+      paperData.push(response.counts_by_year[i].works_count);
+      cited_by_counts.push(response.counts_by_year[i].cited_by_count);
+      yearArr.push(response.counts_by_year[i].year)
+    }
+
+    for (let i=yearArr.length-1;i>=0;i--){
+      years.value.push(yearArr[i]);
+    }
+    console.log(years.value)
+    series.value.push( {
+      name: '发文量',
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: paperData
+    });
+    pflag.value = true;
+
+
+
+
+
+    const associated_institutions_list = institution.value.associated_institutions
+    for (let i = 0 ;i<associated_institutions_list.length;i++){
+      const url = associated_institutions_list[i].id
+      const parts = url.split('/');
+      const institutionId = parts[parts.length - 1];
+      const institutionActions = [
+        { text: "territory:  "+associated_institutions_list[i].type.toString() },
+      ];
+      associated_institutions.value.push({
+        href: "/client/institution/"+ institutionId,
+        title: associated_institutions_list[i].display_name,
+        actions: institutionActions
+      });
+    }
   }
   else {
     let promise = Swal.fire({
@@ -226,40 +287,9 @@ onMounted(async ()=>{
     })
   }
 })
-const listData = [];
-for (let i = 0; i < 5; i++) {
-  listData.push({
-    href: 'https://www.antdv.com/',
-    title: `name${i}`,
-    avatar: 'https://joeschmoe.io/api/v1/random',
-    description:
-        'Ant Design',
-  });
-}
 
-const actions = [
-  {
 
-    text: '发文量:77',
-  },
-  {
-    text: '被引频次:306',
-  },
-  {
-    text: 'H指数:11',
-  },
-];
 
-const actions2 = [
-  {
-
-    text: '合作发文量：57',
-  },
-  {
-    text: '合作发文被引频次：375',
-  },
-
-];
 
 const headerStyle = {
   textAlign: 'center',
