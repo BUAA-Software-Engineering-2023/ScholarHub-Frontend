@@ -15,8 +15,7 @@
         <img class="user-avatar" src="@/assets/icons/default_avatar.png" alt="User Avatar" />
         <div class="message-content">
           <div class="message-sender"> <span>{{ message.receiver_username }}</span> <div class="send_time">{{message.created_at}}</div></div>
-          <div class="message-text">{{ message.content }} <DeleteOutlined @click="deleteMessage(message)"/> </div>
-	        
+          <div class="message-text">{{ message.content }} <DeleteOutlined class="delete" @click="deleteMessage(message)"/> </div>
         </div>
         <span class="unread-badge" v-if="!message.is_read"></span>
       </div>
@@ -186,6 +185,9 @@ const deleteMessage = async (message)=>{
 }
 a:hover{
   cursor: pointer;
+}
+.delete:hover{
+  color: red;
 }
 /* 样式保持不变 */
 </style>
