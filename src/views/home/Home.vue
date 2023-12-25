@@ -353,7 +353,7 @@ function  jump_to_author(id){
   height: 80px;
   border-radius: 20px;
 }
-// 动画
+
 .slide-enter-from,
  .slide-leave-to{
    opacity: 0;
