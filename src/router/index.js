@@ -56,6 +56,11 @@ const router = createRouter({
                     component:()=>import("@/views/user/Information.vue")
                 },
                 {
+                    path: 'user/scholar',
+                    name: 'scholar',
+                    component:() =>import("@/views/user/AuthorDetail.vue")
+                },
+                {
                     path: 'user/history',
                     name:  "History",
                     component:()=>import("@/views/user/History.vue")

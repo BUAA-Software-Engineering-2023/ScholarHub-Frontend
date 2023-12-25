@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import router from "@/router/index.js";
 const historyInfo = ref([])
 const authorInfo = ref()
+const collection_id = ref();
 function showAuthorInfo(author,collectionId) {
   authorInfo.value = author;
   console.log(collectionId)
@@ -60,7 +61,7 @@ function jump_to_article(id){
             <div  @click="jump_to_article(history.work)"> <span class="history-title">{{ history.title }}</span> </div>
             <div  class="author" v-for="(author,index1) in history.authorships" :key="index1">
               <div class="history-details">
-                <div   @mouseover="showAuthorInfo(author.author)"
+                <div   @mouseover="showAuthorInfo(author.author,history.id)"
                        @mouseleave="hideAuthorInfo"
                        class="author_container"
                 ><span id="authorName" class="author-name-hover">
@@ -70,7 +71,7 @@ function jump_to_article(id){
                 </div>
               </div>
               <transition  name="slide">
-                <div v-if="authorInfo && authorInfo.id === author.author.id" class="author-info">
+                <div v-if="authorInfo && authorInfo.id === author.author.id && collection_id===history.id" class="author-info">
                   <img src="@/assets/imgs/default.jpg" alt="Author Avatar">
                   <div class="author-details">
                     <div class="author-name">{{ authorInfo.display_name }}</div>
@@ -139,6 +140,7 @@ function jump_to_article(id){
   border-radius: 20px !important;
   text-align: left;
   color: #363c50 !important;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .history h2 {

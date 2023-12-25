@@ -91,7 +91,6 @@ const cropImage = () => {
 const saveAvatar = async () => {
   try {
     const result = await AccountAPI.upload_avatar(imageFile);
-    // avatar.value = result.data.url;
     globalAccount.setAvatar(result.data.data)
     const result1 = await UserAPI.update_info(globalAccount.userInfo.nickname,result.data.data)
     console.log(result1)
