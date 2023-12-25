@@ -69,7 +69,7 @@ const buttonItemLayout = computed(() => {
           <el-divider></el-divider>
           <a-form  :layout="formState.layout" ref="formRef" :model="formState" name="dynamic_rule" v-bind="formItemLayout" >
             <a-form-item
-                label="Username"
+                label="用户名"
                 name="username"
                 :rules="[{ required: true, message: 'Please input your username!' }]"
             >
@@ -77,7 +77,7 @@ const buttonItemLayout = computed(() => {
             </a-form-item>
 
             <a-form-item
-                label="Nickname"
+                label="昵称"
                 name="nickname"
                 :rules="[{ required: true, message: 'Please input your nickname!' }]"
             >
