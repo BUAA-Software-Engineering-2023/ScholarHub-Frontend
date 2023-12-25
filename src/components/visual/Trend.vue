@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue";
 import * as echarts from "echarts";
 const props = defineProps(["series","years"]);
 const main = ref() // 使用ref创建虚拟DOM引用，使用时用main.value
+
 onMounted(
     async () => {
       init()

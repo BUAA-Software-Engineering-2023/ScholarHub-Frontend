@@ -2,13 +2,13 @@
 <template>
   <div class="container">
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
-      <a-layout>
-        <a-layout>
-          <a-layout-header theme="light" :style="headerStyle">
+      <a-layout >
+        <a-layout style="min-width: 1200px">
+          <a-layout-header theme="light" :style="headerStyle" >
             <!-- 机构信息区域 -->
             <div class="institution-info">
-              <div class="institution-details">
-                <!-- 机构相关信息展示 -->
+              <div class="institution-details" style="display: flex ">
+                <div style="margin-top: 10px;">
                 <div style="font-size: 25px;font-weight: 800">
                   {{ institutionname }}
                 </div>
@@ -16,12 +16,11 @@
                   {{ geo }}
                 </div>
               </div>
+              </div>
             </div>
           </a-layout-header>
-          <a-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 25 }">
-            <a-col :span="4">
-            </a-col>
-            <a-col :span="12">
+
+
           <a-layout-content :style="contentStyle" style="margin-left: 15%;min-width: 1200px">
             <div class="institution-total">
               <a-row :gutter="25">
@@ -134,21 +133,28 @@
               </a-row>
             </div>
           </a-layout-content>
-            </a-col>
 
-            <a-col :span="5">
-              <div class="AuthorsBox">
-                <div class="line"></div>
-                <div class="reprsent-title">合作机构</div>
-              <a-list item-layout="vertical" size="small" :split="true" :data-source="associated_institutions">
+
+
+
+
+
+        </a-layout>
+
+        <a-layout-sider :reverseArrow="true" theme="light" v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">
+          <transition name="slide">
+            <div class="AuthorsBox">
+              <div class="line"></div>
+              <div class="reprsent-title">合作机构</div>
+              <a-list item-layout="vertical" size="small" :split="true" :data-source="associated_institutions" v-show="showSide">
 
                 <template #renderItem="{ item }">
                   <a-list-item key="item.title">
                     <template #actions>
-                    <span v-for="{ icon, text } in item.actions" :key="icon">
-                      <component :is="icon" style="margin-right: 8px" />
-                      {{ text }}
-                    </span>
+                          <span v-for="{ icon, text } in item.actions" :key="icon">
+                            <component :is="icon" style="margin-right: 8px" />
+                            {{ text }}
+                          </span>
                     </template>
 
                     <a-list-item-meta :description="item.description">
@@ -161,16 +167,13 @@
                   </a-list-item>
                 </template>
               </a-list>
-              </div>
+            </div>
+          </transition>
 
+        </a-layout-sider>
 
-
-
-
-            </a-col>
-          </a-row>
-        </a-layout>
       </a-layout>
+
     </a-space>
   </div>
 </template>
@@ -206,7 +209,11 @@ const years = ref([]);
 const x_concepts = ref([]);
 const data = ref([]);
 const pflag = ref(false)
+const showSide = ref(true)
 const InstitutionId ="https://openalex.org/"+route.params.institutionId
+const changeShowSide = (collapsed, type)=>{
+  showSide.value = !showSide.value;
+}
 onMounted(async ()=>{
   pflag.value = false;
   const result =  await Search.institution_detail(InstitutionId)
@@ -292,17 +299,29 @@ onMounted(async ()=>{
 
 
 const headerStyle = {
+  marginLeft: '16%',
+  marginTop: '20px',
   textAlign: 'center',
-  color: '#fff',
+  color: '000',
   height: 'auto',
-  padding: '20px',
+  width: '69%',
+  backgroundColor: '#fff',
+  borderRadius: '10px',
+  minWidth: '900px',
+  boxShadow:  '0 0 5px 0 hsla(0,0%,68.2%,.3)'
 };
 const contentStyle = {
   textAlign: 'center',
   minHeight: 'calc(100vh - 134px)',
   color: '#000',
 };
-
+const siderStyle = {
+  textAlign: 'center',
+  color: '#fff',
+  marginTop: '10px',
+  marginRight: '100px',
+  borderRadius: '20px',
+};
 
 </script>
 
@@ -331,10 +350,13 @@ body{
 .institution-info{
   display: flex;
   text-align: left;
+  margin-bottom: 2%;
+  margin-top: 1%;
 }
 .institution-details{
+  margin-left: 20px;
   display: flex;
-  margin-left: 10px;
+
 }
 .institution-total{
   padding: 20px;
@@ -354,10 +376,7 @@ img{
   margin-left: 20px;
 }
 .institution-info {
-  display: flex;
-  width: 50%;
-  justify-content: space-between;
-  flex-grow: 1;
+  z-index: 10000;
 }
 
 .institution-info img {

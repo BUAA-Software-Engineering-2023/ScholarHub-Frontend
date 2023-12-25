@@ -122,10 +122,7 @@
                       <div class="research-title">研究成果</div>
                       <div class="research-details">
                         <div class="research-authors">
-                          <div class="author-container" v-for="(author, index) in researchAuthors" :key="index">
-                            <span class="author-name">{{ author }}</span>
-                            <span v-if="index !== researchAuthors.length - 1">, </span>
-                          </div>
+
                         </div>
                         <div class="research-stats">
                           <p>引用量: {{ cited_by_count }}&nbsp; | &nbsp; 论文数: {{works_count}}</p >
@@ -281,15 +278,15 @@ const handleClaim = async () => {
 
 // const AuthorId = "https://openalex.org/A5067833651"
 const AuthorId ="https://openalex.org/"+route.params.authorId
-onMounted(async () => {
+onBeforeMount(async () => {
   pflag.value = false;
   const result =  await Search.author_detail(AuthorId)
   if (result.data.success){
     const response = result.data.data
     console.log(response)
     author.value = result.data.data
-    last_known_institution.value = author.value.last_known_institution.display_name
-    h_index.value = author.value.summary_stats.h_index
+    last_known_institution.value = author.value.last_known_institution?.display_name
+    h_index.value = author.value.summary_stats?.h_index
     authorName.value = author.value.display_name
     works_count.value = author.value.works_count
     cited_by_count.value = author.value.cited_by_count
@@ -577,7 +574,7 @@ img{
   text-transform: uppercase;
   transition: 0.5s;
   overflow: hidden;
-  -webkit-box-reflect: below 1px linear-gradient(transparent, #1113);
+
 }
 #button-claim::before {
   content: '';
