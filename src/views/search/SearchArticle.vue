@@ -170,7 +170,7 @@
 	      <Institution :institute="institutionList"></Institution>
       </a-tab-pane>
       <a-tab-pane key="4" tab="领域" force-render>
-	      <field :field="fieldList"></field>
+	      <Field v-model="fieldList"></Field>
       </a-tab-pane>
       </a-tabs>
     </div>
@@ -192,6 +192,7 @@ import ExpertCard from "@/views/search/ExpertCard.vue";
 import EchartsArticle from "@/views/search/EchartsArticle.vue";
 import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
 import Institution from "@/views/search/Institution.vue";
+import Field from "@/views/search/Field.vue";
 const totalPaper = ref(0);
 const totalExpert = ref(0);
 const totalExpertPage = ref(0);
@@ -225,7 +226,7 @@ const paperList = ref();
 const paperListPerPage = ref();
 const expertList = ref();
 const institutionList = ref();
-const fieldList = ref();
+const fieldList = ref([]);
 const update = ref(true);
 let LastKeyPath = null;
 const sortKey = ref(['1']);
@@ -256,6 +257,7 @@ const Exarrow3 = ref(0)
 const ExFilter = ref({});
 const ExSort = ref({});
 const activeIndex = ref("1")
+const route = useRoute();
 async function switchOrder(sortType){
   let order = "";
   if(sortType === 1){
@@ -711,7 +713,19 @@ function setArticlesFilterContent(){//设置论文过滤条件
   }
 }
 onMounted(async ()=>{//初始渲染论文列表
-  const route = useRoute();
+  
+  console.log("route",route.name);
+  if(route.name === "SearchArticle"){
+	  console.log("art")
+	  activeKey.value = '1';
+  }else if(route.name === "SearchExpert"){
+	  console.log("expert")
+	  activeKey.value = '2';
+  }else if(route.name === "SearchInstitution"){
+	  activeKey.value = '3';
+  }else if(route.name === "SearchField"){
+		activeKey.value = '4';
+  }
   const result = await SearchAPI.search(route.query.content)
   searchContent.value = route.query.content;
   totalPaper.value = result.data.data.total;
@@ -721,7 +735,43 @@ onMounted(async ()=>{//初始渲染论文列表
   await getExperts();
   await getField();
   await getInstitution();
-
+})
+watch(route, async (newVal, oldVal) => {//监视输入框
+	if(route.name === "SearchArticle"){
+		console.log("art")
+		activeKey.value = '1';
+	}else if(route.name === "SearchExpert"){
+		console.log("expert")
+		activeKey.value = '2';
+	}else if(route.name === "SearchInstitution"){
+		activeKey.value = '3';
+	}else if(route.name === "SearchField"){
+		activeKey.value = '4';
+	}
+})
+watch(activeKey, async (newVal, oldVal) => {//监视输入框
+	const hash = {
+		1 : "article",
+		2 : "expert",
+		3: "institution",
+		4: "field",
+	}
+	let n = parseInt(activeKey.value)
+	const parts = route.path.split('/');
+	const type = parts[parts.length - 2];
+	if(type === hash[n]){
+	
+	}else{
+		router.push({
+			path:"/search/"+hash[n]+"/",
+			query:{
+				content:route.query.content
+			}
+		});
+	}
+	console.log("route",type)
+	console.log("key",hash[n])
+	
 })
 watch(searchContent, async (newVal, oldVal) => {//监视输入框
   console.log("newVal:",newVal);

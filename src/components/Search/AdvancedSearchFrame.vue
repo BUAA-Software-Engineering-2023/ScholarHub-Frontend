@@ -255,7 +255,7 @@ const clearSearchValue = () =>{
   emits(CLEAR,'')
 }
 const search = () =>{
-  emits(SEARCH,searchValue.value)
+  emits(SEARCH,searchValue.value,value1.value)
 }
 const handleChange = value => {
   console.log(`selected ${value}`);
