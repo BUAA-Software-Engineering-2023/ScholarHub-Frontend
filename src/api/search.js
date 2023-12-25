@@ -202,6 +202,19 @@ export default {
             showLoading:true,
         })
     },
+    searchInstitution(search,page,filter,sort){
+        return requests({
+            url:"/author/search",
+            method: 'POST',
+            data:{
+                search,
+                page,
+                sort,
+                filter,
+            },
+            showLoading:true,
+        })
+    },
     author_detail(author_id){
         return requests({
             url: "/author/detail",

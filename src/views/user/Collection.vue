@@ -249,7 +249,6 @@ const isMounted = ref(false);
   width: 80px;
   height: 80px;
 }
-// 动画
 .slide-enter-from,
 .slide-leave-to{
   opacity: 0;

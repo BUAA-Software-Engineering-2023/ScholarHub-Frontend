@@ -10,15 +10,13 @@
 			<div class="authorGrid">
 				<a-space direction="vertical">
 					<a-space direction="horizontal">
-<!--						<a-typography-text keyboard>H-index:{{item.summary_stats.h_index}}</a-typography-text>-->
-<!--						<a-typography-text keyboard> <LinkOutlined />   引用数:{{item.cited_by_count}}</a-typography-text>-->
-<!--						<a-typography-text keyboard><ReadOutlined />    论文数:{{item.works_count}}</a-typography-text>-->
+
 						<code class="tagcolor">H-index:{{item.summary_stats.h_index}}</code>
 						<code class="tagcolor">引用数:{{item.cited_by_count}}</code>
 						<code class="tagcolor">论文数:{{item.works_count}}</code>
 					</a-space>
 					<a-space direction="horizontal">
-					<a-typography-text v-if="item.last_known_institution!=null">研究领域:</a-typography-text>
+					<a-typography-text v-if="item.last_known_institution!=null">研究机构:</a-typography-text>
 					<a-typography-text v-if="item.last_known_institution!=null" strong>{{item.last_known_institution.display_name}}</a-typography-text>
 					</a-space>
 					<a-space direction="horizontal">

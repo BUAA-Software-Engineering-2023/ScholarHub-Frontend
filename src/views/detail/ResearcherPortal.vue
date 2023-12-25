@@ -577,7 +577,6 @@ img{
   text-transform: uppercase;
   transition: 0.5s;
   overflow: hidden;
-  -webkit-box-reflect: below 1px linear-gradient(transparent, #1113);
 }
 #button-claim::before {
   content: '';
