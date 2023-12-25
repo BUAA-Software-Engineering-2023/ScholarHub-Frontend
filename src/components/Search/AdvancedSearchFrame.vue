@@ -18,7 +18,6 @@
       高级搜索
       <DownOutlined v-show="!AdvSearch"/> <UpOutlined v-show="AdvSearch" />
     </button>
-
     <button class="delete-btn" @click="clearSearchValue"><keep-alive> <el-icon v-show="searchValue"><Close /></el-icon></keep-alive></button>
     <button class="search-btn" @click="search" v-show="!AdvSearch">
       <el-icon class="search-icon"><Search /></el-icon>
@@ -178,7 +177,7 @@ const SearchClassOptions = ref([
       value: "或者",
       label: "或者",
   }])
-const advSearchType = ref("论文")
+const advSearchType = ref("作者")
 const SearchTypeOptions = ref([
   {
     value: "作者",

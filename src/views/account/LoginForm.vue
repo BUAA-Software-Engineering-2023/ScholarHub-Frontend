@@ -135,7 +135,7 @@ const validateCode = (rule,value,callback)=>{
 }
 // 校验表单
 const loginRules = ref({
-  email: [{validator:validateEmail, trigger: "blur" }],
+  email: [{validator:validateName, trigger: "blur" }],
   password: [{validator:validatePassword, trigger: "blur" }]
 });
 const loginForm = ref({
@@ -293,6 +293,8 @@ async function login (){
 
 
 .shell {
+  min-width: 900px;
+  min-height: 400px;
   position: relative;
   height: 100%;
   padding: 25px;

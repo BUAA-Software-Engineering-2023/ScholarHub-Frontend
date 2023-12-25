@@ -211,6 +211,15 @@ export default {
             }
         })
     },
+    institution_detail(id){
+        return requests({
+            url: "/institution/detail",
+            method:"POST",
+            data:{
+                id
+            }
+        })
+    },
     get_article_detail(work_id){
         return requests({
             url: "/work/detail",

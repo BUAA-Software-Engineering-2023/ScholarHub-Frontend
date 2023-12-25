@@ -2,21 +2,12 @@
   <div class="container">
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
-        <a-layout-sider v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">
-          <transition name="slide">
-            <Trend v-if="pflag" :series="series" :years="years"  v-show="showSide"></Trend>
-          </transition>
-        </a-layout-sider>
-        <a-layout>
+        <a-layout style="min-width: 1200px" >
           <a-layout-header theme="light" :style="headerStyle">
             <div class="author-info">
               <div class="author-details">
-                <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }" src="{{avatar}}">
-                  <template #icon>
-                    <AntDesignOutlined />
-                  </template>
-                </a-avatar>
-                <div class="author-detail" style="display: flex">
+                <img class="avatar" src="@/assets/imgs/default.jpg" alt="Author Avatar">
+                <div class="author-detail" style="display: flex ">
                   <div style="margin-top: 10px;">
                     <div style="font-size: 25px;font-weight: 800">
                       {{authorName}}
@@ -27,11 +18,13 @@
                   </div >
 
                  <div style="margin-left: 50px;cursor: pointer" href="#" id="button-claim" @click="showModal " >认领</div>
-                  <a-modal v-model:open="open" title="Basic Modal" @ok="handleOk">
-                    <template #footer>
 
-                      <a-button style="height: 38px;" key="back" @click="handleCancel">Return</a-button>
-                      <a-button style="height: 38px;" key="submit" type="primary" :loading="loading"  @click="handleClaim">Submit</a-button>
+                  <a-modal v-model:open="open" title="认领门户" @ok="handleOk" >
+                    <template #footer>
+                      <div>
+                      <a-button style="height: 38px;font-weight: bold" key="back" @click="handleCancel">取消</a-button>
+                      <a-button style="height: 38px;font-weight: bold" key="submit" type="primary" :loading="loading"  @click="handleClaim">提交</a-button>
+                      </div>
 
                     </template>
                    <div>
@@ -44,20 +37,22 @@
                          @finish="onFinish"
                          @finishFailed="onFinishFailed"
                      >
+                       <div style="font-weight: bold;font-size: 15px;">
 
                        <a-form-item
-                           label="Reason"
+                           label="原因"
                            name="reason"
                        >
                          <a-textarea v-model:value="formState.reason" />
                        </a-form-item>
 
                        <a-form-item
-                           label="Phone Number"
+                           label="电话号码"
                            name="phone number"
                        >
                          <a-input v-model:value="formState.phone_number" />
                        </a-form-item>
+                       </div>
                      </a-form>
                    </div>
                   </a-modal>
@@ -68,7 +63,7 @@
               </div>
             </div>
           </a-layout-header>
-          <a-layout-content :style="contentStyle" style="margin-left: 15%;min-width: 1200px">
+          <a-layout-content :style="contentStyle" style="margin-left: 10%;min-width: 1200px">
             <div class="author-total">
               <a-row :gutter="16">
                 <a-col :span="5">
@@ -158,7 +153,6 @@
                               <template #title>
                                 <a :href="item.href">{{ item.title }}</a>
                               </template>
-                              <template #avatar><a-avatar :src="item.avatar" /></template>
                             </a-list-item-meta>
                             {{ item.content }}
                           </a-list-item>
@@ -172,10 +166,19 @@
           </a-layout-content>
 <!--          <a-layout-footer :style="footerStyle">Footer</a-layout-footer>-->
         </a-layout>
+        <a-layout-sider :reverseArrow="true" theme="light" v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">
+          <transition name="slide">
+            <Trend v-if="pflag" :series="series" :years="years"  v-show="showSide"></Trend>
+          </transition>
+          <transition name="slide">
+            <Relationship v-if="pflag" :cooperations="cooperations" :coauthors="coauthors" v-show="showSide"></Relationship>
+          </transition>
+        </a-layout-sider>
       </a-layout>
+
     </a-space>
-    <a-float-button-group shape="circle" :style="{ right: '24px' }">
-      
+    <a-float-button-group shape="circle" :style="{ left: '24px' }">
+
       <a-back-top :visibility-height="0" />
     </a-float-button-group>
   </div>
@@ -190,7 +193,8 @@ import Paper from "@/assets/icons/Paper.vue";
 import Quote from "@/assets/icons/Quote.vue";
 import Data from "@/assets/icons/Data.vue";
 import Trend from "@/components/visual/Trend.vue";
-import { AntDesignOutlined, LinkOutlined,  CalendarOutlined,CustomerServiceOutlined, CommentOutlined} from '@ant-design/icons-vue';
+import Relationship from "@/components/visual/Relationship.vue";
+import { AntDesignOutlined, LinkOutlined,  CalendarOutlined,} from '@ant-design/icons-vue';
 import { ApplyForClaim } from '@/api/author.js';
 import Swal from "sweetalert2";
 import {ref} from "vue";
@@ -208,6 +212,8 @@ const works = ref([])
 const authorlist = ref([])
 const series = ref([])
 const years = ref([])
+const cooperations =ref([])
+const coauthors = ref([]);
 const pflag = ref(false)
 const pagination = {
   onChange: page => {
@@ -290,17 +296,28 @@ onMounted(async () => {
     avatar.value = author.value.avatar
     const listData = author.value.works
     let paperData = [];
+    let numberCollaborate = [];
     let cited_by_counts = [];
     let yearArr = [];
+    let cooperationArr = [];
+
+    for (let i = 0;i<(response.collaborators.length>=10?10:response.collaborators.length);i++){
+      numberCollaborate.push(response.collaborators[i].cooperation_times);
+      cooperationArr.push(response.collaborators[i].display_name)
+    }
     for (let i = 0;i<response.counts_by_year.length;i++){
       paperData.push(response.counts_by_year[i].works_count);
       cited_by_counts.push(response.counts_by_year[i].cited_by_count);
       yearArr.push(response.counts_by_year[i].year)
     }
-    console.log(yearArr);
+    console.log(cooperationArr);
     for (let i=yearArr.length-1;i>=0;i--){
       years.value.push(yearArr[i]);
     }
+    for (let i = 0;i<cooperationArr.length;i++){
+      coauthors.value.push(cooperationArr[i]);
+    }
+
     console.log(paperData)
     series.value.push( {
       name: '发文量',
@@ -322,6 +339,16 @@ onMounted(async () => {
       },
       data: cited_by_counts
     });
+    cooperations.value.push({
+          name: '合作次数',
+          type: 'bar',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'cooperations'
+          },
+          data: numberCollaborate
+        });
     pflag.value = true;
     for (let i = 0; i < listData.length; i++) {
       const url = listData[i].id
@@ -372,10 +399,16 @@ onMounted(async () => {
 
 })
 const headerStyle = {
+  marginLeft: '12%',
+  marginTop: '20px',
   textAlign: 'center',
-  color: '#fff',
+  color: '000',
   height: 'auto',
-  padding: '20px',
+  width: '72%',
+  backgroundColor: '#fff',
+  borderRadius: '10px',
+  minWidth: '900px',
+  boxShadow:  '0 0 5px 0 hsla(0,0%,68.2%,.3)'
 };
 const contentStyle = {
   textAlign: 'center',
@@ -385,12 +418,11 @@ const contentStyle = {
 const siderStyle = {
   textAlign: 'center',
   color: '#fff',
+  marginTop: '20px',
+  marginRight: '100px',
+  borderRadius: '10px'
 };
-const footerStyle = {
-  textAlign: 'center',
-  color: '#fff',
-  backgroundColor: '#7dbcea',
-};
+
 
 
 
@@ -424,7 +456,6 @@ body{
 }
 .author-details{
   display: flex;
-  margin-left: 10px;
 }
 .author-total{
   padding: 20px;
@@ -454,15 +485,16 @@ img{
   margin-left: 20px;
 }
 .author-info {
+  background-color: white;
   display: flex;
-  width: 50%;
+  width: 100%;
   justify-content: space-between;
   flex-grow: 1;
 }
 
 .author-info img {
-  width: 40px;
-  height: 40px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -553,7 +585,7 @@ img{
   line-height: 40px;
   margin: 30px;
   text-decoration: none;
-  color: #91ecfc;
+  color: #5a6fc0;
   font-size: 15px;
   padding: 0 20px;
   text-transform: uppercase;
@@ -568,8 +600,8 @@ img{
   left: 0;
   width: 20px;
   height: 20px;
-  border-top: 2px solid #91ecfc;
-  border-left: 2px solid #91ecfc;
+  border-top: 2px solid #5a6fc0;
+  border-left: 2px solid #5a6fc0;
   transition: 0.5s;
   transition-delay: 0.5s;
 }
@@ -580,8 +612,8 @@ img{
   right: 0;
   width: 20px;
   height: 20px;
-  border-bottom: 2px solid #91ecfc;
-  border-right: 2px solid #91ecfc;
+  border-bottom: 2px solid #5a6fc0;
+  border-right: 2px solid #5a6fc0;
   transition: 0.5s;
   transition-delay: 0.5s;
 }
@@ -591,9 +623,9 @@ img{
   transition-delay: 0s;
 }
 #button-claim:hover {
-  background-color: #91ecfc;
-  color: #000;
-  box-shadow: 0 0 50px #91ecfc;
+  background-color: #5a6fc0;
+  color: white;
+  box-shadow: 0 0 50px #5a6fc0;
   transition-delay: 0.3s;
 }
 #button-claim:nth-child(1) {
@@ -608,6 +640,8 @@ img{
 #button-claim:nth-child(5) {
   filter: hue-rotate(70deg);
 }
+
+
 .line{
   background:black;/*背景色为浅灰色*/
   width:5px;/*设置宽高*/
