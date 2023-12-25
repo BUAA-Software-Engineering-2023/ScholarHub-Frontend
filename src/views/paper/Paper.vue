@@ -326,12 +326,9 @@ async function add_favorite(foldId,paperId){
               <span v-if="isFavorite">已收藏<el-icon class="icons"><StarFilled /></el-icon></span>
               <span v-else >收藏 <el-icon class="icons"><Star /></el-icon></span>
             </button>
-            <div v-show="showFavorite&&!isFavorite" @mouseover="showFavoriteList" @mouseleave="showFavorite = false" class="favorite-list" >
-              <div v-if="favorites.length"  v-for="(favorite,index) in favorites" :key="index">
+            <div v-if="favorites.length" v-show="showFavorite&&!isFavorite" @mouseover="showFavoriteList" @mouseleave="showFavorite = false" class="favorite-list" >
+              <div  v-for="(favorite,index) in favorites" :key="index">
                 <div class="favorite-list-item" @click="add_favorite(favorite.id,paperId)"> {{favorite.title}}</div>
-              </div>
-              <div v-else>
-                <div class="favorite-list-item">创建收藏</div>
               </div>
               <!-- 这里放置你的收藏列表内容 -->
             </div>
