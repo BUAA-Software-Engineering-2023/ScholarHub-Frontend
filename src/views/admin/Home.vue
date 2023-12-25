@@ -73,6 +73,6 @@ function handleClick(n){
 	background: #fff;
 }
 .sideBar{
-	margin-top: 10px;
+	margin-top: 40px;
 }
 </style>

@@ -45,7 +45,7 @@
           <a-space class="adv-search-class">
             <a-select
                 ref="select"
-                v-model:value="advSearchClass"
+                v-model:value="advSearchClass[index]"
                 :bordered=false
                 style="width: 80px;"
                 :options="SearchClassOptions"
@@ -57,7 +57,7 @@
           <a-space class="adv-search-type">
             <a-select
                 ref="select"
-                v-model:value="advSearchType"
+                v-model:value="advSearchType[index]"
                 :bordered=false
                 style="width: 80px;"
                 :options="SearchTypeOptions"
@@ -143,10 +143,12 @@ const formItemLayoutWithOutLabel = {
 const dynamicValidateForm = reactive({
   domains: [],
 });
+
 const submitForm = () => {
   formRef.value
       .validate()
       .then(() => {
+        emits('getAdv', dynamicValidateForm.domains);
         console.log('values', dynamicValidateForm.domains);
       })
       .catch(error => {
@@ -166,9 +168,11 @@ const addDomain = () => {
   dynamicValidateForm.domains.push({
     value: '',
     key: Date.now(),
+    type:advSearchType.value,
+    operator:advSearchClass.value,
   });
 };
-const advSearchClass = ref("并且")
+const advSearchClass = ref(["并且"])
 const SearchClassOptions = ref([
     {
       value: "并且",
@@ -177,7 +181,7 @@ const SearchClassOptions = ref([
       value: "或者",
       label: "或者",
   }])
-const advSearchType = ref("作者")
+const advSearchType = ref(["作者"])
 const SearchTypeOptions = ref([
   {
     value: "作者",
@@ -232,7 +236,7 @@ const SEARCH = 'search';
 const INPUT = 'input';
 const EMIT_UPDATE_MODEL_VALUE = 'update:modelValue';
 // emits与props进行父子组件通信，保持searchValue一致
-const emits = defineEmits([SEARCH, CLEAR, FOCUS, INPUT,EMIT_UPDATE_MODEL_VALUE]);
+const emits = defineEmits([SEARCH, CLEAR, FOCUS, INPUT,EMIT_UPDATE_MODEL_VALUE, 'getAdv']);
 const props = defineProps(
     {modelValue:{type:String,required:true}}
 )
@@ -247,6 +251,7 @@ onClickOutside(searchContainerTarget, () => {
 const onFocusHandler = () => {
   isFocused.value = true;
 };
+
 // 监听输入框的变化
 
 // 用常量定义、符合规范
@@ -255,7 +260,7 @@ const clearSearchValue = () =>{
   emits(CLEAR,'')
 }
 const search = () =>{
-  emits(SEARCH,searchValue.value)
+  emits(SEARCH,searchValue.value,value1.value)
 }
 const handleChange = value => {
   console.log(`selected ${value}`);

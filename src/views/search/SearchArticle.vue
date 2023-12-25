@@ -3,9 +3,10 @@
     <NavBar/>
     <div class="nav_outer">
       <div class="search-bar">
-        <AdvancedSearchBar ref="searchRef" @getInput="getInput"/>
+        <AdvancedSearchBar :inputStr="searchContent" ref="searchRef" @getInput="getInput" @getAdv="getAdv"/>
       </div>
     </div>
+<!--      <a-skeleton active />-->
     <div class="paper-list-wrap">
       <a-tabs style="margin-left:10px" v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="论文">
@@ -25,7 +26,7 @@
                     mode="inline"
                     :open-keys="ArticleState.openKeys"
                     :items="ArticleItems"
-                    @openChange="onOpenChange"
+                    @openChange="onOpenChange1"
                     @click="handleClickArticle"
                 >
                 </a-menu>
@@ -73,55 +74,78 @@
                   </el-menu>
                 </div>
                 <ul class="search-result__list">
-                  <div v-if="paperList!=null && paperListPerPage.length !== 0">
-                    <li class="result-item" v-for="(item, index) in paperListPerPage" v-bind:key="item.id">
-                      <a-card hoverable @click="getFullPaper(item)">
-                        <ArticleCard :paper="item" :total="totalPaper"/>
-                      </a-card>
-                    </li>
+                  <div v-if="ifLoading===true">
+                    <a-card v-for="item in 9">
+                      <a-skeleton active/>
+                    </a-card>
                   </div>
                   <div v-else>
-                    <span >
-                      No results !
-                    </span>
+                    <div v-if="paperList!=null && paperList.length !== 0">
+                      <li class="result-item" v-for="(item, index) in paperList" v-bind:key="item.id">
+                        <a-card hoverable @click="getFullPaper(item)">
+                          <ArticleCard :paper="item" :total="totalPaper"/>
+                        </a-card>
+                      </li>
+                    </div>
+                    <div v-else>
+                      <a-empty
+                          image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+                          :image-style="{height: '60px',}"
+                      />
+                    </div>
                   </div>
                 </ul>
                 <a-pagination
-                    v-model:current="pageCurrent"
-                    :total="25"
-                    show-less-items />
+                    v-if="paperList!=null && paperList.length !== 0"
+                    v-model:current="currentArticle"
+                    :total=totalPaper
+                    pageSize="25"
+                    :showSizeChanger="false" />
               </a-layout-content>
             </a-layout>
             <a-layout-sider :style="siderStyle" width="300px" >
               <div class="echart-style">
-                <EchartsArticle :field="axisField" :fieldNum="ordNum"/>
-                <div class="table-container">
-                  <div class="column-left">
-                    <div class="title">
-                      发表数量最多的作者
+                <a-card style="margin-bottom: 40px">
+                  <EchartsArticle v-if="paperList!=null && paperList.length !== 0" :field="axisField" :fieldNum="ordNum"/>
+                  <a-empty
+                      v-else
+                      image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+                      :image-style="{height: '60px',}"
+                  />
+                </a-card>
+
+                <a-card>
+                  <div class="table-container" v-if="paperList!=null && paperList.length !== 0">
+                    <div class="column-left">
+                      <div class="title">
+                        发表数量最多的作者
+                      </div>
+                      <div v-for="item in authorRank" :key="item.author_id" class="item" @click="jumpPortal(item.author_id)">
+                        {{ item.name }}
+                      </div>
                     </div>
-                    <div v-for="item in authorRankName" :key="item" class="item">
-                      {{ item }}
+                    <div class="column-right">
+                      <div class="title">
+                        论文数
+                      </div>
+                      <div v-for="item in authorRank" :key="author_id" class="item">
+                        {{ item.count }}
+                      </div>
                     </div>
                   </div>
-                  <div class="column-right">
-                    <div class="title">
-                      论文数
-                    </div>
-                    <div v-for="item in authorRankNum" :key="item" class="item">
-                      {{ item }}
-                    </div>
-                  </div>
-                </div>
+                  <a-empty
+                      v-else
+                      image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+                      :image-style="{height: '60px',}"
+                  />
+                </a-card>
+
               </div>
-
             </a-layout-sider>
-
           </a-layout>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
 	        <a-layout>
-		        
 		        <a-layout-sider :style="siderStyle" width="500" >
 			        <div class = "slideSearch">
 				        <a-menu
@@ -169,12 +193,15 @@
 		        </a-layout-content>
 	        </a-layout>
         </a-tab-pane>
+      <a-tab-pane key="3" tab="机构" force-render>
+	      <Institution :institute="institutionList"></Institution>
+      </a-tab-pane>
+      <a-tab-pane key="4" tab="领域" force-render>
+	      <Field v-model="fieldList"></Field>
+      </a-tab-pane>
       </a-tabs>
-	    
-
     </div>
     <a-float-button-group shape="circle" :style="{ right: '24px' }">
-
       <a-back-top :visibility-height="0" />
     </a-float-button-group>
   </div>
@@ -189,12 +216,16 @@ import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChar
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";
 import ExpertCard from "@/views/search/ExpertCard.vue";
-import * as echarts from "echarts";
-
+import EchartsArticle from "@/views/search/EchartsArticle.vue";
+import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
+import Institution from "@/views/search/Institution.vue";
+import Field from "@/views/search/Field.vue";
 const totalPaper = ref(0);
+const totalPaperPage = ref(0);
 const totalExpert = ref(0);
 const totalExpertPage = ref(0);
 const current = ref(1);
+const currentArticle = ref(1);
 const contentStyle = {
   paddingleft:'200px',
   textAlign: 'center',
@@ -219,34 +250,246 @@ const result = ref();
 const exResult = ref();
 const searchRef = ref(null);
 
+const arResult = ref();
+const arFilter = ref({});
+const arSort = ref({});
+
 import { AntDesignOutlined } from '@ant-design/icons-vue';
-import EchartsArticle from "@/views/search/EchartsArticle.vue";
-import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
+
 const activeKey = ref('1');
-const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
 const paperList = ref();
 const paperListPerPage = ref();
 const expertList = ref();
-const expertListPerPage = ref();
+const institutionList = ref();
+const fieldList = ref([]);
 const update = ref(true);
 let LastKeyPath = null;
+let LKP = null;
 
 const sortKey = ref(['1']);
 const searchContent = ref();
 const Efield = ref([]);
 const tranEfield = ref([]);
+const advDomains = ref([]);
+const getAdv = async (value) => {
+  advDomains.value = value;
+  console.log("outer", advDomains.value);
+  let count = 0;
+  if(advDomains.value !== 0){
+    count = advDomains.value.length;
+  }
+  let filter = {};
+  if(count !== 0) {
+    let tempArray = [];
+    let operator = advDomains.value[0].operator[0];
+    let type = advDomains.value[0].type[0];
+    let value = advDomains.value[0].value;
+    console.log('operator',operator);
+    console.log('type',type);
+    console.log('value',value);
+    if (type === '作者') {
+      filter['authorships.author.display_name'] = advDomains.value[0].value;
+    } else if (type === '机构') {
+      filter['authorships.institutions.display_name'] = advDomains.value[0].value;
+    } else if (type === '领域') {
+      filter['concepts.display_name'] = advDomains.value[0].value;
+    }
+    if (count === 1) {
+      console.log("filter",count,filter);
+      arFilter.value = filter;
+      await searchArticleWithAll();
+      // await getArticlesFiltered(filter);
+    } else if (count > 1) {
+      for(let i = 1 ; i < count ; i++){
+        const tempOp = advDomains.value[i].operator[i];
+        const tempTy = advDomains.value[i].type[i];
+        if(tempOp === '并且'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            let tempValue = filter[enTy];
+            console.log("tempValue",tempValue);
+            tempValue = tempValue+'+'+advDomains.value[i].value;
+            filter[enTy] = tempValue;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }else if(tempOp === '或者'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            if(!tempArray.includes(filter[enTy])){
+              tempArray.push(filter[enTy]);
+            }
+            console.log("tempArray",tempArray);
+            tempArray.push(advDomains.value[i].value);
+            filter[enTy] = tempArray;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }
+      }
+      console.log("filter",count,filter);
+      arFilter.value = filter;
+      await searchArticleWithAll();
+      // await getArticlesFiltered(filter);
+    }
+  }
+}
 const getInput = (value) => {//获取输入框的输入
   searchContent.value = value;
   console.log("searchContent:::",searchContent.value);
 }
+watch(advDomains, async ()=>{
+  console.log("outer",advDomains.value);
+  let count = 0;
+  if(advDomains.value !== 0){
+    count = advDomains.value.length;
+  }
+  let filter = {};
+  if(count !== 0) {
+    let tempArray = [];
+    let operator = advDomains.value[0].operator[0];
+    let type = advDomains.value[0].type[0];
+    let value = advDomains.value[0].value;
+    tempArray.push(value);
+    console.log('operator',operator);
+    console.log('type',type);
+    console.log('value',value);
+    if (type === '作者') {
+      filter['authorships.author.display_name'] = advDomains.value[0].value;
+    } else if (type === '机构') {
+      filter['authorships.institutions.display_name'] = advDomains.value[0].value;
+    } else if (type === '领域') {
+      filter['concepts.display_name'] = advDomains.value[0].value;
+    }
+    if (count === 1) {
+      console.log("filter",count,filter);
+      arFilter.value = filter;
+      await searchArticleWithAll();
+      // await getArticlesFiltered(filter);
+    } else if (count > 1) {
+      for(let i = 1 ; i < count ; i++){
+        const tempOp = advDomains.value[i].operator[i];
+        const tempTy = advDomains.value[i].type[i];
+        console.log("tempOp",tempOp);
+        if(tempOp === '并且'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            let tempValue = filter[enTy];
+            console.log("tempValue",tempValue);
+            tempValue = tempValue+'+'+advDomains.value[i].value;
+            filter[enTy] = tempValue;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }else if(tempOp === '或者'){
+          console.log("tempTy",tempTy);
+          let enTy = '';
+          if(tempTy === '作者'){
+            enTy = 'authorships.author.display_name';
+          }else if(tempTy === '机构'){
+            enTy = 'authorships.institutions.display_name';
+          }else if(tempTy === '领域'){
+            enTy = 'concepts.display_name';
+          }
+          console.log('enTy',enTy);
+          if(filter.hasOwnProperty(enTy)){
+            if(!tempArray.includes(filter[enTy])){
+              tempArray.push(filter[enTy]);
+            }
+            tempArray.push(advDomains.value[i].value);
+            filter[enTy] = tempArray;
+          }else{
+            if (tempTy === '作者') {
+              filter['authorships.author.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '机构') {
+              filter['authorships.institutions.display_name'] = advDomains.value[i].value;
+            } else if (tempTy === '领域') {
+              filter['concepts.display_name'] = advDomains.value[i].value;
+            }
+          }
+        }
+      }
+      console.log("filter",count,filter);
+      arFilter.value = filter;
+      await searchArticleWithAll();
+      // await getArticlesFiltered(filter);
+    }
+  }
+})
 async function getPapers(){//获取论文列表
-  const result = await SearchAPI.search(searchContent.value)
-  paperList.value = result.data.data.result;
-  initArticlePage();
+  ifLoading.value = true;
+  currentArticle.value = 1;
+  let res = await searchArticleWithAll();
+  arResult.value = res;
+  paperList.value = arResult.value.data.data.result;
+  ifLoading.value = false;
+  totalPaper.value = arResult.value.data.data.total;
+  totalPaperPage.value = totalPaper.value/25;
+  console.log("total",arResult.value.data.data.total);
+  setArticlesFilterContent();
 }
 
+function jumpPortal(url){//进入科研人员详情页
+  const parts = url.split('/');
+  const authorId = parts[parts.length - 1]; // 获取最后一个部分
+  console.log(authorId);
+  router.push({
+    path:`/client/author/${authorId}`
+  })
+}
 
+const tranEfieldNum = ref([]);
+const axisField = ref([]);
+const ordNum = ref([]);
+const tranEauthor = ref([]);
+const authorRankName = ref([]);
+const authorRankNum = ref([]);
 const arrow1 = ref(0)
 const arrow2 = ref(0)
 const arrow3 = ref(0)
@@ -256,8 +499,10 @@ const Exarrow2 = ref(0)
 const Exarrow3 = ref(0)
 const ExFilter = ref({});
 const ExSort = ref({});
+
 // const arrow5 = ref(0)
 const activeIndex = ref("1")
+const route = useRoute();
 async function switchOrder(sortType){
   let order = "";
   if(sortType === 1){
@@ -301,7 +546,6 @@ async function switchOrder(sortType){
   console.log("sortType,order",sortType,order)
   await searchWithSort(sortType, order);
 }
-
 function jumpToExDetail(info){
 	console.log("jump");
 	console.log(info.id);
@@ -310,7 +554,6 @@ function jumpToExDetail(info){
 	let lastPart = parts[parts.length - 1]; // 获取数组中的最后一个元素
 	router.push("/client/author/"+lastPart);
 }
-
 async function switchExpertOrder(sortType){
 	let order = "";
 	if(sortType === 1){
@@ -347,42 +590,60 @@ async function searchWithSort(sortType, order){
   if(sortType === 1){
     let sort = {"display_name": "asc"}
     if(order === ""){
-      const result = await SearchAPI.search(searchContent.value)
+      arSort.value = {}
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
+      console.log("sort-search",paperList);
     }else{
       sort.display_name = order;
-      const result = await SearchAPI.searchWithSort(searchContent.value, sort)
+      arSort.value = sort;
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
+      console.log("sort-search",paperList.value);
     }
 
   }else if(sortType === 2){
     let sort = {"cited_by_count": "asc"}
     if(order === ""){
-      const result = await SearchAPI.search(searchContent.value)
+      arSort.value = {}
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
     }else{
       sort.cited_by_count = order;
-      const result = await SearchAPI.searchWithSort(searchContent.value, sort)
+      arSort.value = sort
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
     }
   }else if(sortType === 3){
     let sort = {"publication_date": "asc"}
     if(order === ""){
-      const result = await SearchAPI.search(searchContent.value)
+      arSort.value = {}
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
     }else{
       sort.publication_date = order;
-      const result = await SearchAPI.searchWithSort(searchContent.value, sort)
+      arSort.value = sort
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
     }
   }else if(sortType === 4){
     let sort = {"publication_year": "asc"}
     if(order === ""){
-      const result = await SearchAPI.search(searchContent.value)
+      arSort.value = {}
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
     }else{
       sort.publication_year = order;
-      const result = await SearchAPI.searchWithSort(searchContent.value, sort)
+      arSort.value = sort
+      currentArticle.value = 1
+      const result = await searchArticleWithAll();
       paperList.value = result.data.data.result;
     }
   }else if(sortType === 5){
@@ -393,15 +654,14 @@ async function searchWithSort(sortType, order){
     //   console.log("res",result.data);
     //   paperList.value = result.data.data.result;
     // }else{
-      const result = await SearchAPI.search(searchContent.value)
-      paperList.value = result.data.data.result;
+    arSort.value = {}
+    currentArticle.value = 1
+    const result = await searchArticleWithAll();
+    paperList.value = result.data.data.result;
     // }
   }
-  const slice = paperList.value.slice(1, 10);
-  paperListPerPage.value = slice;
-  console.log("sort_paper",paperList.value);
+  setArticlesFilterContent();
 }
-
 async function searchExpertWithSort(sortType, order){
 	if(sortType === 1){
 		let sort = {"display_name": "asc"}
@@ -461,6 +721,18 @@ async function searchExpertWithSort(sortType, order){
 	initExpertPage();
 	
 }
+async function searchArticleWithAll(){
+  currentArticle.value = 1;
+  let res = await SearchAPI.searchArticleWithAll(searchContent.value, currentArticle.value, arFilter.value,arSort.value);
+  console.log("func-res",res);
+  arResult.value = res;
+  console.log("arResult......",arResult.value);
+  paperList.value = arResult.value.data.data.result;
+  totalPaper.value = arResult.value.data.data.total;
+  totalPaperPage.value = totalPaper.value/25;
+  setArticlesFilterContent();
+  return res;
+}
 async function searchExpertWithAll(){
 	current.value = 1;
 	let res = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,current.value,ExFilter.value,ExSort.value);
@@ -480,36 +752,52 @@ const handleClickArticle = async menuInfo => {
   console.log('click ');
   console.log('click ', menuInfo.keyPath[1]);
 
-  if (menuInfo.keyPath[0] == "region") {
-    const filter ={
-      'concepts.display_name':menuInfo.keyPath[1]
+  if(LKP === menuInfo.keyPath){
+    ArticleState.selectedKeys = [];
+    arFilter.value = {};
+    await searchArticleWithAll();
+    LKP = null;
+  }else{
+    if (menuInfo.keyPath[0] == "region") {
+      const filter ={
+        'concepts.display_name':menuInfo.keyPath[1]
+      }
+      arFilter.value = filter;
+      await searchArticleWithAll();
+    } else if (menuInfo.keyPath[0] == "language") {
+      const filter ={
+        'language':menuInfo.keyPath[1]
+      }
+      arFilter.value = filter;
+      await searchArticleWithAll();
+    }else if(menuInfo.keyPath[0] == "institution"){
+      const filter ={
+        'authorships.institutions.display_name':menuInfo.keyPath[1]
+      }
+      arFilter.value = filter;
+      await searchArticleWithAll();
+    }else if(menuInfo.keyPath[0] == "type"){
+      const filter ={
+        'type':menuInfo.keyPath[1]
+      }
+      arFilter.value = filter;
+      await searchArticleWithAll();
     }
-    await getArticlesFiltered(filter);
-  } else if (menuInfo.keyPath[0] == "language") {
-    const filter ={
-      'language':menuInfo.keyPath[1]
-    }
-    await getArticlesFiltered(filter);
-  }else if(menuInfo.keyPath[0] == "institution"){
-    const filter ={
-      'authorships.institutions.display_name':menuInfo.keyPath[1]
-    }
-    await getArticlesFiltered(filter);
-  }else if(menuInfo.keyPath[0] == "type"){
-    const filter ={
-      'type':menuInfo.keyPath[1]
-    }
-    await getArticlesFiltered(filter);
+    LKP = menuInfo.keyPath;
   }
+  setArticlesFilterContent();
 }
 
 watch (current, async (newValue, oldValue) => {
 	await getExpertsWithPage(newValue);
 	console.log("value",newValue);
 })
-watch (pageCurrent, async (newValue, oldValue) => {
-  const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
-  paperListPerPage.value = tmp;
+// watch (pageCurrent, async (newValue, oldValue) => {
+//   const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
+//   paperListPerPage.value = tmp;
+// })
+watch(currentArticle, async (newValue, oldValue) => {
+  await getArticlesWithPage(newValue);
 })
 
 const ExFilterClick = async menuInfo => {
@@ -536,16 +824,6 @@ const ExFilterClick = async menuInfo => {
 	}
 	setExpertFilterContent();
 }
-const ExSortClick = async menuInfo => {
-	let key = menuInfo.key;
-	if(key === "name"){
-		const sorted = {
-			'display_name' : 'name'
-		}
-	}
-	console.log(menuInfo);
-	console.log("heiheihei");
-}
 async function getExperts(){
 	current.value = 1;
 	let res = await searchExpertWithAll();
@@ -556,18 +834,32 @@ async function getExperts(){
 	console.log("total",exResult.value.data.data.total);
 	setExpertFilterContent();
 }
+async function getInstitution(){
+	let res = await SearchAPI.search_institution(searchRef.value.ifSearch);
+	institutionList.value = res.data.data.result;
+}
+async function getField(){
+	let res = await SearchAPI.search_concept(searchRef.value.ifSearch);
+	console.log("concept",res.data.data.result);
+	fieldList.value = res.data.data.result;
+}
 async function getExpertsWithPage(page){
 	let res = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,page,ExFilter.value,ExSort.value);
 	setExpertFilterContent();
 	exResult.value = res;
 	expertList.value = exResult.value.data.data.result;
 }
+async function getArticlesWithPage(page){
+  let res = await SearchAPI.searchArticleWithAll(searchRef.value.ifSearch,page,arFilter.value,arSort.value);
+  setArticlesFilterContent();
+  arResult.value = res;
+  paperList.value = arResult.value.data.data.result;
+}
 function initArticlePage(){
   const slice = paperList.value.slice(1, 10);
   paperListPerPage.value = slice;
   pageCurrent.value = 1;
 }
-
 async function getExpertsFiltered(Region){
 	current.value = 1;
 	exResult.value = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,current.value,ExFilter.value,ExSort.value);
@@ -603,29 +895,24 @@ function setExpertFilterContent(){
 	}
 }
 
-async function getArticlesFiltered(filter){//获取带有筛选条件的论文
-  const result = await SearchAPI.searchWithFilter(searchContent.value,filter)
-  console.log("paper_result:", result)
-  paperList.value = result.data.data.result;
-  console.log("paperList:", paperList.value);
-  setArticlesFilterContent();
-  initArticlePage();
-}
+// async function getArticlesFiltered(filter){//获取带有筛选条件的论文
+//   const result = await SearchAPI.searchWithFilter(searchContent.value,filter)
+//   console.log("paper_result:", result)
+//   paperList.value = result.data.data.result;
+//   console.log("paperList:", paperList.value);
+//   setArticlesFilterContent();
+//   initArticlePage();
+// }
 
-const tranEfieldNum = ref([]);
-const axisField = ref([]);
-const ordNum = ref([]);
 
-const tranEauthor = ref([]);
-const authorRankName = ref([]);
-const authorRankNum = ref([]);
+const authorRank = ref([]);
 function setArticlesFilterContent(){//设置论文过滤条件
   let ArticleField = [];
   let ArticleLanguage = [];
   let ArticleInstitution = [];
   let ArticleType = [];
   let authors = [];
-  console.log("filter",paperList.value);
+  console.log("filter_set",paperList.value);
   for(let i=0;i<paperList.value.length;i++){
     const paper = paperList.value[i];
 
@@ -689,7 +976,7 @@ function setArticlesFilterContent(){//设置论文过滤条件
           existingAuthor.count++;
         } else {
           // 如果 Field 不存在于数组中，则添加一个新的项
-          tranEauthor.value.push({ name: authorName, count: 1 });
+          tranEauthor.value.push({ name: authorName, count: 1 ,author_id:paper.authorships[j].author.id});
         }
       }
     }
@@ -702,17 +989,19 @@ function setArticlesFilterContent(){//设置论文过滤条件
   tranEauthor.value.sort((a, b) => b.count - a.count);
 
   // 取出数组中的前十个项
-  const topFiveFields = tranEfieldNum.value.slice(0, 10);
+  const topTenFields = tranEfieldNum.value.slice(0, 10);
   const topTenAuthors = tranEauthor.value.slice(0,10);
 
-  console.log(topFiveFields);
+  console.log(topTenFields);
 
-  // 从 topFiveFields 中提取 field 和 count 作为两个数组
-  axisField.value = topFiveFields.map(item => item.field);
-  ordNum.value = topFiveFields.map(item => item.count);
+  // 从 topFTenFields 中提取 field 和 count 作为两个数组
+  axisField.value = topTenFields.map(item => item.field);
+  ordNum.value = topTenFields.map(item => item.count);
 
-  authorRankName.value = topTenAuthors.map(item => item.name);
-  authorRankNum.value = topTenAuthors.map(item => item.count);
+  authorRank.value = topTenAuthors;
+  console.log("authorRankName",authorRankName.value);
+  console.log("authorRankNum",authorRankNum.value);
+
 
   const languageItem = ArticleItems.find(ArticleItem => ArticleItem.label === '语言');
   const fieldItem = ArticleItems.find(ArticleItem => ArticleItem.label === '领域');
@@ -737,31 +1026,91 @@ function setArticlesFilterContent(){//设置论文过滤条件
   }
 }
 
+const ifLoading = ref(false)
 onMounted(async ()=>{//初始渲染论文列表
-  const route = useRoute();
-  console.log("route",route.query.content)
+  
+  console.log("route",route.name);
+  if(route.name === "SearchArticle"){
+	  console.log("art")
+	  activeKey.value = '1';
+  }else if(route.name === "SearchExpert"){
+	  console.log("expert")
+	  activeKey.value = '2';
+  }else if(route.name === "SearchInstitution"){
+	  activeKey.value = '3';
+  }else if(route.name === "SearchField"){
+		activeKey.value = '4';
+  }
   const result = await SearchAPI.search(route.query.content)
+  ifLoading.value = true;
+  console.log("route",route.query.content)
+  currentArticle.value = 1;
+  let res = await searchArticleWithAll();
+  console.log("res-on",res);
   searchContent.value = route.query.content;
-  totalPaper.value = result.data.data.total;
-  console.log("result:", result)
-  paperList.value = result.data.data.result;
+  arResult.value = res;
+  paperList.value = arResult.value.data.data.result;
+  console.log("paperList-mou",paperList.value);
+  totalPaper.value = arResult.value.data.data.total;
+  totalPaperPage.value = totalPaper.value/25;
+  console.log("total",arResult.value.data.data.total);
+  ifLoading.value = false;
   console.log("paperlist:", paperList.value);
   setArticlesFilterContent();
-  initArticlePage();
   await getExperts();
-  console.log("axis",axisField.value);
-  console.log("ord",ordNum.value);
-  console.log("rankname",authorRankName.value);
-  console.log("ranknum",authorRankNum.value)
+  await getField();
+  await getInstitution();
 })
-
+watch(route, async (newVal, oldVal) => {//监视输入框
+	if(route.name === "SearchArticle"){
+		console.log("art")
+		activeKey.value = '1';
+	}else if(route.name === "SearchExpert"){
+		console.log("expert")
+		activeKey.value = '2';
+	}else if(route.name === "SearchInstitution"){
+		activeKey.value = '3';
+	}else if(route.name === "SearchField"){
+		activeKey.value = '4';
+	}
+})
+watch(activeKey, async (newVal, oldVal) => {//监视输入框
+	const hash = {
+		1 : "article",
+		2 : "expert",
+		3: "institution",
+		4: "field",
+	}
+	let n = parseInt(activeKey.value)
+	const parts = route.path.split('/');
+	const type = parts[parts.length - 2];
+	if(type === hash[n]){
+	
+	}else{
+		router.push({
+			path:"/search/"+hash[n]+"/",
+			query:{
+				content:route.query.content
+			}
+		});
+	}
+	console.log("route",type)
+	console.log("key",hash[n])
+	
+})
 watch(searchContent, async (newVal, oldVal) => {//监视输入框
   console.log("newVal:",newVal);
   console.log("oldVal:",oldVal);
   await getPapers();
 })
-
-
+watch (current, async (newValue, oldValue) => {
+	await getExpertsWithPage(newValue);
+	console.log("value",newValue);
+})
+watch (pageCurrent, async (newValue, oldValue) => {
+	const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
+	paperListPerPage.value = tmp;
+})
 function getFullPaper(item){//进入论文详情
   const url = item.id;
   const parts = url.split('/');
@@ -816,6 +1165,15 @@ const state = reactive({
 	openKeys: ['region'],
 	selectedKeys: [],
 });
+
+const onOpenChange1 = openKeys => {
+  const latestOpenKey = openKeys.find(key => ArticleState.openKeys.indexOf(key) === -1);
+  if (ArticleState.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+    ArticleState.openKeys = openKeys;
+  } else {
+    ArticleState.openKeys = latestOpenKey ? [latestOpenKey] : [];
+  }
+}
 const onOpenChange = openKeys => {
 	const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
 	if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -863,13 +1221,7 @@ body{
   filter: brightness(1.5); /* 调整颜色亮度，1表示原始亮度，大于1表示增加亮度 */
 }
 
-.echart-style{
-  border: 1px solid #dcdcdc; /* 设置边框颜色和宽度 */
-  background-color: #fff; /* 设置背景色，如果需要的话 */
-  padding: 10px; /* 设置内边距 */
-  flex-direction: column;
-  align-items: center;
-}
+
 .nav_outer{
   width: 100%;
   min-width: 1280px;
@@ -930,7 +1282,7 @@ body{
   margin-top: 15px;
   display: flex;
   justify-content: space-between;
-  line-height: 20px;
+  line-height: 30px;
 }
 .column-left{
   display: flex;
@@ -943,7 +1295,12 @@ body{
 .column-left .item {
   text-align: left;
   font-size: 14px;
-  color:#3C80F6;
+  color:black;
+  cursor: pointer;
+  opacity: 80%;
+}
+.column-left .item:hover {
+    transform: scale(1.03); /* 可根据需要调整缩放比例 */
 }
 .column-right  .item {
   text-align: center;
