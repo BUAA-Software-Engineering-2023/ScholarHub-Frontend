@@ -1052,44 +1052,80 @@ onMounted(async ()=>{//初始渲染论文列表
   if(route.name === "SearchArticle"){
 	  console.log("art")
 	  activeKey.value = '1';
+	  ifLoading.value = true;
+	  console.log("route",route.query.content)
+	  currentArticle.value = 1;
+	  let res = await searchArticleWithAll();
+	  console.log("res-on",res);
+	  searchContent.value = route.query.content;
+	  arResult.value = res;
+	  paperList.value = arResult.value.data.data.result;
+	  console.log("paperList-mou",paperList.value);
+	  totalPaper.value = arResult.value.data.data.total;
+	  totalPaperPage.value = totalPaper.value/25;
+	  console.log("total",arResult.value.data.data.total);
+	  ifLoading.value = false;
+	  console.log("paperlist:", paperList.value);
+	  setArticlesFilterContent();
+	  console.log("art")
   }else if(route.name === "SearchExpert"){
+	  await getExperts();
 	  console.log("expert")
 	  activeKey.value = '2';
   }else if(route.name === "SearchInstitution"){
+	  await getInstitution();
 	  activeKey.value = '3';
   }else if(route.name === "SearchField"){
-		activeKey.value = '4';
+	  await getField();
+	  activeKey.value = '4';
   }
-  const result = await SearchAPI.search(route.query.content)
-  ifLoading.value = true;
-  console.log("route",route.query.content)
-  currentArticle.value = 1;
-  let res = await searchArticleWithAll();
-  console.log("res-on",res);
-  searchContent.value = route.query.content;
-  arResult.value = res;
-  paperList.value = arResult.value.data.data.result;
-  console.log("paperList-mou",paperList.value);
-  totalPaper.value = arResult.value.data.data.total;
-  totalPaperPage.value = totalPaper.value/25;
-  console.log("total",arResult.value.data.data.total);
-  ifLoading.value = false;
-  console.log("paperlist:", paperList.value);
-  setArticlesFilterContent();
+  // ifLoading.value = true;
+  // console.log("route",route.query.content)
+  // currentArticle.value = 1;
+  // let res = await searchArticleWithAll();
+  // console.log("res-on",res);
+  // searchContent.value = route.query.content;
+  // arResult.value = res;
+  // paperList.value = arResult.value.data.data.result;
+  // console.log("paperList-mou",paperList.value);
+  // totalPaper.value = arResult.value.data.data.total;
+  // totalPaperPage.value = totalPaper.value/25;
+  // console.log("total",arResult.value.data.data.total);
+  // ifLoading.value = false;
+  // console.log("paperlist:", paperList.value);
+  // setArticlesFilterContent();
   await getExperts();
   await getField();
   await getInstitution();
 })
 watch(route, async (newVal, oldVal) => {//监视输入框
 	if(route.name === "SearchArticle"){
+		ifLoading.value = true;
+		console.log("route",route.query.content)
+		currentArticle.value = 1;
+		let res = await searchArticleWithAll();
+		console.log("res-on",res);
+		searchContent.value = route.query.content;
+		arResult.value = res;
+		paperList.value = arResult.value.data.data.result;
+		console.log("paperList-mou",paperList.value);
+		totalPaper.value = arResult.value.data.data.total;
+		totalPaperPage.value = totalPaper.value/25;
+		console.log("total",arResult.value.data.data.total);
+		ifLoading.value = false;
+		console.log("paperlist:", paperList.value);
+		setArticlesFilterContent();
 		console.log("art")
 		activeKey.value = '1';
 	}else if(route.name === "SearchExpert"){
+		await getExperts();
 		console.log("expert")
 		activeKey.value = '2';
 	}else if(route.name === "SearchInstitution"){
+		await getInstitution();
 		activeKey.value = '3';
 	}else if(route.name === "SearchField"){
+		await getField();
 		activeKey.value = '4';
 	}
 })
