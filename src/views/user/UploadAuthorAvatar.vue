@@ -90,11 +90,12 @@ const cropImage = () => {
 
 const saveAvatar = async () => {
   try {
-    const result = await AccountAPI.upload_avatar(imageFile);
-    globalAccount.setAvatar(result.data.data)
-    const result1 = await UserAPI.update_info(globalAccount.userInfo.nickname,result.data.data)
-    console.log(result1)
-    avatar.value = globalAccount.userInfo.avatar;
+    const result = await AccountAPI.upload_author_avatar(imageFile);
+    const author_id = globalAccount.userInfo.author_id;
+    const result1 = await AccountAPI.update_author_avatar(author_id,result.data.data);
+    if (result1.data.success){
+      avatar.value = result1.data.data.avatar;
+    }
     emit('update:avatar', avatar.value);
   } catch (e) {
     console.error('图片上传失败', e);

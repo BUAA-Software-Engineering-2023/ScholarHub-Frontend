@@ -18,7 +18,7 @@
     </div>
     <div class="recommendation">
       <div v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
-        <div  @click="jump_to_article(recommendation.id)"> <span class="recommendation-title">{{ recommendation.display_name }}</span> </div>
+        <div  @click="jump_to_article(recommendation.id)"> <span class="recommendation-title" v-html="recommendation.display_name"></span> </div>
         <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
           <div class="recommendation-details">
             <div   @mouseover="showAuthorInfo(author.author,recommendation.id)"
@@ -176,7 +176,7 @@ function  jump_to_author(id){
     margin-top: 5vh;
     font-size: 20px;
     font-weight: 200;
-    color: #aab1b9;
+    color: white;
     line-height: 30px;
   }
 }

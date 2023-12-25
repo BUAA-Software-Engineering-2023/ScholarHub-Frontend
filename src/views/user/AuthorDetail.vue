@@ -2,32 +2,44 @@
 import UserApi from "@/api/user.js";
 import SideBar from "@/views/user/SideBar.vue";
 import Swal from "sweetalert2";
-import {useGlobalStore} from "@/stores/global.js";
-import Avatar from "@/components/Account/Avatar.vue";
 import {useAccountStore} from "@/stores/account.js";
+import AccountApi from "@/api/account.js"
 import UploadAuthorAvatar from "@/views/user/UploadAuthorAvatar.vue";
+import Search from "@/api/search.js";
 
 const globalStore  = useAccountStore();
-
-async function handleChange(){
-  const result = await UserApi.update_info(formState.nickname);
-  globalStore.userInfo.nickname = formState.nickname;
-  if (!result.data.success){
-    let promise = Swal.fire({
-      icon: 'error',
-      title:'服务器错误'
-    });
-  }else{
-    let promise = Swal.fire({
-      icon: 'success',
-      title:'修改信息成功！'
-    });
+const authorBio = ref('这里是作者的简介...');
+const editableBio = ref('');
+const isEditing = ref(false);
+const authorName = ref("");
+const avatar = ref("");
+const authorInfo = ref()
+const Mounted = ref(false)
+const input = ref("")
+// 切换编辑模式
+async function toggleEdit() {
+  if (isEditing.value) {
+    authorBio.value = editableBio.value; // 保存编辑后的内容
+    const result = await AccountApi.update_author_info(globalStore.userInfo.author_id,authorName.value,authorBio.value,avatar.value);
+    console.log(result.data)
+    authorName.value = input.value;
+    // 这里可以添加代码将编辑后的内容发送到服务器
+  } else {
+    editableBio.value = authorBio.value; // 准备编辑内容
   }
+  isEditing.value = !isEditing.value;
 }
-const avatar = ref(globalStore.userInfo.avatar);
 const is_Author = ref(globalStore.userInfo.is_Author);
 onMounted( async () => {
-  console.log(globalStore.userInfo)
+  const result =  await Search.author_detail(globalStore.userInfo.author_id)
+  if (result.data.success){
+    authorName.value = result.data.data.display_name
+    input.value = result.data.data.display_name
+    avatar.value = result.data.data.avatar
+    authorInfo.value = result.data.data
+  }
+  Mounted.value = true;
+  console.log(result)
 });
 const onFinish = values => {
   console.log('Success:', values);
@@ -58,36 +70,35 @@ const buttonItemLayout = computed(() => {
     <div class="sidebar">
       <SideBar select-keys="4"></SideBar>
     </div>
-    <div v-if="is_Author" class="content">
+    <div v-if="!is_Author" class="content">
       <div class="header">
         <div class="avatar">
-          <UploadAuthorAvatar :initial-avatar="avatar"></UploadAuthorAvatar>
+          <UploadAuthorAvatar v-show="Mounted" :initial-avatar="avatar"></UploadAuthorAvatar>
         </div>
-        <div class="header-content">{{globalStore.userInfo.nickname}}</div>
+        <div class="header-content">{{authorName}}</div>
       </div>
       <div class="information">
+
         <div class="left">
-          <div class="title"> 基本信息</div>
+          <div class="title">
+            作者信息
+            <EditOutlined @click="toggleEdit" v-if="!isEditing" class="edit-button" />
+          </div>
           <el-divider></el-divider>
-          <a-form  :layout="formState.layout" ref="formRef" :model="formState" name="dynamic_rule" v-bind="formItemLayout" >
-            <a-form-item
-                label="用户名"
-                name="username"
-                :rules="[{ required: true, message: 'Please input your username!' }]"
-            >
-              <a-input  :disabled="true" v-model:value="formState.username" />
-            </a-form-item>
-
-            <a-form-item
-                label="昵称"
-                name="nickname"
-                :rules="[{ required: true, message: 'Please input your nickname!' }]"
-            >
-              <a-input v-model:value="formState.nickname" />
-            </a-form-item>
-
-            <a-button @click="handleChange" type="primary">保存</a-button>
-          </a-form>
+          <div class="profile-section">
+            <div class="title">
+              作者姓名
+              <a-input v-model:value="input" :disabled="!isEditing" class="name-input"></a-input>
+            </div>
+            <div class="title">
+              作者简介
+            </div>
+            <!-- ...其他内容... -->
+          </div>
+          <el-divider></el-divider>
+          <div v-if="!isEditing" class="author-bio">{{ authorBio }}</div>
+          <a-textarea v-else v-model:value="editableBio" :rows="4"></a-textarea>
+          <button class="btn" v-if="isEditing" @click="toggleEdit">保存</button>
         </div>
         <div class="right">
           <div class="title">合作学者</div>
@@ -123,8 +134,8 @@ const buttonItemLayout = computed(() => {
         </div>
       </div>
     </div>
-    <div v-else>
-
+    <div class="empty" v-else>
+        <a-empty description="暂无作者信息"></a-empty>
     </div>
   </div>
 
@@ -163,6 +174,18 @@ const buttonItemLayout = computed(() => {
   width: 80%; /* 右侧宽度，可以根据需求调整 */
   /* 可添加其他样式 */
 }
+.empty {
+  margin-left: 10vw;
+  background-color: white;
+  margin-top: 20px;
+  color: black;
+  /* 右侧内容样式 */
+  width: 60%; /* 右侧宽度，可以根据需求调整 */
+  height: 200%;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+  border-radius: 10px;
+  /* 可添加其他样式 */
+}
 .avatar{
   box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
   margin: auto;
@@ -196,6 +219,27 @@ const buttonItemLayout = computed(() => {
   font-weight: 800;
   font-size: 25px;
 }
+
+
+.author-bio {
+  margin-bottom: 15px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555;
+}
+
+a-textarea {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+a-button{
+  margin-top: 20px;
+}
+.profile-section a-button:hover {
+  background-color: #45a049;
+}
+
 #components-form-demo-normal-login .login-form {
   max-width: 300px;
 }
@@ -207,5 +251,35 @@ const buttonItemLayout = computed(() => {
   font-size: 25px;
   font-weight: 900;
 }
-
+.edit-button {
+  margin-left: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  color: #a0a5a8;
+}
+.btn{
+  margin-top: 20px;
+  font-size: 14px;
+  background-color: white;
+  color: black;
+  border: black 1px solid;
+  align-items: center;
+  transition: 0.5s;
+}
+.btn:hover{
+  color: white;
+  background-color: black;
+}
+.name-input {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+.profile-section .title{
+  font-size: 20px;
+  font-weight: 400;
+}
 </style>

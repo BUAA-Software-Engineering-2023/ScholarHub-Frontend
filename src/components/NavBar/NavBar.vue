@@ -12,7 +12,7 @@
             </div>
             <!-- 左侧导航栏 -->
             <div class="left-ul">
-              <li title=""><router-link active-class="active" to="#"> 博客 </router-link></li>
+              <li title=""><router-link active-class="active" to="#"></router-link></li>
             </div>
           </div>
 
@@ -191,7 +191,8 @@ a{
   background-color: #eee;
 }
 .navbar-container-middle{
-  padding: 10px 40px;
+  margin-left: 20%;
+  margin-top: 8px;
   flex: 1;
 }
 .navbar-search-container{
