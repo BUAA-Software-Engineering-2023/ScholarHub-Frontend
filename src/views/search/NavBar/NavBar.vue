@@ -98,7 +98,7 @@
     router.push('/')
   }
 </script>
-<!--登录之后的导航栏-->
+
 
 <style scoped>
 .navbar{
@@ -112,7 +112,6 @@
   /* 字体粗细，400相当于normal */
   font-weight: 400;
   color: white;
-  //opacity: .8;
   background-color: #0e161e;
   /* 阴影  水平阴影距离，垂直阴影距离， 模糊尺寸， 阴影尺寸 颜色*/
   box-shadow:0 2px 4px 0 rgb(0, 0, 0,5%);
@@ -148,7 +147,7 @@
   max-width: 180px;
   height: 67px;
   display: block;
-//margin-top: calc((48px - 44px)/ 2);
+
 }
 .left-ul{
   width: auto;
