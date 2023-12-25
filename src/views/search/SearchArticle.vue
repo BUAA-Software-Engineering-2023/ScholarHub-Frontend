@@ -255,8 +255,7 @@ const arFilter = ref({});
 const arSort = ref({});
 
 import { AntDesignOutlined } from '@ant-design/icons-vue';
-import EchartsArticle from "@/views/search/EchartsArticle.vue";
-import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
+
 const activeKey = ref('1');
 const pageCurrent = ref(1);
 const paperList = ref();
@@ -366,9 +365,6 @@ const getAdv = async (value) => {
     }
   }
 }
-const sortKey = ref(['1']);
-const searchContent = ref();
-const Efield = ref([]);
 const getInput = (value) => {//获取输入框的输入
   searchContent.value = value;
   console.log("searchContent:::",searchContent.value);
@@ -908,13 +904,7 @@ function setExpertFilterContent(){
 //   initArticlePage();
 // }
 
-const tranEfieldNum = ref([]);
-const axisField = ref([]);
-const ordNum = ref([]);
 
-const tranEauthor = ref([]);
-const authorRankName = ref([]);
-const authorRankNum = ref([]);
 const authorRank = ref([]);
 function setArticlesFilterContent(){//设置论文过滤条件
   let ArticleField = [];
