@@ -12,6 +12,8 @@ import { message } from 'ant-design-vue';
 import CitedByYear from "@/components/visual/CitedByYear.vue";
 import CommentsAPI from "@/api/comments.js"
 import {dayjs} from "undraw-ui";
+import UploadPaper from "@/views/paper/UploadPaper.vue";
+import router from "@/router/index.js";
 const paperInfo =ref([])
 const route = useRoute()
 const authorInfo = ref()
@@ -25,10 +27,13 @@ const year = ref([])
 const Mounted = ref(false);
 const comments = ref([])
 const series = ref([])
+const is_oa = ref(false)
+
 onMounted(async () => {
   const result = await SearchAPI.get_article_detail(paperId);
   const response = result.data.data
-  console.log("paper result:",result);
+  console.log(response)
+  console.log(result);
   favorites.value = await (await UserAPI.get_favorite()).data.data;
   let paperData = [];
   let yearArr = [];
@@ -100,7 +105,7 @@ onMounted(async () => {
     }
 
   }
-
+  is_oa.value = paperInfo.value[0].open_access.is_oa
   const commentsResult = (await CommentsAPI.get_comments(paperId, true)).data;
   console.log(commentsResult)
   if (commentsResult.success){
@@ -135,7 +140,7 @@ onMounted(async () => {
       if (tmp.reply_id==null){
         comments.value.push({
           id: String(tmp.comment_id),
-          parentId: String(tmp.reply_id),
+          parentId: null,
           uid: tmp.sender_id,
           address: '来自北京',
           content: tmp.content,
@@ -144,11 +149,12 @@ onMounted(async () => {
           user: {
             username: tmp.sender_nickname,
             avatar: tmp.sender_avatar,
+            level: 6,
+            homeLink: '/1'
           },
-          reply:reply,
+          reply:null,
         })
       }
-    console.log()
     }
   }
 
@@ -156,6 +162,11 @@ onMounted(async () => {
 });
 function showAuthorInfo(author) {
   authorInfo.value = author;
+}
+function  jump_to_author(id){
+  const parts = id.split('/');
+  const authorId = parts[parts.length - 1]; // 获取最后一个部分
+  router.push(`/client/author/${authorId}`)
 }
 const isFavorite = ref(false); // 是否已经收藏，可以根据实际逻辑进行设置
 
@@ -191,14 +202,12 @@ function showFavoriteList(){
 const options = ref([]);
 const value = ref();
 const handleChange = async value => {
-  console.log(value); // { key: "lucy", label: "Lucy (101)" }
   const url = value.value // 下载文件的url
-  console.log(url.value)
   const link = document.createElement('a') ;
   link.href = url;
   link.target="_blank"
   link.click()
-  // window.URL.revokeObjectURL(url)
+  value.value = '';
 };
 async function add_favorite(foldId,paperId){
   // message.success('收藏成功！', 10);
@@ -220,6 +229,7 @@ async function add_favorite(foldId,paperId){
               <div   @mouseover="showAuthorInfo(author.author)"
                      @mouseleave="hideAuthorInfo"
                      class="author_container"
+                     @click="jump_to_author(author.author.id)"
               ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
                 <span v-if="index1 !== paper.authorships.length - 1">，</span>
               </div>
@@ -292,11 +302,14 @@ async function add_favorite(foldId,paperId){
             </div>
           </div>
           <div class="buttons">
-            <div @click="downloadPDF" @mouseover="showDownload" @mouseleave="hideDownload" class="download-pdf">
+            <div v-if="is_oa" @click="downloadPDF" @mouseover="showDownload" @mouseleave="hideDownload" class="download-pdf">
               <span class="pdf"> PDF</span>
               <transition  name="slide1">
                 <span class="arrow" v-if="download"><EyeOutlined /></span>
               </transition>
+            </div>
+            <div v-else  class="upload-pdf">
+              <UploadPaper :paper_id="paperId"></UploadPaper>
             </div>
             <div class="paper-link">
               <a-select
@@ -306,7 +319,7 @@ async function add_favorite(foldId,paperId){
                   placeholder="原文链接"
                   style="width: 120px;box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;margin: 5px;border-radius: 5px"
                   :options="options"
-                  @change="handleChange"
+                  @select="handleChange"
               ></a-select>
             </div>
             <button @mouseover="showFavoriteList" class="favorite-button" >
@@ -314,8 +327,11 @@ async function add_favorite(foldId,paperId){
               <span v-else >收藏 <el-icon class="icons"><Star /></el-icon></span>
             </button>
             <div v-show="showFavorite&&!isFavorite" @mouseover="showFavoriteList" @mouseleave="showFavorite = false" class="favorite-list" >
-              <div v-for="(favorite,index) in favorites" :key="index">
+              <div v-if="favorites.length"  v-for="(favorite,index) in favorites" :key="index">
                 <div class="favorite-list-item" @click="add_favorite(favorite.id,paperId)"> {{favorite.title}}</div>
+              </div>
+              <div v-else>
+                <div class="favorite-list-item">创建收藏</div>
               </div>
               <!-- 这里放置你的收藏列表内容 -->
             </div>
@@ -548,6 +564,24 @@ async function add_favorite(foldId,paperId){
   font-size: 14px;
   display: flex;
 }
+.upload-pdf{
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  border-radius: 5px;
+  background-color: #3c12ea;
+  border: none;
+  color: #ffff;
+  text-align: center;
+  font-weight: 400;
+  transition: all 0.5s;
+  padding: 10px;
+  margin: 5px 5px 5px 0;
+  vertical-align: middle;
+}
+.upload-pdf:hover{
+    background-color: #4B70E2;
+}
 /* 悬停添加箭头图标 */
 .download-pdf {
   font-size: 14px;
@@ -574,9 +608,10 @@ async function add_favorite(foldId,paperId){
 .pdf{
   font-weight: 600 ;
   margin: auto 10px;
+  font-size: 15px;
 }
 .arrow{
-  margin: auto 5px;
+  margin: 0 auto auto;
 }
 .reference_work {
   margin-top: 20px;
@@ -692,7 +727,6 @@ async function add_favorite(foldId,paperId){
   text-align: left;
   color: #363c50 !important;
   box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
-  text-align: left;
   width: 100%;
   overflow-y: scroll;
 }
@@ -714,4 +748,7 @@ async function add_favorite(foldId,paperId){
 .concepts-text{
   display: flex;
  }
+.paper-link{
+
+}
 </style>

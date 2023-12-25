@@ -48,6 +48,7 @@ import { Camera, UploadFilled } from "@element-plus/icons-vue";
 import VueCropper from "vue-cropperjs";
 import 'cropperjs/dist/cropper.css';
 import AccountAPI from "@/api/account.js"
+import UserAPI from "@/api/user.js"
 import {useAccountStore} from "@/stores/account.js";
 const props = defineProps({
   initialAvatar: String
@@ -91,9 +92,9 @@ const saveAvatar = async () => {
   try {
     const result = await AccountAPI.upload_avatar(imageFile);
     // avatar.value = result.data.url;
-    console.log(result)
     globalAccount.setAvatar(result.data.data)
-    console.log(globalAccount.userInfo.avatar)
+    const result1 = await UserAPI.update_info(globalAccount.userInfo.nickname,result.data.data)
+    console.log(result1)
     avatar.value = globalAccount.userInfo.avatar;
     emit('update:avatar', avatar.value);
   } catch (e) {

@@ -155,6 +155,30 @@ export default {
             showLoading:true,
         })
     },
+    searchExpertWithPage(search,page){
+        return requests({
+            url:"/author/search",
+            method: 'POST',
+            data:{
+                search,
+                page,
+            },
+            showLoading:true,
+        })
+    },
+    searchExpertWithAll(search,page,filter,sort){
+        return requests({
+            url:"/author/search",
+            method: 'POST',
+            data:{
+                search,
+                page,
+                sort,
+                filter,
+            },
+            showLoading:true,
+        })
+    },
     searchExpertFiltered(search,filter){
         return requests({
             url:"/author/search",
@@ -184,6 +208,15 @@ export default {
             method:"POST",
             data:{
                 author_id
+            }
+        })
+    },
+    institution_detail(id){
+        return requests({
+            url: "/institution/detail",
+            method:"POST",
+            data:{
+                id
             }
         })
     },

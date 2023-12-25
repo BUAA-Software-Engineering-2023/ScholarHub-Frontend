@@ -25,7 +25,7 @@ function init() {
       }
     },
     legend: {
-      data: ["发文量", '引用频次']
+      data: ["发文量"]
     },
     toolbox: {
       feature: {
@@ -62,7 +62,7 @@ function init() {
 <template>
   <div class="TrendBox">
     <div class="line"></div><div class="title">研究趋势</div>
-    <div ref="main" style="width: 350px; height: 350px;"></div>
+    <div ref="main" style="width: 350px; height: 200px;"></div>
   </div>
 </template>
 
