@@ -145,6 +145,19 @@ export default {
             showLoading:true,
         })
     },
+    searchArticleWithAll(search,page,filter,sort){
+        return requests({
+            url:"/work/search",
+            method: 'POST',
+            data:{
+                search,
+                page,
+                sort,
+                filter,
+            },
+            showLoading:true,
+        })
+    },
     searchExpert(search){
         return requests({
             url:"/author/search",

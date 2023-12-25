@@ -4,6 +4,7 @@
         v-model="searchValue"
         @search="handleSearch"
         @clear="handleClear"
+        @get-adv="getAdv"
     >
       <template #dropdown>
         <AdvancedSearchHint
@@ -32,12 +33,12 @@ import {useRouter} from "vue-router";
 
 const searchStore = useSearchStore();
 const searchValue = ref(searchStore.searchInput);
-
+const advContent = ref([])
 
 const ifSearch = ref();
 defineExpose({ifSearch})
-const emit = defineEmits(["getInput"])
-
+const emit = defineEmits(["getInput", "getAdv"])
+const props = defineProps(['inputStr'])
 async function handleSearch(InputValue,type){
   searchValue.value = InputValue;
   console.log("input:"+searchValue.value)
@@ -66,6 +67,18 @@ async function handleSearch(InputValue,type){
     });
   }
 }
+
+const getAdv = (value) =>{
+  advContent.value = value;
+  console.log("advContent",advContent.value);
+  emit("getAdv", advContent.value);
+}
+
+watch(advContent, ()=>{
+  console.log("advContent",advContent.value);
+  emit("getAdv", advContent.value);
+})
+
 const handleClear = () => {
   searchValue.value = '';
   searchStore.setSearchInput("");
@@ -76,6 +89,13 @@ const handleRemoveHistory = (history) =>{
 const handleClearHistory = async () => {
 
 }
+onMounted(()=>{
+  searchValue.value = props.inputStr;
+})
+
+watch(props, ()=>{
+  searchValue.value = props.inputStr;
+})
 
 </script>
 
