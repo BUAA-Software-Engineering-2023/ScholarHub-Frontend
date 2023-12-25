@@ -98,7 +98,6 @@ body{
   max-width: 180px;
   height: 100px;
   display: block;
-  //margin-top: calc((48px - 44px)/ 2);
 }
 .left-ul{
   width: auto;

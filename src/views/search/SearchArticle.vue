@@ -141,14 +141,11 @@
                 </a-card>
 
               </div>
-
             </a-layout-sider>
-
           </a-layout>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
 	        <a-layout>
-		        
 		        <a-layout-sider :style="siderStyle" width="500" >
 			        <div class = "slideSearch">
 				        <a-menu
@@ -196,12 +193,15 @@
 		        </a-layout-content>
 	        </a-layout>
         </a-tab-pane>
+      <a-tab-pane key="3" tab="机构" force-render>
+	      <Institution :institute="institutionList"></Institution>
+      </a-tab-pane>
+      <a-tab-pane key="4" tab="领域" force-render>
+	      <field :field="fieldList"></field>
+      </a-tab-pane>
       </a-tabs>
-	    
-
     </div>
     <a-float-button-group shape="circle" :style="{ right: '24px' }">
-
       <a-back-top :visibility-height="0" />
     </a-float-button-group>
   </div>
@@ -216,8 +216,9 @@ import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChar
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";
 import ExpertCard from "@/views/search/ExpertCard.vue";
-import * as echarts from "echarts";
-
+import EchartsArticle from "@/views/search/EchartsArticle.vue";
+import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
+import Institution from "@/views/search/Institution.vue";
 const totalPaper = ref(0);
 const totalPaperPage = ref(0);
 const totalExpert = ref(0);
@@ -256,12 +257,12 @@ import { AntDesignOutlined } from '@ant-design/icons-vue';
 import EchartsArticle from "@/views/search/EchartsArticle.vue";
 import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
 const activeKey = ref('1');
-const emit = defineEmits(["changePage"]);
 const pageCurrent = ref(1);
 const paperList = ref();
 const paperListPerPage = ref();
 const expertList = ref();
-const expertListPerPage = ref();
+const institutionList = ref();
+const fieldList = ref();
 const update = ref(true);
 let LastKeyPath = null;
 let LKP = null;
@@ -364,6 +365,9 @@ const getAdv = async (value) => {
     }
   }
 }
+const sortKey = ref(['1']);
+const searchContent = ref();
+const Efield = ref([]);
 const getInput = (value) => {//获取输入框的输入
   searchContent.value = value;
   console.log("searchContent:::",searchContent.value);
@@ -483,6 +487,12 @@ function jumpPortal(url){//进入科研人员详情页
   })
 }
 
+const tranEfieldNum = ref([]);
+const axisField = ref([]);
+const ordNum = ref([]);
+const tranEauthor = ref([]);
+const authorRankName = ref([]);
+const authorRankNum = ref([]);
 const arrow1 = ref(0)
 const arrow2 = ref(0)
 const arrow3 = ref(0)
@@ -538,7 +548,6 @@ async function switchOrder(sortType){
   console.log("sortType,order",sortType,order)
   await searchWithSort(sortType, order);
 }
-
 function jumpToExDetail(info){
 	console.log("jump");
 	console.log(info.id);
@@ -547,7 +556,6 @@ function jumpToExDetail(info){
 	let lastPart = parts[parts.length - 1]; // 获取数组中的最后一个元素
 	router.push("/client/author/"+lastPart);
 }
-
 async function switchExpertOrder(sortType){
 	let order = "";
 	if(sortType === 1){
@@ -656,7 +664,6 @@ async function searchWithSort(sortType, order){
   }
   setArticlesFilterContent();
 }
-
 async function searchExpertWithSort(sortType, order){
 	if(sortType === 1){
 		let sort = {"display_name": "asc"}
@@ -819,16 +826,6 @@ const ExFilterClick = async menuInfo => {
 	}
 	setExpertFilterContent();
 }
-const ExSortClick = async menuInfo => {
-	let key = menuInfo.key;
-	if(key === "name"){
-		const sorted = {
-			'display_name' : 'name'
-		}
-	}
-	console.log(menuInfo);
-	console.log("heiheihei");
-}
 async function getExperts(){
 	current.value = 1;
 	let res = await searchExpertWithAll();
@@ -838,6 +835,15 @@ async function getExperts(){
 	totalExpertPage.value = totalExpert.value/25;
 	console.log("total",exResult.value.data.data.total);
 	setExpertFilterContent();
+}
+async function getInstitution(){
+	let res = await SearchAPI.search_institution(searchRef.value.ifSearch);
+	institutionList.value = res.data.data.result;
+}
+async function getField(){
+	let res = await SearchAPI.search_concept(searchRef.value.ifSearch);
+	console.log("concept",res.data.data.result);
+	fieldList.value = res.data.data.result;
 }
 async function getExpertsWithPage(page){
 	let res = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,page,ExFilter.value,ExSort.value);
@@ -856,7 +862,6 @@ function initArticlePage(){
   paperListPerPage.value = slice;
   pageCurrent.value = 1;
 }
-
 async function getExpertsFiltered(Region){
 	current.value = 1;
 	exResult.value = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,current.value,ExFilter.value,ExSort.value);
@@ -1048,19 +1053,23 @@ onMounted(async ()=>{//初始渲染论文列表
   console.log("paperlist:", paperList.value);
   setArticlesFilterContent();
   await getExperts();
-  console.log("axis",axisField.value);
-  console.log("ord",ordNum.value);
-  console.log("rankname",authorRankName.value);
-  console.log("ranknum",authorRankNum.value)
-})
+  await getField();
+  await getInstitution();
 
+})
 watch(searchContent, async (newVal, oldVal) => {//监视输入框
   console.log("newVal:",newVal);
   console.log("oldVal:",oldVal);
   await getPapers();
 })
-
-
+watch (current, async (newValue, oldValue) => {
+	await getExpertsWithPage(newValue);
+	console.log("value",newValue);
+})
+watch (pageCurrent, async (newValue, oldValue) => {
+	const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
+	paperListPerPage.value = tmp;
+})
 function getFullPaper(item){//进入论文详情
   const url = item.id;
   const parts = url.split('/');

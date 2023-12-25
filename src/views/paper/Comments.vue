@@ -1,9 +1,8 @@
 <template>
-  <u-comment :config="config"  @submit="submit" @operate="operate" @like="like" ref="commentRef" upload relative-time>
+  <u-comment :config="config"  @submit="submit" @operate="operate" ref="commentRef" relative-time>
     <!-- <template>用户信息导航栏卡槽</template> -->
     <!-- <template #info>用户信息卡槽</template> -->
     <!-- <template #card>用户信息卡片卡槽</template> -->
-    <u-comment-nav v-model="latest" @sorted="sorted"></u-comment-nav>
     <template #operate="scope" v-if="useAccountStore().userInfo.is_admin">
       <Operate :comment="scope" @remove="remove" />
     </template>
