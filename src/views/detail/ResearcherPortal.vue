@@ -329,6 +329,7 @@ onMounted(async () => {
       },
       data: paperData
     });
+    console.log(series.value)
     series.value.push( {
       name: '引用频次',
       type: 'line',
@@ -439,10 +440,6 @@ body{
   margin-top: 10px;
 }
 
-.research-list {
-  list-style: none;
-  padding: 0;
-}
 
 .research-list li {
   background-color: #fff;
@@ -469,17 +466,6 @@ img{
 
   display: flex;
   align-items: center;
-}
-.card-H{
-  text-align: center;
-  font-size: 20px;
-
-}
-.card-H-content{
-  text-align: center;
-  color: #4B70E2;
-  margin-top: 5px;
-  font-size: 30px;
 }
 .card-content div {
   margin-left: 20px;
