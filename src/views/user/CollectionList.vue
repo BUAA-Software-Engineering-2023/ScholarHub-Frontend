@@ -63,6 +63,7 @@ async function deleteFolder(folderId){
     });
   }
   result = await UserApi.get_favorite();
+  router.push("/client/user/collections")
   collections.value = result.data.data;
 }
 async function query(folderId){

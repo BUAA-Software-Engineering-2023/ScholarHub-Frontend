@@ -12,7 +12,7 @@
             </div>
             <!-- 左侧导航栏 -->
             <div class="left-ul">
-              <li title=""><router-link active-class="active" to="#"> 博客 </router-link></li>
+              <li title=""><router-link active-class="active" to="#"></router-link></li>
             </div>
           </div>
 
@@ -38,11 +38,11 @@
                   <div id="test"></div>
                     <div class="profile-user">
                       <div class="profile-nickName">
-                        <img class="profile-avatar" :src="avatar" alt="用户头像"> <span class="nickName">您好，{{name}}</span> <!-- 显示用户姓名 -->
+                        <img class="profile-avatar" :src="avatar||'@/assets/imgs/default.jpg'" alt="用户头像"> <span class="nickName">您好，{{name}}</span> <!-- 显示用户姓名 -->
                       </div>
                       <el-divider></el-divider>
                       <div class="profile-links">
-                        <a  @click="goto" class="profile-link">学术主页</a>
+                        <a  @click="gotoScholar" class="profile-link">学术主页</a>
                         <a  @click="gotoCollection" class="profile-link">我的收藏</a>
                         <a  @click="gotoInfo" class="profile-link">个人信息</a>
                         <a  v-if="isAdmin" @click="gotoAdmin" class="profile-link">管理端</a>
@@ -98,6 +98,9 @@ import Notification from "@/components/NavBar/Message.vue";
   }
   function  gotoAdmin(){
     router.push('/test')
+  }
+  function gotoScholar(){
+    router.push('/client/user/scholar')
   }
 
   function logout(){
@@ -188,7 +191,8 @@ a{
   background-color: #eee;
 }
 .navbar-container-middle{
-  padding: 10px 40px;
+  margin-left: 20%;
+  margin-top: 8px;
   flex: 1;
 }
 .navbar-search-container{
