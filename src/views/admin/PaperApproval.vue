@@ -3,7 +3,7 @@
 	<a-table bordered :data-source="dataSource" :columns="columns">
 		<template #bodyCell="{ column, text, record }">
 			<template v-if="column.dataIndex === 'name'">
-				<router-link tag="a" target="_blank" :to="/client\paper/+record.paper_id">{{ text }}</router-link>
+				<router-link tag="a" target="_blank" :to="/client\paper/+record.id">{{ text }}</router-link>
 			</template>
 			<template v-else-if="column.dataIndex === 'operation'">
 				<a-popconfirm

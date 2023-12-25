@@ -160,20 +160,15 @@
 						        </div>
 					        </el-menu-item>
 				        </el-menu>
-			        <li class = "ExpertRes" v-for="item in expertListPerPage" v-bind:key="item.id">
+			        <li class = "ExpertRes" v-for="item in expertList" v-bind:key="item.id">
 				        <a-card hoverable style="width: 80%;">
 					        <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
 				        </a-card>
 				    </li>
-			        <a-pagination
-				        v-model:current="current"
-				        :total="25"
-				        show-less-items />
+			        <a-pagination v-model:current="current" :total=totalExpertPage pageSize="25" :showSizeChanger="false" />
 		        </a-layout-content>
-		        
 	        </a-layout>
         </a-tab-pane>
-		
       </a-tabs>
 	    
 
@@ -193,6 +188,8 @@ import ExpertCard from "@/views/search/ExpertCard.vue";
 import * as echarts from "echarts";
 
 const totalPaper = ref(0);
+const totalExpert = ref(0);
+const totalExpertPage = ref(0);
 const current = ref(1);
 const contentStyle = {
   paddingleft:'200px',
@@ -217,6 +214,7 @@ const headerStyle = {
 const result = ref();
 const exResult = ref();
 const searchRef = ref(null);
+
 import { AntDesignOutlined } from '@ant-design/icons-vue';
 import EchartsArticle from "@/views/search/EchartsArticle.vue";
 import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
@@ -239,11 +237,8 @@ const getInput = (value) => {//获取输入框的输入
   console.log("searchContent:::",searchContent.value);
 }
 async function getPapers(){//获取论文列表
-  console.log("searchContent:"+searchContent.value)
   const result = await SearchAPI.search(searchContent.value)
-  console.log("result:", result)
   paperList.value = result.data.data.result;
-  console.log("paperlist:", paperList.value);
   initArticlePage();
 }
 
@@ -255,7 +250,8 @@ const arrow4 = ref(0)
 const Exarrow1 = ref(0)
 const Exarrow2 = ref(0)
 const Exarrow3 = ref(0)
-
+const ExFilter = ref({});
+const ExSort = ref({});
 // const arrow5 = ref(0)
 const activeIndex = ref("1")
 async function switchOrder(sortType){
@@ -297,16 +293,7 @@ async function switchOrder(sortType){
       order = "";
     }
   }
-  // else if(sortType === 5){
-  //   arrow5.value ++;
-  //   if(arrow5.value % 3 === 1){//上
-  //     order = "asc";
-  //   }else if(arrow5.value % 3 === 2){//下
-  //     order = "desc";
-  //   }else if(arrow5.value % 3 === 0){
-  //     order = "";
-  //   }
-  // }
+
   console.log("sortType,order",sortType,order)
   await searchWithSort(sortType, order);
 }
@@ -409,20 +396,21 @@ async function searchWithSort(sortType, order){
   const slice = paperList.value.slice(1, 10);
   paperListPerPage.value = slice;
   console.log("sort_paper",paperList.value);
-
 }
 
 async function searchExpertWithSort(sortType, order){
 	if(sortType === 1){
 		let sort = {"display_name": "asc"}
 		if(order === ""){
-			const result = await SearchAPI.searchExpert(searchContent.value)
-			console.log("sortResult:",result);
-			console.log("res",result.data);
+			ExSort.value = {};
+			current.value = 1;
+			const result = await searchExpertWithAll();
 			expertList.value = result.data.data.result;
 		}else{
 			sort.display_name = order;
-			const result = await SearchAPI.searchExpertSorted(searchContent.value, sort)
+			ExSort.value = sort
+			current.value = 1;
+			const result = await searchExpertWithAll();
 			console.log("sortResult:",result);
 			console.log("res",result.data);
 			expertList.value = result.data.data.result;
@@ -431,13 +419,17 @@ async function searchExpertWithSort(sortType, order){
 	}else if(sortType === 2){
 		let sort = {"cited_by_count": "asc"}
 		if(order === ""){
-			const result = await SearchAPI.searchExpert(searchContent.value)
+			ExSort.value = {};
+			current.value = 1;
+			const result = await searchExpertWithAll();
 			console.log("sortResult:",result);
 			console.log("res",result.data);
 			expertList.value = result.data.data.result;
 		}else{
 			sort.cited_by_count = order;
-			const result = await SearchAPI.searchExpertSorted(searchContent.value, sort)
+			ExSort.value = sort;
+			current.value = 1;
+			const result = await searchExpertWithAll();
 			console.log("sortResult:",result);
 			console.log("res",result.data.data.result);
 			expertList.value = result.data.data.result;
@@ -445,13 +437,17 @@ async function searchExpertWithSort(sortType, order){
 	}else if(sortType === 3){
 		let sort = {"works_count": "asc"}
 		if(order === ""){
-			const result = await SearchAPI.searchExpert(searchContent.value)
+			ExSort.value = {};
+			current.value = 1;
+			const result = await searchExpertWithAll();
 			console.log("works_count:",result);
 			console.log("res",result.data.data.result);
 			expertList.value = result.data.data.result;
 		}else{
 			sort.works_count = order;
-			const result = await SearchAPI.searchExpertSorted(searchContent.value, sort)
+			ExSort.value = sort;
+			current.value = 1;
+			const result = await searchExpertWithAll();
 			console.log("works_count:",result);
 			console.log("res",result.data);
 			expertList.value = result.data.data.result;
@@ -461,7 +457,21 @@ async function searchExpertWithSort(sortType, order){
 	initExpertPage();
 	
 }
+async function searchExpertWithAll(){
+	current.value = 1;
+	let res = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,current.value,ExFilter.value,ExSort.value);
+	console.log("hhhhhh",res.data.data);
+	console.log("filter",ExFilter.value);
+	console.log("sort",ExSort.value);
 
+	
+	exResult.value = res;
+	expertList.value = exResult.value.data.data.result;
+	totalExpert.value = exResult.value.data.data.total;
+	totalExpertPage.value = totalExpert.value/25;
+	setExpertFilterContent();
+	return res;
+}
 const handleClickArticle = async menuInfo => {
   console.log('click ');
   console.log('click ', menuInfo.keyPath[1]);
@@ -490,8 +500,8 @@ const handleClickArticle = async menuInfo => {
 }
 
 watch (current, async (newValue, oldValue) => {
-	const tmp = expertList.value.slice((current.value-1)*10,current.value*10);
-	expertListPerPage.value = tmp;
+	await getExpertsWithPage(newValue);
+	console.log("value",newValue);
 })
 watch (pageCurrent, async (newValue, oldValue) => {
   const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
@@ -501,22 +511,26 @@ watch (pageCurrent, async (newValue, oldValue) => {
 const ExFilterClick = async menuInfo => {
 	if(LastKeyPath === menuInfo.keyPath){
 		state.selectedKeys = [];
-		await getExperts();
+		ExFilter.value = {};
+		await searchExpertWithAll();
 		LastKeyPath = null;
 	}else {
 		if (menuInfo.keyPath[0] == "region") {
-			const filter = {
+			let filter = {
 				'concepts.display_name': menuInfo.keyPath[1]
 			}
-			await getExpertsFiltered(filter);
+			ExFilter.value = filter;
+			await searchExpertWithAll();
 		} else if (menuInfo.keyPath[0] == "country") {
-			const filter = {
+			let filter = {
 				'last_known_institution.country_code': menuInfo.keyPath[1]
 			}
-			await getExpertsFiltered(filter);
+			ExFilter.value = filter;
+			await searchExpertWithAll();
 		}
 		LastKeyPath = menuInfo.keyPath;
 	}
+	setExpertFilterContent();
 }
 const ExSortClick = async menuInfo => {
 	let key = menuInfo.key;
@@ -529,27 +543,32 @@ const ExSortClick = async menuInfo => {
 	console.log("heiheihei");
 }
 async function getExperts(){
-	exResult.value = await SearchAPI.searchExpert(searchRef.value.ifSearch)
+	current.value = 1;
+	let res = await searchExpertWithAll();
+	exResult.value = res;
 	expertList.value = exResult.value.data.data.result;
+	totalExpert.value = exResult.value.data.data.total;
+	totalExpertPage.value = totalExpert.value/25;
+	console.log("total",exResult.value.data.data.total);
 	setExpertFilterContent();
-	//cut
-	initExpertPage();
+}
+async function getExpertsWithPage(page){
+	let res = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,page,ExFilter.value,ExSort.value);
+	setExpertFilterContent();
+	exResult.value = res;
+	expertList.value = exResult.value.data.data.result;
 }
 function initArticlePage(){
   const slice = paperList.value.slice(1, 10);
   paperListPerPage.value = slice;
   pageCurrent.value = 1;
 }
-function initExpertPage(){
-	const slice = expertList.value.slice(1, 10);
-	expertListPerPage.value = slice;
-	current.value = 1;
-}
+
 async function getExpertsFiltered(Region){
-	exResult.value = await SearchAPI.searchExpertFiltered(searchRef.value.ifSearch,Region)
+	current.value = 1;
+	exResult.value = await SearchAPI.searchExpertWithAll(searchRef.value.ifSearch,current.value,ExFilter.value,ExSort.value);
 	expertList.value = exResult.value.data.data.result;
 	setExpertFilterContent();
-	initExpertPage();
 }
 function setExpertFilterContent(){
 	let ExpertInstitution = [];
@@ -655,9 +674,7 @@ function setArticlesFilterContent(){//设置论文过滤条件
     }
 
     for(let j=0; j<paper.authorships.length; j++) {//add institution
-      console.log("paper.authorships",paper.authorships[j].author);
       if(paper.authorships[j].author != null){
-        console.log("yes")
         let authorName = paper.authorships[j].author.display_name;
 
         // 检查 Field 是否已经在 tranEfieldNum 中
