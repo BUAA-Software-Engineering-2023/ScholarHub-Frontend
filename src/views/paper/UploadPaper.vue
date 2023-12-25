@@ -41,6 +41,7 @@ import 'cropperjs/dist/cropper.css';
 import AccountAPI from "@/api/account.js"
 import UserAPI from "@/api/user.js"
 import {useAccountStore} from "@/stores/account.js";
+import Swal from "sweetalert2";
 const props = defineProps({
   initialAvatar: String,
   paper_id:String,
@@ -82,6 +83,20 @@ const saveAvatar = async () => {
       console.log(pdfFile)
       const result = await UserAPI.upload_paper(props.paper_id,pdfFile)
       console.log(result)
+      if (result.data.success){
+        dialogVisible.value = false;
+        await Swal.fire({
+          icon: 'success', //error\warning\info\question
+          title: result.data.message
+        })
+      }else{
+        dialogVisible.value = false;
+        await Swal.fire({
+          icon: 'error', //error\warning\info\question
+          title: result.data.message
+        })
+
+      }
       // const result = await AccountAPI.upload_avatar(pdfFile);
       // avatar.value = result.data.url;
       // globalAccount.setAvatar(result.data.data)
@@ -90,9 +105,11 @@ const saveAvatar = async () => {
       // avatar.value = globalAccount.userInfo.avatar;
       // emit('update:avatar', avatar.value);
     } catch (e) {
-      console.error('PDF 文件上传失败', e);
+      await Swal.fire({
+        icon: 'error', //error\warning\info\question
+        title: "文件上传失败"
+      })
     }
-    dialogVisible.value = false;
   }
 };
 </script>
