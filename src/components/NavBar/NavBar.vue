@@ -128,7 +128,7 @@ import Notification from "@/components/NavBar/Message.vue";
   font-weight: 400;
   color: white;
   //opacity: .8;
-  background-color: #0e161e;
+  background-color: black;
   /* 阴影  水平阴影距离，垂直阴影距离， 模糊尺寸， 阴影尺寸 颜色*/
   box-shadow:0 2px 4px 0 rgb(0, 0, 0,5%);
 }
