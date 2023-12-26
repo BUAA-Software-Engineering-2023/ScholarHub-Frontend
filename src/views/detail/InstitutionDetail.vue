@@ -1,6 +1,6 @@
 
 <template>
-  <div class="container">
+
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout >
         <a-layout style="min-width: 1200px">
@@ -87,7 +87,7 @@
                   <div class="research-container">
                     <div class="research-item">
                       <div class="line"></div>
-                      <div class="research-title">研究成果</div>
+                      <div class="research-title">机构数据库</div>
                       <div class="research-details">
                         <div class="research-institutions">
                           <div class="institution-container" v-for="(institution, index) in researchinstitutions" :key="index">
@@ -101,28 +101,23 @@
 
                         </div>
                       </div>
-                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="works">
+                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="associated_repositories">
                         <template #footer>
 
                         </template>
                         <template #renderItem="{ item }">
                           <a-list-item key="item.title">
-                            <template #actions>
-                              <span v-for="{ icon, text } in item.actions" :key="icon">
-                              <component :is="icon" style="margin-right: 8px" />
-                              text
-                            </span>
-                            </template>
+
                             <template #extra>
 
                             </template>
                             <a-list-item-meta :description="item.description">
                               <template #title>
-                                <a :href="item.href">Title</a>
+                                <a :href="item.href">{{ item.title }}</a>
                               </template>
-                              <template #avatar><a-avatar :src="item.avatar" /></template>
+
                             </a-list-item-meta>
-                            content
+
                           </a-list-item>
                         </template>
                       </a-list>
@@ -175,7 +170,7 @@
       </a-layout>
 
     </a-space>
-  </div>
+
 </template>
 
 
@@ -204,6 +199,7 @@ const cited_by_count = ref();
 const h_index = ref();
 const geo = ref();
 const associated_institutions = ref([]);
+const associated_repositories = ref([]);
 const series = ref([]);
 const years = ref([]);
 const x_concepts = ref([]);
@@ -233,7 +229,8 @@ onMounted(async ()=>{
     let yearArr = [];
     data.value = x_concepts.value.map(concept => ({
       value: concept.score,
-      name: concept.display_name
+      name: concept.display_name,
+      url: concept.id,
     }));
 
     console.log(data)
@@ -242,10 +239,11 @@ onMounted(async ()=>{
     onMounted(() => {
       data.value = x_concepts.map(concept => ({
         value: concept.score,
-        name: concept.display_name
+        name: concept.display_name,
+        url: concept.id,
       }));
     });
-    console.log(data.value)
+
     for (let i = 0;i<response.counts_by_year.length;i++){
       paperData.push(response.counts_by_year[i].works_count);
       cited_by_counts.push(response.counts_by_year[i].cited_by_count);
@@ -255,7 +253,7 @@ onMounted(async ()=>{
     for (let i=yearArr.length-1;i>=0;i--){
       years.value.push(yearArr[i]);
     }
-    console.log(years.value)
+
     series.value.push( {
       name: '发文量',
       type: 'line',
@@ -273,12 +271,13 @@ onMounted(async ()=>{
 
 
     const associated_institutions_list = institution.value.associated_institutions
+
     for (let i = 0 ;i<associated_institutions_list.length;i++){
       const url = associated_institutions_list[i].id
       const parts = url.split('/');
       const institutionId = parts[parts.length - 1];
       const institutionActions = [
-        { text: "territory:  "+associated_institutions_list[i].type.toString() },
+        { text: "concept:  "+associated_institutions_list[i].type.toString() },
       ];
       associated_institutions.value.push({
         href: "/client/institution/"+ institutionId,
@@ -286,6 +285,20 @@ onMounted(async ()=>{
         actions: institutionActions
       });
     }
+
+
+    const repositories_list = institution.value.repositories
+    console.log(repositories_list)
+    for (let i = 0 ;i<repositories_list.length;i++){
+      const url = repositories_list[i].id
+
+      associated_repositories.value.push({
+        href: url,
+        title: (i+1).toString() + ". " + repositories_list[i].display_name,
+      });
+    }
+
+
 
 
 
@@ -310,7 +323,7 @@ const headerStyle = {
   width: '69%',
   backgroundColor: '#fff',
   borderRadius: '10px',
-  minWidth: '900px',
+  minWidth: '970px',
   boxShadow:  '0 0 5px 0 hsla(0,0%,68.2%,.3)'
 };
 const contentStyle = {
