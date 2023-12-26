@@ -1,9 +1,9 @@
 <template>
-	<li v-for="ins in InstitutionList" v-bind:key="ins.id">
-		<a-card hoverable style="width: 80%; margin: 0 auto;">
+	<div class="container">
+		<a-card hoverable style="width: 20%; margin: 40px 40px" v-for="ins in InstitutionList" v-bind:key="ins.id" >
 			<InsCard :institution="ins" @click="jumpToInsDetail(ins)"/>
 		</a-card>
-	</li>
+	</div>
 </template>
 <script setup>
 
@@ -27,5 +27,8 @@ function jumpToInsDetail(){
 }
 </script>
 <style scoped>
-
+.container{
+	display: flex;
+	flex-wrap: wrap
+}
 </style>

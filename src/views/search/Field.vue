@@ -1,9 +1,15 @@
 <template>
-	<li v-for="fie in fieldList" v-bind:key="fie.id">
-		<a-card hoverable style="width: 80%; margin: 0 auto;">
+<!--	<li v-for="fie in fieldList" v-bind:key="fie.id">-->
+<!--		<a-card hoverable style="width: 80%; margin: 0 auto;">-->
+<!--			<field-card :fieldcard="fie" @click="jumpToInsDetail(fie)"/>-->
+<!--		</a-card>-->
+<!--	</li>-->
+	<div class="container">
+		<a-card hoverable style="width: 20%; margin: 40px 40px" v-for="fie in fieldList" v-bind:key="fie.id" >
 			<field-card :fieldcard="fie" @click="jumpToInsDetail(fie)"/>
 		</a-card>
-	</li>
+
+	</div>
 </template>
 <script setup>
 
@@ -18,7 +24,7 @@ const fieldList = computed({
 		return props.modelValue;
 	},
 	set(value) {
-		emit('update:fieldL', value);
+		emit('update:modelValue', value);
 	}
 })
 
@@ -27,5 +33,8 @@ function jumpToInsDetail(){
 }
 </script>
 <style scoped>
-
+.container{
+	display: flex;
+	flex-wrap: wrap
+}
 </style>

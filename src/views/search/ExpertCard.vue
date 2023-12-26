@@ -3,7 +3,7 @@
 		<a-typography>
 			<a-typography-title :level="3" style="text-align: justify; text-justify: auto;">
 				<a-avatar :size="54" class="avatar">
-					<template #icon><img src="@/assets/imgs/default.jpg"/></template>
+					<template #icon><img src="@/assets/imgs/expert.png"/></template>
 				</a-avatar>
 				{{item.display_name}}
 			</a-typography-title>
