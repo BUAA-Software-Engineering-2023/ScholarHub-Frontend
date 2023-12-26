@@ -147,7 +147,7 @@ export default {
             showLoading:true,
         })
     },
-    searchArticleWithAll(search,page,filter,sort){
+    searchArticleWithAll(search,page,filter,sort,position){
         return requests({
             url:"/work/search",
             method: 'POST',
@@ -156,6 +156,7 @@ export default {
                 page,
                 sort,
                 filter,
+                position,
             },
             showLoading:true,
         })
@@ -181,7 +182,7 @@ export default {
             showLoading:true,
         })
     },
-    searchExpertWithAll(search,page,filter,sort){
+    searchExpertWithAll(search,page,filter,sort,position){
         return requests({
             url:"/author/search",
             method: 'POST',
@@ -190,6 +191,7 @@ export default {
                 page,
                 sort,
                 filter,
+                position,
             },
             showLoading:true,
         })

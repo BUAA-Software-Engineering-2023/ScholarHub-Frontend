@@ -12,6 +12,77 @@
       >
       </a-select>
     </a-space>
+    <a-select v-if="value1 === '论文'"
+        ref="select"
+        v-model:value="value_1"
+        :bordered=false
+        style="width: 100px;"
+        :options="options_1"
+        @focus="focus"
+        @change="handleChange"
+    >
+    </a-select>
+    <a-select v-if="value1 === '科研人员'"
+              ref="select"
+              v-model:value="value_2"
+              :bordered=false
+              style="width: 100px;"
+              :options="options_2"
+              @focus="focus"
+              @change="handleChange"
+    >
+    </a-select>
+    <a-select v-if="value1 === '来源'"
+              ref="select"
+              v-model:value="value_3"
+              :bordered=false
+              style="width: 100px;"
+              :options="options_3"
+              @focus="focus"
+              @change="handleChange"
+    >
+    </a-select>
+    <a-select v-if="value1 === '机构'"
+              ref="select"
+              v-model:value="value_4"
+              :bordered=false
+              style="width: 100px;"
+              :options="options_4"
+              @focus="focus"
+              @change="handleChange"
+    >
+    </a-select>
+    <a-select v-if="value1 === '领域'"
+              ref="select"
+              v-model:value="value_5"
+              :bordered=false
+              style="width: 100px;"
+              :options="options_5"
+              @focus="focus"
+              @change="handleChange"
+    >
+    </a-select>
+    <a-select v-if="value1 === '出版社'"
+              ref="select"
+              v-model:value="value_6"
+              :bordered=false
+              style="width: 100px;"
+              :options="options_6"
+              @focus="focus"
+              @change="handleChange"
+    >
+    </a-select>
+    <a-select v-if="value1 === '基金'"
+              ref="select"
+              v-model:value="value_7"
+              :bordered=false
+              style="width: 100px;"
+              :options="options_7"
+              @focus="focus"
+              @change="handleChange"
+    >
+    </a-select>
+
     <div class="search-divider"></div>
     <input  @keyup.enter="search" v-model="searchValue" @focus="onFocusHandler" class="search-input" type="text" placeholder="搜索一下...">
     <button class="show-adv" @click="showAdv">
@@ -196,6 +267,97 @@ const SearchTypeOptions = ref([
     label: "领域",
   }
 ])
+
+const value_1 = ref("综合搜索");
+const options_1 = ref([
+  {
+    value: 'default',
+    label: '综合搜索',
+  },
+  {
+    value: 'abstract',
+    label: '摘要',
+  },
+  {
+    value: 'display_name',
+    label: '标题',
+  },
+  {
+    value: 'fulltext',
+    label: '全文',
+  },
+])
+const value_2 = ref("综合搜索");
+const options_2 = ref([
+  {
+    value: 'default',
+    label: '综合搜索',
+  },
+  {
+    value: 'display_name',
+    label: '标题',
+  },
+])
+const value_3 = ref("综合搜索");
+const options_3 = ref([
+  {
+    value: 'default',
+    label: '综合搜索',
+  },
+  {
+    value: 'display_name',
+    label: '标题',
+  },
+])
+const value_4 = ref("综合搜索");
+const options_4 = ref([
+  {
+    value: 'default',
+    label: '综合搜索',
+  },
+  {
+    value: 'display_name',
+    label: '标题',
+  },
+])
+const value_5 = ref("综合搜索");
+const options_5 = ref([
+  {
+    value: 'default',
+    label: '综合搜索',
+  },
+  {
+    value: 'display_name',
+    label: '标题',
+  },
+])
+const value_6 = ref("综合搜索");
+const options_6 = ref([
+  {
+    value: 'default',
+    label: '综合搜索',
+  },
+  {
+    value: 'display_name',
+    label: '标题',
+  },
+])
+const value_7 = ref("综合搜索");
+const options_7 = ref([
+  {
+    value: 'default',
+    label: '综合搜索',
+  },
+  {
+    value: 'display_name',
+    label: '标题',
+  },
+  {
+    value: 'description',
+    label: '描述'
+  }
+])
+
 const value1 = ref("论文")
 const options1 = ref([
   {
@@ -260,7 +422,7 @@ const clearSearchValue = () =>{
   emits(CLEAR,'')
 }
 const search = () =>{
-  emits(SEARCH,searchValue.value,value1.value)
+  emits(SEARCH, searchValue.value, value1.value, value_1.value, value_2.value, value_3.value, value_4.value, value_5.value, value_6.value, value_7.value)
 }
 const handleChange = value => {
   console.log(`selected ${value}`);

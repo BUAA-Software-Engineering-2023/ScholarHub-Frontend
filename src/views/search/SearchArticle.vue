@@ -3,7 +3,7 @@
     <NavBar/>
     <div class="nav_outer">
       <div class="search-bar">
-        <AdvancedSearchBar :inputStr="searchContent" ref="searchRef" @getInput="getInput" @getAdv="getAdv"/>
+        <AdvancedSearchBar :inputStr="searchContent" ref="searchRef" @getPosition="getPosition" @getPosition2="getPosition2" @getPosition3="getPosition3" @getPosition4="getPosition4" @getPosition5="getPosition5" @getPosition6="getPosition6" @getPosition7="getPosition7" @getInput="getInput" @getAdv="getAdv"/>
       </div>
     </div>
 <!--      <a-skeleton active />-->
@@ -213,11 +213,11 @@
 	        </a-layout>
         </a-tab-pane>
       <a-tab-pane key="3" tab="机构" force-render>
-	      <Institution :institute="institutionList"></Institution>
+	      <Institution :ifLoading="ifLoading" :institute="institutionList"></Institution>
 	      <a-pagination v-model:current="currentIns" :total="totalIns" :pageSize="25" :showSizeChanger="false"/>
       </a-tab-pane>
       <a-tab-pane key="4" tab="领域" force-render>
-	      <Field v-model="fieldList"></Field>
+	      <Field :ifLoading="ifLoading" v-model="fieldList"></Field>
 	      <a-pagination v-model:current="currentField" :total="totalField" :pageSize="25" :showSizeChanger="false"/>
       </a-tab-pane>
       </a-tabs>
@@ -274,11 +274,20 @@ const headerStyle = {
 };
 const result = ref();
 const exResult = ref();
+const exPosition = ref('');
 const searchRef = ref(null);
 
-const arResult = ref();
+const arResult = ref([]);
 const arFilter = ref({});
 const arSort = ref({});
+const arPosition = ref('');
+const positionType = ref('default');
+const positionType2 = ref('default');
+const positionType3 = ref('default');
+const positionType4 = ref('default');
+const positionType5 = ref('default');
+const positionType6 = ref('default');
+const positionType7 = ref('default');
 
 const activeKey = ref('1');
 const pageCurrent = ref(1);
@@ -393,6 +402,62 @@ const getInput = (value) => {//获取输入框的输入
   searchContent.value = value;
   console.log("searchContent:::",searchContent.value);
 }
+
+const getPosition = async (value) => {
+  positionType.value = value;
+  arPosition.value = positionType.value
+  console.log("positionType", positionType.value);
+  await getPapers();
+}
+const getPosition2 = async (value) => {
+  positionType2.value = value;
+  exPosition.value = positionType2.value
+  console.log("positionType2", positionType2.value);
+  await getExperts();
+}
+const getPosition3 = async (value) => {
+  positionType3.value = value;
+  arPosition.value = positionType3.value
+  console.log("positionType3", positionType3.value);
+  await getPapers();
+}
+
+const getPosition4 = async (value) => {
+  positionType4.value = value;
+  arPosition.value = positionType4.value
+  console.log("positionType4", positionType4.value);
+  await getPapers();
+}
+
+const getPosition5 = async (value) => {
+  positionType5.value = value;
+  arPosition.value = positionType5.value
+  console.log("positionType5", positionType5.value);
+  await getPapers();
+}
+const getPosition6 = async (value) => {
+  positionType6.value = value;
+  arPosition.value = positionType6.value
+  console.log("positionType6", positionType6.value);
+  await getPapers();
+}
+
+const getPosition7 = async (value) => {
+  positionType7.value = value;
+  arPosition.value = positionType7.value
+  console.log("positionType7", positionType7.value);
+  await getPapers();
+}
+
+watch(positionType, async ()=>{
+  arPosition.value = positionType.value
+  await getPapers();
+})
+watch(positionType2, async ()=>{
+  exPosition.value = positionType2.value
+  await getExperts();
+})
+
 watch(advDomains, async ()=>{
   console.log("outer",advDomains.value);
   let count = 0;
@@ -527,6 +592,8 @@ const ExSort = ref({});
 // const arrow5 = ref(0)
 const activeIndex = ref("1")
 const route = useRoute();
+
+
 async function switchOrder(sortType){
   let order = "";
   if(sortType === 1){
@@ -747,7 +814,7 @@ async function searchExpertWithSort(sortType, order){
 }
 async function searchArticleWithAll(){
   currentArticle.value = 1;
-  let res = await SearchAPI.searchArticleWithAll(searchContent.value, currentArticle.value, arFilter.value,arSort.value);
+  let res = await SearchAPI.searchArticleWithAll(searchContent.value, currentArticle.value, arFilter.value, arSort.value, arPosition.value);
   console.log("func-res",res);
   arResult.value = res;
   console.log("arResult......",arResult.value);
@@ -868,14 +935,20 @@ async function getExperts(){
 	setExpertFilterContent();
 }
 async function getInstitution(page){
+  ifLoading.value = true;
 	let res = await SearchAPI.search_institution(searchContent.value,page);
 	institutionList.value = res.data.data.result;
+  ifLoading.value = false;
 	totalIns.value = res.data.data.total;
 	console.log("totalInst",totalInsPage.value);
 }
 async function getField(page){
+  ifLoading.value = true;
+  console.log("field-ifLoading1",ifLoading.value);
 	let res = await SearchAPI.search_concept(searchContent.value,page);
 	fieldList.value = res.data.data.result;
+  ifLoading.value = false;
+  console.log("field-ifLoading2",ifLoading.value);
 	totalField.value = res.data.data.total;
 	console.log(fieldList.value);
 }
