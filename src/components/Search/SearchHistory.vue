@@ -31,7 +31,7 @@ const searchStore = useSearchStore();
 const emits = defineEmits(['select']);
 
 const selectItem = (item) => {
-  emits('select', item);
+  emits('select', item,"论文");
 };
 
 const removeItem = (item) => {
