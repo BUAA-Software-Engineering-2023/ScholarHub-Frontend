@@ -22,7 +22,10 @@
 					<a-space direction="horizontal">
 					<a-typography-text :level="5">研究领域:</a-typography-text>
 					<a-typography-text :level="5"  v-for="(author, index) in item.x_concepts"   >
-						<a-typography-text strong v-if="index<3">{{author.display_name}},</a-typography-text>
+						<a-typography-text strong v-if="index<3">
+              {{author.display_name}}
+              <span v-if="index !== item.x_concepts.length - 1">,&nbsp;</span>
+            </a-typography-text>
 					</a-typography-text>
 					</a-space>
 				</a-space>
