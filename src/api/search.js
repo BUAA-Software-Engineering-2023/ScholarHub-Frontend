@@ -251,6 +251,15 @@ export default {
             }
         })
     },
+    concept_detail(id){
+        return requests({
+            url: "/concept/detail",
+            method:"POST",
+            data:{
+                id
+            }
+        })
+    },
     get_article_detail(work_id){
         return requests({
             url: "/work/detail",

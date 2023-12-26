@@ -46,6 +46,11 @@ function jump_to_article(id){
   console.log(`/client/paper/${paperId}`)
   router.push(`/client/paper/${paperId}`)
 }
+function  jump_to_author(id){
+  const parts = id.split('/');
+  const authorId = parts[parts.length - 1]; // 获取最后一个部分
+  router.push(`/client/author/${authorId}`)
+}
 async function handleSelect(){
   folderId.value = route.query.id
   if (folderId.value === ''||folderId.value===undefined) {
@@ -82,7 +87,7 @@ const isMounted = ref(false);
               <div   @mouseover="showAuthorInfo(author.author,collection.id)"
                      @mouseleave="hideAuthorInfo"
                      class="author_container"
-              ><span id="authorName" class="author-name-hover">{{ author.author.display_name }}</span>
+              ><span id="authorName" class="author-name-hover" @click="jump_to_author(author.author.id)">{{ author.author.display_name }}</span>
                 <span v-if="index1 !== collection.authorships.length - 1">，</span>
               </div>
             </div>

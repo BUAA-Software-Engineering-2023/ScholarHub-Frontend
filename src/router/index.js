@@ -45,6 +45,11 @@ const router = createRouter({
                     component: ()=>import("@/views/detail/InstitutionDetail.vue")
                 },
                 {
+                    path: 'concept/:conceptId',
+                    name: 'ConceptDetail',
+                    component: ()=>import("@/views/detail/ConceptDetail.vue")
+                },
+                {
                     path: 'user/collections',
                     name: 'Collections',
                     component:()=>import("@/views/user/Collection.vue"),
