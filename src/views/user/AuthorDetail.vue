@@ -49,7 +49,7 @@ async function toggleEdit() {
   }
   isEditing.value = !isEditing.value;
 }
-const is_Author = ref(globalStore.userInfo.is_Author);
+const is_Author = ref(globalStore.userInfo.is_author);
 onMounted( async () => {
   const result =  await Search.author_detail(globalStore.userInfo.author_id)
   if (result.data.success){
