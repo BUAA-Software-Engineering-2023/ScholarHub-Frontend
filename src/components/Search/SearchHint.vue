@@ -4,7 +4,7 @@
         v-for="item in hints"
         :key="item"
         class="history-item"
-        @click="selectItem(item)"
+        @click="selectItem(item,searchType)"
         v-html="item"
     >
     </div>
@@ -17,6 +17,7 @@ import {Delete, DeleteFilled} from "@element-plus/icons-vue";
 import {watchDebounced} from "@vueuse/core";
 import Search from '@/api/search.js'
 import {useSearchStore} from "@/stores/search.js";
+const searchType = ref(useSearchStore().searchType)
 const props = defineProps({
   searchText: {
     type: String,
@@ -97,8 +98,8 @@ watchDebounced(
       debounce : 300
     }
 );
-const selectItem = (item) => {
-  emits('select', item);
+const selectItem = (item,type) => {
+  emits('select', item,type);
 };
 </script>
 

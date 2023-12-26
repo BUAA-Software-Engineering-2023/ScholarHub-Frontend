@@ -77,7 +77,7 @@ function jump_to_article(id){
               </div>
               <transition  name="slide">
                 <div v-if="authorInfo && authorInfo.id === author.author.id && collection_id===history.id" class="author-info">
-                  <img src="@/assets/imgs/default.jpg" alt="Author Avatar">
+                  <img src="https://p4.itc.cn/q_70/images03/20230419/afa26485b395428abdc42e66a44d2e32.jpeg" alt="Author Avatar">
                   <div class="author-details">
                     <div class="author-name">{{ authorInfo.display_name }}</div>
                     <div class="author-stats">
