@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
         <a-layout style="min-width: 1200px" >
@@ -181,7 +181,6 @@
 
       <a-back-top :visibility-height="0" />
     </a-float-button-group>
-  </div>
 
 </template>
 

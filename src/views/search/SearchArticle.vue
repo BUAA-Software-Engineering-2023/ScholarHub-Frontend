@@ -184,11 +184,28 @@
 						        </div>
 					        </el-menu-item>
 				        </el-menu>
-			        <div>
-				        <a-card hoverable style="width: 80%;" v-for="item in expertList" v-bind:key="item.id" >
-					        <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
-				        </a-card>
-			        </div>
+			        <li class = "ExpertRes" v-for="item in expertList" v-bind:key="item.id">
+                <div v-if="ifLoading===true">
+                  <a-card v-for="item in 9">
+                    <a-skeleton active/>
+                  </a-card>
+                </div>
+                <div v-else>
+                  <div v-if="expertList!=null && expertList.length !== 0">
+                    <li class="result-item" v-for="(item, index) in expertList" v-bind:key="item.id">
+                      <a-card hoverable style="width: 80%;">
+                        <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
+                      </a-card>
+                    </li>
+                  </div>
+                  <div v-else>
+                    <a-empty
+                        image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+                        :image-style="{height: '60px',}"
+                    />
+                  </div>
+                </div>
+				    </li>
 			        <a-pagination v-model:current="current" :total=totalExpert pageSize="25" :showSizeChanger="false" />
 		        </a-layout-content>
 	        </a-layout>
@@ -835,10 +852,12 @@ const ExFilterClick = async menuInfo => {
 	setExpertFilterContent();
 }
 async function getExperts(){
+  ifLoading.value = true;
 	current.value = 1;
 	let res = await searchExpertWithAll();
 	exResult.value = res;
 	expertList.value = exResult.value.data.data.result;
+  ifLoading.value = false;
 	totalExpert.value = exResult.value.data.data.total;
 	totalExpertPage.value = totalExpert.value/25;
 	console.log("total",exResult.value.data.data.total);
