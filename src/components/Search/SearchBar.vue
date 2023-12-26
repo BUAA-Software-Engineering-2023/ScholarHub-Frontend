@@ -45,7 +45,7 @@ const emit = defineEmits(["getInput"])
 onMounted(()=>{
   tmp.value = searchStore.searchType
 })
-async function handleSearch(InputValue,type="article"){
+async function handleSearch(InputValue,type){
   searchValue.value = InputValue;
   console.log("input:"+searchValue.value)
 	if(type === "论文"){

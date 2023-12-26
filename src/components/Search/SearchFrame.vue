@@ -97,6 +97,7 @@ const search = () =>{
 }
 const handleChange = value => {
   useSearchStore().setSearchType(value)
+  console.log(value)
   emits("SearchType",value)
 };
 </script>

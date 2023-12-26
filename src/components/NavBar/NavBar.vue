@@ -11,9 +11,6 @@
               <img src="@/assets/imgs/scholarHub.png" alt="#">
             </div>
             <!-- 左侧导航栏 -->
-            <div class="left-ul">
-              <li title=""><router-link active-class="active" to="#"></router-link></li>
-            </div>
           </div>
 
           <!-- 中间搜索框 -->
