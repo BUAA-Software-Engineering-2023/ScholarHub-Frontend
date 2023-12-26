@@ -1,13 +1,13 @@
 import requests from "@/utils/request.js";
 export default {
-    search_source(search,page,pos){
+    search_source(search,page,position){
         return requests({
             url: '/source/search',
             method: 'POST',
             data:{
                 search,
                 page,
-                pos
+                position
             }
         })
     },
@@ -22,14 +22,14 @@ export default {
         })
     },
 
-    search_institution(search,page,pos) {
+    search_institution(search,page,position) {
         return requests({
             url: '/institution/search',
             method: 'POST',
             data: {
                 search,
                 page,
-                pos,
+                position,
             }
         })
     },
@@ -44,14 +44,14 @@ export default {
         })
     },
 
-    search_concept(search,page,pos) {
+    search_concept(search,page,position) {
         return requests({
             url: '/concept/search',
             method: 'POST',
             data: {
                 search,
                 page,
-                pos
+                position
             }
         })
     },
@@ -66,14 +66,14 @@ export default {
         })
     },
 
-    search_publisher(search,page,pos) {
+    search_publisher(search,page,position) {
         return requests({
             url: '/publisher/search',
             method: 'POST',
             data: {
                 search,
                 page,
-                pos
+                position
             }
         })
     },
@@ -88,14 +88,14 @@ export default {
         })
     },
 
-    search_funder(search,page,pos) {
+    search_funder(search,page,position) {
         return requests({
             url: '/funder/search',
             method: 'POST',
             data: {
                 search,
                 page,
-                pos
+                position
             }
         })
     },
