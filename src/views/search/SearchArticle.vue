@@ -205,7 +205,6 @@
                     />
                   </div>
                 </div>
-				    </li>
 			        <a-pagination v-model:current="current" :total=totalExpert pageSize="25" :showSizeChanger="false" />
 		        </a-layout-content>
 	        </a-layout>
