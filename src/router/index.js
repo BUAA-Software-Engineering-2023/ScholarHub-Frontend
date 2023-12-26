@@ -50,6 +50,16 @@ const router = createRouter({
                     component: ()=>import("@/views/detail/ConceptDetail.vue")
                 },
                 {
+                    path: 'funder/:funderId',
+                    name: 'FunderDetail',
+                    component: ()=>import("@/views/detail/FunderDetail.vue")
+                },
+                {
+                    path: 'publisher/:publisherId',
+                    name: 'PublisherDetail',
+                    component: ()=>import("@/views/detail/PublisherDetail.vue")
+                },
+                {
                     path: 'user/collections',
                     name: 'Collections',
                     component:()=>import("@/views/user/Collection.vue"),

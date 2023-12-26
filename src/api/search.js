@@ -257,6 +257,24 @@ export default {
             }
         })
     },
+    funder_detail(id){
+        return requests({
+            url: "/funder/detail",
+            method:"POST",
+            data:{
+                id
+            }
+        })
+    },
+    publisher_detail(id){
+        return requests({
+            url: "/publisher/detail",
+            method:"POST",
+            data:{
+                id
+            }
+        })
+    },
     get_article_detail(work_id){
         return requests({
             url: "/work/detail",
