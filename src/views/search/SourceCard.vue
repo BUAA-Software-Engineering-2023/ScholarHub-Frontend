@@ -3,8 +3,8 @@
 		<a-typography v-if="item">
 			
 			<a-avatar :size="54" class="avatar">
-				<template #icon v-if="item.image_url != null"><img :src="item.image_url"/></template>
-				<template #icon v-if="item.image_url == null"><img src="@/assets/imgs/instituition.png"/></template>
+				<template #icon v-if="item.image_url"><img :src="item.image_url"/></template>
+				<template #icon v-if="!item.image_url"><img src="@/assets/imgs/source.png"/></template>
 			</a-avatar>
 			<h3>{{item.display_name}}</h3>
 		</a-typography>

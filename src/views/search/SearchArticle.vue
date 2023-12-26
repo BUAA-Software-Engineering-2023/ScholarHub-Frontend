@@ -139,12 +139,11 @@
                       :image-style="{height: '60px',}"
                   />
                 </a-card>
-
               </div>
             </a-layout-sider>
           </a-layout>
         </a-tab-pane>
-        <a-tab-pane key="2" tab="专家" force-render>
+        <a-tab-pane key="2" tab="科研人员" force-render>
 	        <a-layout class="a-layout-container">
 		        <a-layout-sider :style="siderStyle" width="250" >
 			        <div class = "slideSearch">
@@ -273,6 +272,12 @@ const currentPublisher = ref(1);
 const currentFunder = ref(1);
 const currentSource = ref(1);
 const currentArticle = ref(1);
+const InsPosition = ref('');
+const FieldPosition = ref('');
+const Position = ref('');
+const PublisherInsPosition = ref('');
+const FunderInsPosition = ref('');
+const SourceInsPosition = ref('');
 const contentStyle = {
   paddingleft:'200px',
   textAlign: 'center',
@@ -296,11 +301,9 @@ const headerStyle = {
 const result = ref();
 const exResult = ref();
 const searchRef = ref(null);
-
 const arResult = ref();
 const arFilter = ref({});
 const arSort = ref({});
-
 const activeKey = ref('1');
 const paperList = ref([]);
 const paperListPerPage = ref();
