@@ -5,10 +5,8 @@ export const useSearchStore = defineStore({
     id: "search",
     state:()=>{
         return{
-            // 要保存的字段
             searchType:useLocalStorage(("searchType"),"works"),
             searchInput: useLocalStorage("searchInput",""),
-            // 历史记录
             historyList: useLocalStorage("historyList",[]),
         }
     },

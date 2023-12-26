@@ -21,7 +21,7 @@ function init() {
   // 指定图表的配置项和数据
   const option = {
     title: {
-      text: '学术领域',
+      text: '相关领域占比',
       left: 'center'
     },
     tooltip: {
@@ -36,10 +36,12 @@ function init() {
     series: [
       {
 
-        name: '领域比例',
+        name: '相关领域占比',
         type: 'pie',
         radius: '60%',
         data: props.data,
+
+
         emphasis: {
           itemStyle: {
             shadowBlur: 10,

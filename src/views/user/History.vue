@@ -18,7 +18,11 @@ function showAuthorInfo(author,collectionId) {
   console.log(collectionId)
   collection_id.value = collectionId;
 }
-
+function  jump_to_author(id){
+  const parts = id.split('/');
+  const authorId = parts[parts.length - 1]; // 获取最后一个部分
+  router.push(`/client/author/${authorId}`)
+}
 function hideAuthorInfo() {
   authorInfo.value = null;
 }
@@ -40,6 +44,7 @@ function jump_to_article(id){
   console.log(`/client/paper/${paperId}`)
   router.push(`/client/paper/${paperId}`)
 }
+
 </script>
 
 <template>
@@ -64,7 +69,7 @@ function jump_to_article(id){
                 <div   @mouseover="showAuthorInfo(author.author,history.id)"
                        @mouseleave="hideAuthorInfo"
                        class="author_container"
-                ><span id="authorName" class="author-name-hover">
+                ><span @click="jump_to_author(author.author.id)" id="authorName" class="author-name-hover">
                   {{ author.author.display_name }}
                 </span>
                   <span v-if="index1 !== history.authorships.length - 1">，</span>

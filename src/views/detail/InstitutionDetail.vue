@@ -1,14 +1,14 @@
 
 <template>
-  <div class="container">
+
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
-      <a-layout>
-        <a-layout>
-          <a-layout-header theme="light" :style="headerStyle">
+      <a-layout >
+        <a-layout style="min-width: 1200px">
+          <a-layout-header theme="light" :style="headerStyle" >
             <!-- 机构信息区域 -->
             <div class="institution-info">
-              <div class="institution-details">
-                <!-- 机构相关信息展示 -->
+              <div class="institution-details" style="display: flex ">
+                <div style="margin-top: 10px;">
                 <div style="font-size: 25px;font-weight: 800">
                   {{ institutionname }}
                 </div>
@@ -16,12 +16,11 @@
                   {{ geo }}
                 </div>
               </div>
+              </div>
             </div>
           </a-layout-header>
-          <a-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 25 }">
-            <a-col :span="4">
-            </a-col>
-            <a-col :span="12">
+
+
           <a-layout-content :style="contentStyle" style="margin-left: 15%;min-width: 1200px">
             <div class="institution-total">
               <a-row :gutter="25">
@@ -88,7 +87,7 @@
                   <div class="research-container">
                     <div class="research-item">
                       <div class="line"></div>
-                      <div class="research-title">研究成果</div>
+                      <div class="research-title">机构数据库</div>
                       <div class="research-details">
                         <div class="research-institutions">
                           <div class="institution-container" v-for="(institution, index) in researchinstitutions" :key="index">
@@ -102,28 +101,23 @@
 
                         </div>
                       </div>
-                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="works">
+                      <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="associated_repositories">
                         <template #footer>
 
                         </template>
                         <template #renderItem="{ item }">
                           <a-list-item key="item.title">
-                            <template #actions>
-                              <span v-for="{ icon, text } in item.actions" :key="icon">
-                              <component :is="icon" style="margin-right: 8px" />
-                              text
-                            </span>
-                            </template>
+
                             <template #extra>
 
                             </template>
                             <a-list-item-meta :description="item.description">
                               <template #title>
-                                <a :href="item.href">Title</a>
+                                <a :href="item.href">{{ item.title }}</a>
                               </template>
-                              <template #avatar><a-avatar :src="item.avatar" /></template>
+
                             </a-list-item-meta>
-                            content
+
                           </a-list-item>
                         </template>
                       </a-list>
@@ -134,21 +128,28 @@
               </a-row>
             </div>
           </a-layout-content>
-            </a-col>
 
-            <a-col :span="5">
-              <div class="AuthorsBox">
-                <div class="line"></div>
-                <div class="reprsent-title">合作机构</div>
-              <a-list item-layout="vertical" size="small" :split="true" :data-source="associated_institutions">
+
+
+
+
+
+        </a-layout>
+
+        <a-layout-sider :reverseArrow="true" theme="light" v-model="collapsed" @collapse="changeShowSide" collapsible :width="400" :style="siderStyle">
+          <transition name="slide">
+            <div class="AuthorsBox">
+              <div class="line"></div>
+              <div class="reprsent-title">合作机构</div>
+              <a-list item-layout="vertical" size="small" :split="true" :data-source="associated_institutions" v-show="showSide">
 
                 <template #renderItem="{ item }">
                   <a-list-item key="item.title">
                     <template #actions>
-                    <span v-for="{ icon, text } in item.actions" :key="icon">
-                      <component :is="icon" style="margin-right: 8px" />
-                      {{ text }}
-                    </span>
+                          <span v-for="{ icon, text } in item.actions" :key="icon">
+                            <component :is="icon" style="margin-right: 8px" />
+                            {{ text }}
+                          </span>
                     </template>
 
                     <a-list-item-meta :description="item.description">
@@ -161,18 +162,15 @@
                   </a-list-item>
                 </template>
               </a-list>
-              </div>
+            </div>
+          </transition>
 
+        </a-layout-sider>
 
-
-
-
-            </a-col>
-          </a-row>
-        </a-layout>
       </a-layout>
+
     </a-space>
-  </div>
+
 </template>
 
 
@@ -201,12 +199,17 @@ const cited_by_count = ref();
 const h_index = ref();
 const geo = ref();
 const associated_institutions = ref([]);
+const associated_repositories = ref([]);
 const series = ref([]);
 const years = ref([]);
 const x_concepts = ref([]);
 const data = ref([]);
 const pflag = ref(false)
+const showSide = ref(true)
 const InstitutionId ="https://openalex.org/"+route.params.institutionId
+const changeShowSide = (collapsed, type)=>{
+  showSide.value = !showSide.value;
+}
 onMounted(async ()=>{
   pflag.value = false;
   const result =  await Search.institution_detail(InstitutionId)
@@ -226,7 +229,8 @@ onMounted(async ()=>{
     let yearArr = [];
     data.value = x_concepts.value.map(concept => ({
       value: concept.score,
-      name: concept.display_name
+      name: concept.display_name,
+      url: concept.id,
     }));
 
     console.log(data)
@@ -235,10 +239,11 @@ onMounted(async ()=>{
     onMounted(() => {
       data.value = x_concepts.map(concept => ({
         value: concept.score,
-        name: concept.display_name
+        name: concept.display_name,
+        url: concept.id,
       }));
     });
-    console.log(data.value)
+
     for (let i = 0;i<response.counts_by_year.length;i++){
       paperData.push(response.counts_by_year[i].works_count);
       cited_by_counts.push(response.counts_by_year[i].cited_by_count);
@@ -248,7 +253,7 @@ onMounted(async ()=>{
     for (let i=yearArr.length-1;i>=0;i--){
       years.value.push(yearArr[i]);
     }
-    console.log(years.value)
+
     series.value.push( {
       name: '发文量',
       type: 'line',
@@ -266,12 +271,13 @@ onMounted(async ()=>{
 
 
     const associated_institutions_list = institution.value.associated_institutions
+
     for (let i = 0 ;i<associated_institutions_list.length;i++){
       const url = associated_institutions_list[i].id
       const parts = url.split('/');
       const institutionId = parts[parts.length - 1];
       const institutionActions = [
-        { text: "territory:  "+associated_institutions_list[i].type.toString() },
+        { text: "concept:  "+associated_institutions_list[i].type.toString() },
       ];
       associated_institutions.value.push({
         href: "/client/institution/"+ institutionId,
@@ -279,6 +285,23 @@ onMounted(async ()=>{
         actions: institutionActions
       });
     }
+
+
+    const repositories_list = institution.value.repositories
+    console.log(repositories_list)
+    for (let i = 0 ;i<repositories_list.length;i++){
+      const url = repositories_list[i].id
+
+      associated_repositories.value.push({
+        href: url,
+        title: (i+1).toString() + ". " + repositories_list[i].display_name,
+      });
+    }
+
+
+
+
+
   }
   else {
     let promise = Swal.fire({
@@ -292,17 +315,29 @@ onMounted(async ()=>{
 
 
 const headerStyle = {
+  marginLeft: '16%',
+  marginTop: '20px',
   textAlign: 'center',
-  color: '#fff',
+  color: '000',
   height: 'auto',
-  padding: '20px',
+  width: '69%',
+  backgroundColor: '#fff',
+  borderRadius: '10px',
+  minWidth: '970px',
+  boxShadow:  '0 0 5px 0 hsla(0,0%,68.2%,.3)'
 };
 const contentStyle = {
   textAlign: 'center',
   minHeight: 'calc(100vh - 134px)',
   color: '#000',
 };
-
+const siderStyle = {
+  textAlign: 'center',
+  color: '#fff',
+  marginTop: '10px',
+  marginRight: '100px',
+  borderRadius: '20px',
+};
 
 </script>
 
@@ -331,10 +366,13 @@ body{
 .institution-info{
   display: flex;
   text-align: left;
+  margin-bottom: 2%;
+  margin-top: 1%;
 }
 .institution-details{
+  margin-left: 20px;
   display: flex;
-  margin-left: 10px;
+
 }
 .institution-total{
   padding: 20px;
@@ -354,10 +392,7 @@ img{
   margin-left: 20px;
 }
 .institution-info {
-  display: flex;
-  width: 50%;
-  justify-content: space-between;
-  flex-grow: 1;
+  z-index: 10000;
 }
 
 .institution-info img {
