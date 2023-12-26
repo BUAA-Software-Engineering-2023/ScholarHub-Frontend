@@ -1,11 +1,12 @@
 import requests from "@/utils/request.js";
 export default {
-    search_source(search){
+    search_source(search,page){
         return requests({
             url: '/source/search',
             method: 'POST',
             data:{
-                search
+                search,
+                page
             }
         })
     },
@@ -62,12 +63,13 @@ export default {
         })
     },
 
-    search_publisher(search) {
+    search_publisher(search,page) {
         return requests({
             url: '/publisher/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page
             }
         })
     },
@@ -82,12 +84,13 @@ export default {
         })
     },
 
-    search_funder(search) {
+    search_funder(search,page) {
         return requests({
             url: '/funder/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page
             }
         })
     },
@@ -302,6 +305,15 @@ export default {
     institution_detail(id){
         return requests({
             url: "/institution/detail",
+            method:"POST",
+            data:{
+                id
+            }
+        })
+    },
+    concept_detail(id){
+        return requests({
+            url: "/concept/detail",
             method:"POST",
             data:{
                 id

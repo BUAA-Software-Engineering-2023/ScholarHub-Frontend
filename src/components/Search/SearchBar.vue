@@ -53,6 +53,12 @@ async function handleSearch(InputValue,type="article"){
 		type = "institution"
 	}else if(type === "领域"){
 		type = "field"
+	}else if(type === "出版社"){
+		type = "publisher"
+	}else if(type === "基金"){
+		type = "funder"
+	}else if(type === "来源"){
+		type = "source"
 	}
   if (InputValue)
   {

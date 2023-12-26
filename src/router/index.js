@@ -45,6 +45,11 @@ const router = createRouter({
                     component: ()=>import("@/views/detail/InstitutionDetail.vue")
                 },
                 {
+                    path: 'concept/:conceptId',
+                    name: 'ConceptDetail',
+                    component: ()=>import("@/views/detail/ConceptDetail.vue")
+                },
+                {
                     path: 'user/collections',
                     name: 'Collections',
                     component:()=>import("@/views/user/Collection.vue"),
@@ -88,6 +93,18 @@ const router = createRouter({
         },{
             path: '/search/institution',
             name: 'SearchInstitution',
+            component: () => import('@/views/search/SearchArticle.vue')
+        },{
+            path: '/search/publisher',
+            name: 'SearchPublisher',
+            component: () => import('@/views/search/SearchArticle.vue')
+        },{
+            path: '/search/funder',
+            name: 'SearchFunder',
+            component: () => import('@/views/search/SearchArticle.vue')
+        },{
+            path: '/search/source',
+            name: 'SearchSource',
             component: () => import('@/views/search/SearchArticle.vue')
         }
         ,{
