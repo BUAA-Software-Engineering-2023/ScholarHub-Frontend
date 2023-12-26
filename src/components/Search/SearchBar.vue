@@ -4,6 +4,7 @@
         v-model="searchValue"
         @search="handleSearch"
         @clear="handleClear"
+        @SearchType="handleSearchType"
     >
       <template #dropdown>
         <SearchHistory
@@ -33,6 +34,7 @@ import Swal from "sweetalert2";
 import {useRouter} from "vue-router"
 import {defineEmits} from 'vue'
 const searchStore = useSearchStore();
+const SearchType = ref(searchStore.searchType)
 const searchValue = ref(searchStore.searchInput);
 const router = useRouter();
 
@@ -40,7 +42,7 @@ const ifSearch = ref();
 defineExpose({ifSearch})
 const emit = defineEmits(["getInput"])
 
-async function handleSearch(InputValue,type){
+async function handleSearch(InputValue,type="article"){
   searchValue.value = InputValue;
   console.log("input:"+searchValue.value)
 	if(type === "论文"){
@@ -54,7 +56,6 @@ async function handleSearch(InputValue,type){
 	}
   if (InputValue)
   {
-    // const result = await Search.search(InputValue);
     ifSearch.value = InputValue;
     emit('getInput', ifSearch.value);
     searchStore.addHistory(InputValue);
@@ -69,6 +70,10 @@ async function handleSearch(InputValue,type){
 const handleClear = () => {
   searchValue.value = '';
   searchStore.setSearchInput("");
+}
+const handleSearchType = (searchType) => {
+  SearchType.value = SearchType
+  searchStore.setSearchType(searchType);
 }
 const handleRemoveHistory = (history) =>{
   searchStore.deleteHistory(history);

@@ -16,6 +16,7 @@ import { ref, defineProps, defineEmits } from 'vue';
 import {Delete, DeleteFilled} from "@element-plus/icons-vue";
 import {watchDebounced} from "@vueuse/core";
 import Search from '@/api/search.js'
+import {useSearchStore} from "@/stores/search.js";
 const props = defineProps({
   searchText: {
     type: String,
@@ -26,13 +27,65 @@ const hints = ref([])
 const emits = defineEmits(['select']);
 const getHintData = async () => {
   if (!props.searchText) return;
-  const result = await Search.auto_complete(props.searchText)
-  let item;
-  hints.value = []
-  for (item in result.data.data)
-  {
-    hints.value.push(result.data.data[item].display_name)
+  let type = useSearchStore().searchType
+  if(type === "论文"){
+    const result = await Search.auto_complete_works(props.searchText)
+    let item;
+    hints.value = []
+    for (item in result.data.data)
+    {
+      hints.value.push(result.data.data[item].display_name)
+    }
+  }else if(type === "科研人员"){
+    const result = await Search.auto_complete_authors(props.searchText)
+    let item;
+    hints.value = []
+    for (item in result.data.data)
+    {
+      hints.value.push(result.data.data[item].display_name)
+    }
+  }else if(type === "机构"){
+    const result = await Search.auto_complete_institutions(props.searchText)
+    let item;
+    hints.value = []
+    for (item in result.data.data)
+    {
+      hints.value.push(result.data.data[item].display_name)
+    }
+  }else if(type === "领域"){
+    const result = await Search.auto_complete_concepts(props.searchText)
+    let item;
+    hints.value = []
+    for (item in result.data.data)
+    {
+      hints.value.push(result.data.data[item].display_name)
+    }
+  }else if(type === "来源"){
+    const result = await Search.auto_complete_source(props.searchText)
+    let item;
+    hints.value = []
+    for (item in result.data.data)
+    {
+      hints.value.push(result.data.data[item].display_name)
+    }
+  }else if(type === "出版社"){
+    const result = await Search.auto_complete_publishers(props.searchText)
+    let item;
+    hints.value = []
+    for (item in result.data.data)
+    {
+      hints.value.push(result.data.data[item].display_name)
+    }
+  }else if(type === "基金"){
+    const result = await Search.auto_complete_funders(props.searchText)
+    let item;
+    hints.value = []
+    for (item in result.data.data)
+    {
+      hints.value.push(result.data.data[item].display_name)
+    }
   }
+
   // const result = await
 }
 watchDebounced(

@@ -101,9 +101,69 @@ export default {
             }
         })
     },
-    auto_complete(search){
+    auto_complete_works(search){
         return requests({
             url:"/work/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_authors(search){
+        return requests({
+            url:"/author/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_institutions(search){
+        return requests({
+            url:"/institution/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_concepts(search){
+        return requests({
+            url:"/concept/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_source(search){
+        return requests({
+            url:"/source/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_publishers(search){
+        return requests({
+            url:"/publisher/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_funders(search){
+        return requests({
+            url:"/funder/autocomplete",
             method:"GET",
             params:{
                 search

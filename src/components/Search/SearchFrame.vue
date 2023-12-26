@@ -33,7 +33,8 @@
 <script setup>
 import {Close, Search} from "@element-plus/icons-vue";
 import { useVModel, onClickOutside } from '@vueuse/core';
-const value1 = ref("论文")
+import {useSearchStore} from "@/stores/search.js";
+const value1 = ref(useSearchStore().searchType)
 const options1 = ref([
   {
     value: '论文',
@@ -73,7 +74,7 @@ const SEARCH = 'search';
 const INPUT = 'input';
 const EMIT_UPDATE_MODEL_VALUE = 'update:modelValue';
 // emits与props进行父子组件通信，保持searchValue一致
-const emits = defineEmits([SEARCH, CLEAR, FOCUS, INPUT,EMIT_UPDATE_MODEL_VALUE]);
+const emits = defineEmits([SEARCH, CLEAR, FOCUS, INPUT,EMIT_UPDATE_MODEL_VALUE,"SearchType"]);
 const props = defineProps(
     {modelValue:{type:String,required:true}}
 )
@@ -95,7 +96,8 @@ const search = () =>{
   emits(SEARCH,searchValue.value,value1.value)
 }
 const handleChange = value => {
-  console.log(`selected ${value}`);
+  useSearchStore().setSearchType(value)
+  emits("SearchType",value)
 };
 </script>
 
