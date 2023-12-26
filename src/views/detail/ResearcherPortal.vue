@@ -1,7 +1,7 @@
 <template>
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
-        <a-layout style="min-width: 1200px" >
+        <a-layout style="width: 80%" >
           <a-layout-header theme="light" :style="headerStyle">
             <div class="author-info">
               <div class="author-details">
