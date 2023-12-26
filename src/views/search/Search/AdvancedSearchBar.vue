@@ -37,7 +37,7 @@ async function handleSearch(InputValue){
   {
     const result = await Search.search(InputValue);
     searchStore.addHistory(InputValue);
-    searchStore.setSearchInput(InputValue)
+    // searchStore.setSearchInput(InputValue)
   }
 }
 const handleClear = () => {

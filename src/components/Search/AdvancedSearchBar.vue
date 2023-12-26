@@ -71,7 +71,7 @@ async function handleSearch(InputValue, type, position, value2, value3, value4, 
     console.log("!!!!!");
     const result = await Search.search(InputValue);
     searchStore.addHistory(InputValue);
-    searchStore.setSearchInput(InputValue)
+    // searchStore.setSearchInput(InputValue)
     await router.push({
       path:"/search/"+type+"/",
       query:{
