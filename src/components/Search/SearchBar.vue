@@ -4,10 +4,11 @@
         v-model="searchValue"
         @search="handleSearch"
         @clear="handleClear"
+        @SearchType="handleSearchType"
     >
       <template #dropdown>
         <SearchHistory
-            v-show="!searchValue"
+            v-if="tmp === '论文' && !searchValue"
             @select="handleSearch"
         />
         <SearchHint
@@ -33,14 +34,18 @@ import Swal from "sweetalert2";
 import {useRouter} from "vue-router"
 import {defineEmits} from 'vue'
 const searchStore = useSearchStore();
+const SearchType = ref(searchStore.searchType)
 const searchValue = ref(searchStore.searchInput);
 const router = useRouter();
-
+const tmp = ref()
 const ifSearch = ref();
+const is_works = ref()
 defineExpose({ifSearch})
 const emit = defineEmits(["getInput"])
-
-async function handleSearch(InputValue,type){
+onMounted(()=>{
+  tmp.value = searchStore.searchType
+})
+async function handleSearch(InputValue,type="article"){
   searchValue.value = InputValue;
   console.log("input:"+searchValue.value)
 	if(type === "论文"){
@@ -51,10 +56,15 @@ async function handleSearch(InputValue,type){
 		type = "institution"
 	}else if(type === "领域"){
 		type = "field"
+	}else if(type === "出版社"){
+		type = "publisher"
+	}else if(type === "基金"){
+		type = "funder"
+	}else if(type === "来源"){
+		type = "source"
 	}
   if (InputValue)
   {
-    // const result = await Search.search(InputValue);
     ifSearch.value = InputValue;
     emit('getInput', ifSearch.value);
     searchStore.addHistory(InputValue);
@@ -70,6 +80,11 @@ const handleClear = () => {
   searchValue.value = '';
   searchStore.setSearchInput("");
 }
+const handleSearchType = (searchType) => {
+  console.log(searchStore.searchType)
+  tmp.value =searchType
+  console.log(tmp.value)
+}
 const handleRemoveHistory = (history) =>{
   searchStore.deleteHistory(history);
 }
@@ -77,13 +92,6 @@ const handleClearHistory = async () => {
 
 }
 
-// const emit = defineEmits(['inputSearch'])
-// const inputSearch = () =>{
-//   let param = {
-//     content:'x'
-//   }
-//   emit('inputSearch', param)
-// }
 
 </script>
 

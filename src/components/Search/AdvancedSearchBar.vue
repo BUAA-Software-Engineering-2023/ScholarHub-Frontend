@@ -39,7 +39,7 @@ const ifSearch = ref();
 defineExpose({ifSearch})
 const emit = defineEmits(["getInput", "getAdv"])
 const props = defineProps(['inputStr'])
-async function handleSearch(InputValue,type){
+async function handleSearch(InputValue, type, position, value2, value3, value4, value5, value6, value7){
   searchValue.value = InputValue;
   console.log("input:"+searchValue.value)
 	if(type === "论文"){
@@ -50,15 +50,28 @@ async function handleSearch(InputValue,type){
 		type = "institution"
 	}else if(type === "领域"){
 		type = "field"
+	}else if(type === "出版社"){
+		type = "publisher"
+	}else if(type === "基金"){
+		type = "funder"
+	}else if(type === "来源"){
+		type = "source"
 	}
   if (InputValue)
   {
     ifSearch.value = InputValue;
     emit('getInput', ifSearch.value);
+    emit('getPosition', position);
+    emit('getPosition2', value2);
+    emit('getPosition3', value3);
+    emit('getPosition4', value4);
+    emit('getPosition5', value5);
+    emit('getPosition6', value6);
+    emit('getPosition1', value7);
     console.log("!!!!!");
     const result = await Search.search(InputValue);
     searchStore.addHistory(InputValue);
-    searchStore.setSearchInput(InputValue)
+    // searchStore.setSearchInput(InputValue)
     await router.push({
       path:"/search/"+type+"/",
       query:{

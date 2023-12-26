@@ -1,11 +1,13 @@
 import requests from "@/utils/request.js";
 export default {
-    search_source(search){
+    search_source(search,page,pos){
         return requests({
             url: '/source/search',
             method: 'POST',
             data:{
-                search
+                search,
+                page,
+                pos
             }
         })
     },
@@ -20,13 +22,14 @@ export default {
         })
     },
 
-    search_institution(search,page) {
+    search_institution(search,page,pos) {
         return requests({
             url: '/institution/search',
             method: 'POST',
             data: {
                 search,
                 page,
+                pos,
             }
         })
     },
@@ -41,13 +44,14 @@ export default {
         })
     },
 
-    search_concept(search,page) {
+    search_concept(search,page,pos) {
         return requests({
             url: '/concept/search',
             method: 'POST',
             data: {
                 search,
-                page
+                page,
+                pos
             }
         })
     },
@@ -62,12 +66,14 @@ export default {
         })
     },
 
-    search_publisher(search) {
+    search_publisher(search,page,pos) {
         return requests({
             url: '/publisher/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page,
+                pos
             }
         })
     },
@@ -82,12 +88,14 @@ export default {
         })
     },
 
-    search_funder(search) {
+    search_funder(search,page,pos) {
         return requests({
             url: '/funder/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page,
+                pos
             }
         })
     },
@@ -101,9 +109,69 @@ export default {
             }
         })
     },
-    auto_complete(search){
+    auto_complete_works(search){
         return requests({
             url:"/work/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_authors(search){
+        return requests({
+            url:"/author/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_institutions(search){
+        return requests({
+            url:"/institution/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_concepts(search){
+        return requests({
+            url:"/concept/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_source(search){
+        return requests({
+            url:"/source/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_publishers(search){
+        return requests({
+            url:"/publisher/autocomplete",
+            method:"GET",
+            params:{
+                search
+            },
+            noLoading: true // 添加这个配置项
+        })
+    },
+    auto_complete_funders(search){
+        return requests({
+            url:"/funder/autocomplete",
             method:"GET",
             params:{
                 search
@@ -147,7 +215,7 @@ export default {
             showLoading:true,
         })
     },
-    searchArticleWithAll(search,page,filter,sort){
+    searchArticleWithAll(search,page,filter,sort,position){
         return requests({
             url:"/work/search",
             method: 'POST',
@@ -156,6 +224,7 @@ export default {
                 page,
                 sort,
                 filter,
+                position,
             },
             showLoading:true,
         })
@@ -181,7 +250,7 @@ export default {
             showLoading:true,
         })
     },
-    searchExpertWithAll(search,page,filter,sort){
+    searchExpertWithAll(search,page,filter,sort,position){
         return requests({
             url:"/author/search",
             method: 'POST',
@@ -190,6 +259,7 @@ export default {
                 page,
                 sort,
                 filter,
+                position,
             },
             showLoading:true,
         })

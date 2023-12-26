@@ -3,7 +3,7 @@
     <NavBar/>
     <div class="nav_outer">
       <div class="search-bar">
-        <AdvancedSearchBar :inputStr="searchContent" ref="searchRef" @getInput="getInput" @getAdv="getAdv"/>
+        <AdvancedSearchBar :inputStr="searchContent" ref="searchRef" @getPosition="getPosition" @getPosition2="getPosition2" @getPosition3="getPosition3" @getPosition4="getPosition4" @getPosition5="getPosition5" @getPosition6="getPosition6" @getPosition7="getPosition7" @getInput="getInput" @getAdv="getAdv"/>
       </div>
     </div>
 <!--      <a-skeleton active />-->
@@ -139,12 +139,11 @@
                       :image-style="{height: '60px',}"
                   />
                 </a-card>
-
               </div>
             </a-layout-sider>
           </a-layout>
         </a-tab-pane>
-        <a-tab-pane key="2" tab="专家" force-render>
+        <a-tab-pane key="2" tab="科研人员" force-render>
 	        <a-layout class="a-layout-container">
 		        <a-layout-sider :style="siderStyle" width="250" >
 			        <div class = "slideSearch">
@@ -213,12 +212,24 @@
 	        </a-layout>
         </a-tab-pane>
       <a-tab-pane key="3" tab="机构" force-render>
-	      <Institution :institute="institutionList"></Institution>
+	      <Institution :ifLoading="ifLoading" :institute="institutionList"></Institution>
 	      <a-pagination v-model:current="currentIns" :total="totalIns" :pageSize="25" :showSizeChanger="false"/>
       </a-tab-pane>
       <a-tab-pane key="4" tab="领域" force-render>
-	      <Field v-model="fieldList"></Field>
+	      <Field :ifLoading="ifLoading" v-model="fieldList"></Field>
 	      <a-pagination v-model:current="currentField" :total="totalField" :pageSize="25" :showSizeChanger="false"/>
+      </a-tab-pane>
+      <a-tab-pane key="5" tab="出版社" force-render>
+	      <Publisher v-model="publisherList"></Publisher>
+	      <a-pagination v-model:current="currentPublisher" :total="totalPublisher" :pageSize="25" :showSizeChanger="false"/>
+      </a-tab-pane>
+      <a-tab-pane key="6" tab="基金" force-render>
+	      <Funder v-model="funderList"></Funder>
+	      <a-pagination v-model:current="currentFunder" :total="totalFunder" :pageSize="25" :showSizeChanger="false"/>
+      </a-tab-pane>
+      <a-tab-pane key="7" tab="来源" force-render>
+	      <Sour v-model="sourceList"></Sour>
+	      <a-pagination v-model:current="currentSource" :total="totalSource" :pageSize="25" :showSizeChanger="false"/>
       </a-tab-pane>
       </a-tabs>
     </div>
@@ -240,6 +251,9 @@ import EchartsArticle from "@/views/search/EchartsArticle.vue";
 import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
 import Institution from "@/views/search/Institution.vue";
 import Field from "@/views/search/Field.vue";
+import Publisher from "@/views/search/Publisher.vue";
+import Funder from "@/views/search/Funder.vue";
+import Sour from "@/views/search/Sour.vue";
 
 const totalPaper = ref(0);
 const totalPaperPage = ref(0);
@@ -248,10 +262,22 @@ const totalExpertPage = ref(0);
 const totalInsPage = ref(0);
 const totalIns = ref(0);
 const totalField = ref(0);
+const totalPublisher = ref(0);
+const totalFunder = ref(0);
+const totalSource = ref(0);
 const current = ref(1);
 const currentIns = ref(1);
 const currentField = ref(1);
+const currentPublisher = ref(1);
+const currentFunder = ref(1);
+const currentSource = ref(1);
 const currentArticle = ref(1);
+const InsPosition = ref('');
+const FieldPosition = ref('');
+const Position = ref('');
+const PublisherInsPosition = ref('');
+const FunderInsPosition = ref('');
+const SourceInsPosition = ref('');
 const contentStyle = {
   paddingleft:'200px',
   textAlign: 'center',
@@ -274,19 +300,30 @@ const headerStyle = {
 };
 const result = ref();
 const exResult = ref();
+const exPosition = ref('');
 const searchRef = ref(null);
 
-const arResult = ref();
+const arResult = ref([]);
 const arFilter = ref({});
 const arSort = ref({});
+const arPosition = ref('');
+const positionType = ref('default');
+const positionType2 = ref('default');
+const positionType3 = ref('default');
+const positionType4 = ref('default');
+const positionType5 = ref('default');
+const positionType6 = ref('default');
+const positionType7 = ref('default');
 
 const activeKey = ref('1');
-const pageCurrent = ref(1);
 const paperList = ref([]);
 const paperListPerPage = ref();
 const expertList = ref([]);
 const institutionList = ref();
 const fieldList = ref([]);
+const publisherList = ref([]);
+const funderList = ref([]);
+const sourceList = ref([]);
 const update = ref(true);
 let LastKeyPath = null;
 let LKP = null;
@@ -393,6 +430,62 @@ const getInput = (value) => {//获取输入框的输入
   searchContent.value = value;
   console.log("searchContent:::",searchContent.value);
 }
+
+const getPosition = async (value) => {
+  positionType.value = value;
+  arPosition.value = positionType.value
+  console.log("positionType", positionType.value);
+  await getPapers();
+}
+const getPosition2 = async (value) => {
+  positionType2.value = value;
+  exPosition.value = positionType2.value
+  console.log("positionType2", positionType2.value);
+  await getExperts();
+}
+const getPosition3 = async (value) => {
+  positionType3.value = value;
+  SourceInsPosition.value = positionType3.value
+  console.log("positionType3", positionType3.value);
+  await getSource();
+}
+
+const getPosition4 = async (value) => {
+  positionType4.value = value;
+  InsPosition.value = positionType4.value
+  console.log("positionType4", positionType4.value);
+  await getInstitution();
+}
+
+const getPosition5 = async (value) => {
+  positionType5.value = value;
+  FieldPosition.value = positionType5.value
+  console.log("positionType5", positionType5.value);
+  await getField();
+}
+const getPosition6 = async (value) => {
+  positionType6.value = value;
+  PublisherInsPosition.value = positionType6.value
+  console.log("positionType6", positionType6.value);
+  await getPublisher();
+}
+
+const getPosition7 = async (value) => {
+  positionType7.value = value;
+  FunderInsPosition.value = positionType7.value
+  console.log("positionType7", positionType7.value);
+  await getFunder();
+}
+
+watch(positionType, async ()=>{
+  arPosition.value = positionType.value
+  await getPapers();
+})
+watch(positionType2, async ()=>{
+  exPosition.value = positionType2.value
+  await getExperts();
+})
+
 watch(advDomains, async ()=>{
   console.log("outer",advDomains.value);
   let count = 0;
@@ -527,6 +620,8 @@ const ExSort = ref({});
 // const arrow5 = ref(0)
 const activeIndex = ref("1")
 const route = useRoute();
+
+
 async function switchOrder(sortType){
   let order = "";
   if(sortType === 1){
@@ -747,7 +842,7 @@ async function searchExpertWithSort(sortType, order){
 }
 async function searchArticleWithAll(){
   currentArticle.value = 1;
-  let res = await SearchAPI.searchArticleWithAll(searchContent.value, currentArticle.value, arFilter.value,arSort.value);
+  let res = await SearchAPI.searchArticleWithAll(searchContent.value, currentArticle.value, arFilter.value, arSort.value, arPosition.value);
   console.log("func-res",res);
   arResult.value = res;
   console.log("arResult......",arResult.value);
@@ -820,15 +915,21 @@ watch (currentIns, async (newValue, oldValue) => {
 	await getInstitution(newValue)
 	paperListPerPage.value = tmp;
 })
-// watch (pageCurrent, async (newValue, oldValue) => {
-//   const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
-//   paperListPerPage.value = tmp;
-// })
+
 watch(currentArticle, async (newValue, oldValue) => {
   await getArticlesWithPage(newValue);
 })
 watch(currentField, async (newValue, oldValue) => {
 	await getField(newValue);
+})
+watch(currentPublisher, async (newValue, oldValue) => {
+	await getPublisher(newValue);
+})
+watch(currentFunder, async (newValue, oldValue) => {
+	await getFunder(newValue);
+})
+watch(currentSource, async (newValue, oldValue) => {
+	await getSource(newValue);
 })
 const ExFilterClick = async menuInfo => {
 	if(LastKeyPath === menuInfo.keyPath){
@@ -868,16 +969,40 @@ async function getExperts(){
 	setExpertFilterContent();
 }
 async function getInstitution(page){
-	let res = await SearchAPI.search_institution(searchContent.value,page);
+  ifLoading.value = true;
+	let res = await SearchAPI.search_institution(searchContent.value,page, InsPosition.value);
 	institutionList.value = res.data.data.result;
+  ifLoading.value = false;
 	totalIns.value = res.data.data.total;
 	console.log("totalInst",totalInsPage.value);
 }
 async function getField(page){
-	let res = await SearchAPI.search_concept(searchContent.value,page);
+  ifLoading.value = true;
+  console.log("field-ifLoading1",ifLoading.value);
+	let res = await SearchAPI.search_concept(searchContent.value,page, FieldPosition.value);
 	fieldList.value = res.data.data.result;
+  ifLoading.value = false;
+  console.log("field-ifLoading2",ifLoading.value);
 	totalField.value = res.data.data.total;
 	console.log(fieldList.value);
+}
+async function getPublisher(page){
+	let res = await SearchAPI.search_publisher(searchContent.value,page, PublisherInsPosition.value);
+	publisherList.value = res.data.data.result;
+	totalPublisher.value = res.data.data.total;
+	console.log("publish",publisherList.value);
+}
+async function getFunder(page){
+	let res = await SearchAPI.search_funder(searchContent.value,page, FunderInsPosition.value);
+	funderList.value = res.data.data.result;
+	totalFunder.value = res.data.data.total;
+	console.log(funderList.value);
+}
+async function getSource(page){
+	let res = await SearchAPI.search_source(searchContent.value,page, SourceInsPosition.value);
+	sourceList.value = res.data.data.result;
+	totalSource.value = res.data.data.total;
+	console.log(sourceList.value);
 }
 async function getExpertsWithPage(page){
 	let res = await SearchAPI.searchExpertWithAll(searchContent.value,page,ExFilter.value,ExSort.value);
@@ -891,17 +1016,7 @@ async function getArticlesWithPage(page){
   arResult.value = res;
   paperList.value = arResult.value.data.data.result;
 }
-function initArticlePage(){
-  const slice = paperList.value.slice(1, 10);
-  paperListPerPage.value = slice;
-  pageCurrent.value = 1;
-}
-async function getExpertsFiltered(Region){
-	current.value = 1;
-	exResult.value = await SearchAPI.searchExpertWithAll(searchContent.value,current.value,ExFilter.value,ExSort.value);
-	expertList.value = exResult.value.data.data.result;
-	setExpertFilterContent();
-}
+
 function setExpertFilterContent(){
 	let ExpertInstitution = [];
 	let ExpertArea = [];
@@ -1085,6 +1200,16 @@ onMounted(async ()=>{//初始渲染论文列表
   }else if(route.name === "SearchField"){
 	  await getField(1);
 	  activeKey.value = '4';
+  }else if(route.name === "SearchPublisher"){
+	  console.log("publish")
+	  await getPublisher(1);
+	  activeKey.value = '5';
+  }else if(route.name === "SearchFunder"){
+	  await getFunder(1);
+	  activeKey.value = '6';
+  }else if(route.name === "SearchSource"){
+	  await getSource(1);
+	  activeKey.value = '7';
   }
   // ifLoading.value = true;
   // console.log("route",route.query.content)
@@ -1137,14 +1262,26 @@ watch(route, async (newVal, oldVal) => {//监视输入框
 		await getField(1);
 		console.log("field")
 		activeKey.value = '4';
+	}else if(route.name === "SearchPublisher"){
+		await getPublisher(1);
+		activeKey.value = '5';
+	}else if(route.name === "SearchFunder"){
+		await getFunder(1);
+		activeKey.value = '6';
+	}else if(route.name === "SearchSource"){
+		await getSource(1);
+		activeKey.value = '7';
 	}
 })
-watch(activeKey, async (newVal, oldVal) => {//监视输入框
+watch(activeKey, async (newVal, oldVal) => {
 	const hash = {
 		1 : "article",
 		2 : "expert",
 		3 : "institution",
 		4 : "field",
+		5 : "publisher",
+		6 : "funder",
+		7 : "source"
 	}
 	let n = parseInt(activeKey.value)
 	const parts = route.path.split('/');
@@ -1169,10 +1306,6 @@ watch(searchContent, async (newVal, oldVal) => {//监视输入框
   await getPapers();
 })
 
-watch (pageCurrent, async (newValue, oldValue) => {
-	const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
-	paperListPerPage.value = tmp;
-})
 
 function getFullPaper(item){//进入论文详情
   const url = item.id;
