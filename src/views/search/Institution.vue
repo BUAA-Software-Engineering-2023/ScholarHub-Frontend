@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<a-card v-if="props.ifLoading === false" hoverable style="width: 20%; margin: 40px 40px" v-for="ins in InstitutionList" v-bind:key="ins.id" >
-			<InsCard :institution="ins" @click="jumpToInsDetail(ins)"/>
+			<InsCard :institution="ins" @click="jumpIns(ins.id)"/>
 		</a-card>
     <a-card v-else v-for="item in 9" class="card-style">
       <a-skeleton-avatar class="card-item" :active="active" :size="size" :shape="avatarShape" />
@@ -17,6 +17,7 @@
 import {ref} from "vue";
 import InsCard from "@/views/search/InsCard.vue";
 const props = defineProps(['institute', 'ifLoading']);
+import router from "@/router/index.js";
 const emit = defineEmits(['update:institute'])
 const InstitutionList = computed({
 	get() {
@@ -27,8 +28,13 @@ const InstitutionList = computed({
 	}
 })
 
-function jumpToInsDetail(){
-
+function jumpIns(url){//进入科研人员详情页
+	const parts = url.split('/');
+	const InsId = parts[parts.length - 1]; // 获取最后一个部分
+	console.log(url);
+	router.push({
+		path:`/client/institution/${InsId}`
+	})
 }
 </script>
 <style scoped>

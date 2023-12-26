@@ -2,12 +2,11 @@
 	<div>
 		<a-typography v-if="item">
 			
-				<a-avatar :size="54" class="avatar">
-					<template #icon v-if="item.image_url"><img :src="item.image_url"/></template>
-					<template #icon v-if="!item.image_url"><img src="@/assets/imgs/instituition.png"/></template>
-				</a-avatar>
-				<h3>{{item.display_name}}</h3>
-			<h4 v-if="item.type!=null"> {{item.type}}</h4>
+			<a-avatar :size="54" class="avatar">
+				<template #icon v-if="item.image_url"><img :src="item.image_url"/></template>
+				<template #icon v-if="!item.image_url"><img src="@/assets/imgs/book.png"/></template>
+			</a-avatar>
+			<h3>{{item.display_name}}</h3>
 		</a-typography>
 	</div>
 </template>
@@ -19,11 +18,11 @@ import { useRouter } from 'vue-router';
 import insImg from "@/assets/imgs/instituition.png"
 const ellipsis = {rows:5}
 const router = useRouter();
-const props = defineProps(['institution']);
+const props = defineProps(['publishContent']);
 const item = ref()
 console.log("in inscard")
 onMounted( ()=>{
-	item.value = props.institution
+	item.value = props.publishContent
 })
 
 </script>

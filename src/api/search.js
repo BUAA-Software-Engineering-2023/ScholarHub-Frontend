@@ -1,11 +1,13 @@
 import requests from "@/utils/request.js";
 export default {
-    search_source(search){
+    search_source(search,page,pos){
         return requests({
             url: '/source/search',
             method: 'POST',
             data:{
-                search
+                search,
+                page,
+                pos
             }
         })
     },
@@ -20,13 +22,14 @@ export default {
         })
     },
 
-    search_institution(search,page) {
+    search_institution(search,page,pos) {
         return requests({
             url: '/institution/search',
             method: 'POST',
             data: {
                 search,
                 page,
+                pos,
             }
         })
     },
@@ -41,13 +44,14 @@ export default {
         })
     },
 
-    search_concept(search,page) {
+    search_concept(search,page,pos) {
         return requests({
             url: '/concept/search',
             method: 'POST',
             data: {
                 search,
-                page
+                page,
+                pos
             }
         })
     },
@@ -62,12 +66,14 @@ export default {
         })
     },
 
-    search_publisher(search) {
+    search_publisher(search,page,pos) {
         return requests({
             url: '/publisher/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page,
+                pos
             }
         })
     },
@@ -82,12 +88,14 @@ export default {
         })
     },
 
-    search_funder(search) {
+    search_funder(search,page,pos) {
         return requests({
             url: '/funder/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page,
+                pos
             }
         })
     },
@@ -244,6 +252,15 @@ export default {
     institution_detail(id){
         return requests({
             url: "/institution/detail",
+            method:"POST",
+            data:{
+                id
+            }
+        })
+    },
+    concept_detail(id){
+        return requests({
+            url: "/concept/detail",
             method:"POST",
             data:{
                 id

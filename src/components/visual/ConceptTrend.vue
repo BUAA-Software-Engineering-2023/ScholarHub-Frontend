@@ -1,30 +1,14 @@
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted } from "vue";
 //  按需引入 echarts
 import * as echarts from "echarts";
-const props = defineProps({
-  series: {
-    type: Array,
-    required: true,
-  },
-  years: {
-    type: Array,
-    required: true,
-  }
-});
+const props = defineProps(["series","years"]);
 const main = ref() // 使用ref创建虚拟DOM引用，使用时用main.value
-let myChart = null;
-onMounted(() => {
-  window.addEventListener('resize', resizeChart);
-  init();
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', resizeChart);
-  if (myChart != null) {
-    myChart.dispose();
-  }
-});
+onMounted(
+    async () => {
+      init()
+    }
+)
 function init() {
   // 基于准备好的dom，初始化echarts实例
   const myChart = echarts.init(main.value);
@@ -41,7 +25,7 @@ function init() {
       }
     },
     legend: {
-      data: ["发文量", '引用频次']
+      data: ["发文量"]
     },
     toolbox: {
       feature: {
@@ -74,17 +58,13 @@ function init() {
   myChart.setOption(option);
 
 }
-function resizeChart() {
-  if (myChart != null) {
-    myChart.resize();
-  }
-}
+
 </script>
 
 <template>
   <div class="TrendBox">
     <div class="line"></div><div class="title">研究趋势</div>
-    <div ref="main" style="width: 350px; height: 350px;"></div>
+    <div ref="main" style="width: 350px; height: 200px;"></div>
   </div>
 </template>
 

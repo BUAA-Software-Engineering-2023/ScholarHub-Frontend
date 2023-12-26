@@ -79,12 +79,11 @@ const buttonItemLayout = computed(() => {
             <a-form-item
                 label="昵称"
                 name="nickname"
-                :rules="[{ required: true, message: 'Please input your nickname!' }]"
+                :rules="[{ required: true, message: '请输入您的昵称！' }]"
             >
               <a-input v-model:value="formState.nickname" />
             </a-form-item>
-
-              <a-button @click="handleChange" type="primary">保存</a-button>
+              <a-button v-if="formState.nickname" @click="handleChange" type="primary">保存</a-button>
           </a-form>
         </div>
           <div class="right">
