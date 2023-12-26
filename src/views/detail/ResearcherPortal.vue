@@ -127,9 +127,7 @@
                           <p>引用量: {{ cited_by_count }}&nbsp; | &nbsp; 论文数: {{works_count}}</p >
                         </div>
                       </div>
-<!--                      <div class="research-abstract">-->
-<!--                        这里是研究成果的摘要内容，可以是一段文字。-->
-<!--                      </div>-->
+
                       <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="works">
                         <template #footer>
 
@@ -267,11 +265,12 @@ const handleClaim = async () => {
     setTimeout(() => {
       loading.value = false;
       open.value = false;
+      Swal.fire('成功申请', '', 'success')
     }, 1500);
-    console.log('认领成功', response);
+
     // 这里可以添加一些成功后的逻辑，比如弹出通知或清空表单
   } catch (error) {
-    console.error('认领失败', error);
+    Swal.fire('认领失败', '', 'error')
     // 这里可以添加错误处理逻辑
   }
 };
@@ -413,7 +412,7 @@ const headerStyle = {
   width: '72%',
   backgroundColor: '#fff',
   borderRadius: '10px',
-  minWidth: '900px',
+  minWidth: '970px',
   boxShadow:  '0 0 5px 0 hsla(0,0%,68.2%,.3)'
 };
 const contentStyle = {
