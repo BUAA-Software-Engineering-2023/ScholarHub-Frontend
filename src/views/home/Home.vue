@@ -17,7 +17,12 @@
       <h2>个性推荐</h2>
     </div>
     <div class="recommendation">
-      <div v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
+      <div v-if="ifLoading===true">
+        <a-card v-for="item in 10">
+          <a-skeleton active/>
+        </a-card>
+      </div>
+      <div v-else v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
         <div  @click="jump_to_article(recommendation.id)"> <span class="recommendation-title" v-html="recommendation.display_name"></span> </div>
         <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
           <div class="recommendation-details">
@@ -75,12 +80,15 @@ const showSearch = ref(false); // 根据你的需求将其设置为 true 或 fal
 const authorInfo = ref(null);
 const userName = ref('')
 const selectedRecommendation = ref('')
+const ifLoading = ref(false)
 onMounted( async () => {
   window.addEventListener('scroll', handleScroll);
+  ifLoading.value = true;
   const result =  await HomeAPI.get_recommendation();
   userName.value = getName();
     // 在异步操作成功时处理数据
   recommendations.value = result.data.data
+  ifLoading.value = false;
   console.log(recommendations.value)
 });
 function showAuthorInfo(author,recommendation) {

@@ -145,8 +145,8 @@
           </a-layout>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
-	        <a-layout>
-		        <a-layout-sider :style="siderStyle" width="500" >
+	        <a-layout class="a-layout-container">
+		        <a-layout-sider :style="siderStyle" width="250" >
 			        <div class = "slideSearch">
 				        <a-menu
 					        v-model:selectedKeys="state.selectedKeys"
@@ -161,39 +161,41 @@
 			        </div>
 		        </a-layout-sider>
 		        <a-layout-content :style="contentStyle" v-if="update">
-			        <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
-					        <el-menu-item index="1" class="parent-container" @click="switchExpertOrder(1)">
-						        <span class="left-span">姓名</span>
-						        <div class="right-icons">
-							        <CaretUpOutlined v-show="Exarrow1 % 3 === 1" class="control-icon"/>
-							        <CaretDownOutlined v-show="Exarrow1 % 3 === 2" class="control-icon"/>
-						        </div>
-					        </el-menu-item>
-					        <el-menu-item index="2" class="parent-container" @click="switchExpertOrder(2)">
-						        <span class="left-span">引用量</span>
-						        <div class="right-icons">
-							        <CaretUpOutlined v-show="Exarrow2 % 3 === 1" class="control-icon"/>
-							        <CaretDownOutlined v-show="Exarrow2 % 3 === 2" class="control-icon"/>
-						        </div>
-					        </el-menu-item>
-					        <el-menu-item index="3" class="parent-container" @click="switchExpertOrder(3)">
-						        <span class="left-span">论文数量</span>
-						        <div class="right-icons">
-							        <CaretUpOutlined v-show="Exarrow3 % 3 === 1" class="control-icon"/>
-							        <CaretDownOutlined v-show="Exarrow3 % 3 === 2" class="control-icon"/>
-						        </div>
-					        </el-menu-item>
-				        </el-menu>
-			        <li class = "ExpertRes" v-for="item in expertList" v-bind:key="item.id">
+              <div class="menu-container">
+                <el-menu :default-active="activeIndex" class="border-style" mode="horizontal">
+                    <el-menu-item index="1" class="parent-container" @click="switchExpertOrder(1)">
+                      <span class="left-span">姓名</span>
+                      <div class="right-icons">
+                        <CaretUpOutlined v-show="Exarrow1 % 3 === 1" class="control-icon"/>
+                        <CaretDownOutlined v-show="Exarrow1 % 3 === 2" class="control-icon"/>
+                      </div>
+                    </el-menu-item>
+                    <el-menu-item index="2" class="parent-container" @click="switchExpertOrder(2)">
+                      <span class="left-span">引用量</span>
+                      <div class="right-icons">
+                        <CaretUpOutlined v-show="Exarrow2 % 3 === 1" class="control-icon"/>
+                        <CaretDownOutlined v-show="Exarrow2 % 3 === 2" class="control-icon"/>
+                      </div>
+                    </el-menu-item>
+                    <el-menu-item index="3" class="parent-container" @click="switchExpertOrder(3)">
+                      <span class="left-span">论文数量</span>
+                      <div class="right-icons">
+                        <CaretUpOutlined v-show="Exarrow3 % 3 === 1" class="control-icon"/>
+                        <CaretDownOutlined v-show="Exarrow3 % 3 === 2" class="control-icon"/>
+                      </div>
+                    </el-menu-item>
+                  </el-menu>
+              </div>
+			        <div class="search-result__list">
                 <div v-if="ifLoading===true">
                   <a-card v-for="item in 9">
-                    <a-skeleton active/>
+                    <a-skeleton active avatar/>
                   </a-card>
                 </div>
                 <div v-else>
-                  <div v-if="expertList!=null && expertList.length !== 0">
+                  <div v-if="expertList.length !== 0">
                     <li class="result-item" v-for="(item, index) in expertList" v-bind:key="item.id">
-                      <a-card hoverable style="width: 80%;">
+                      <a-card hoverable style="width: 100%;">
                         <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
                       </a-card>
                     </li>
@@ -205,16 +207,18 @@
                     />
                   </div>
                 </div>
-				    </li>
-			        <a-pagination v-model:current="current" :total=totalExpertPage pageSize="25" :showSizeChanger="false" />
+				    </div>
+			        <a-pagination v-if="expertList!=null && expertList.length !== 0" v-model:current="current" :total=totalExpert pageSize="25" :showSizeChanger="false" />
 		        </a-layout-content>
 	        </a-layout>
         </a-tab-pane>
       <a-tab-pane key="3" tab="机构" force-render>
 	      <Institution :institute="institutionList"></Institution>
+	      <a-pagination v-model:current="currentIns" :total="totalIns" :pageSize="25" :showSizeChanger="false"/>
       </a-tab-pane>
       <a-tab-pane key="4" tab="领域" force-render>
 	      <Field v-model="fieldList"></Field>
+	      <a-pagination v-model:current="currentField" :total="totalField" :pageSize="25" :showSizeChanger="false"/>
       </a-tab-pane>
       </a-tabs>
     </div>
@@ -225,11 +229,10 @@
 </template>
 
 <script setup>
-import SearchBar from "@/views/search/Search/SearchBar.vue";
 import NavBar from "@/components/NavBar/NavBar.vue";
 import ArticleCard from "@/views/search/ArticleCard.vue";
 import SearchAPI from "@/api/search.js"
-import { MailOutlined, AppstoreOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined } from '@ant-design/icons-vue';
+import {BankOutlined, ExperimentOutlined, PieChartOutlined} from '@ant-design/icons-vue';
 import {useRoute} from "vue-router";
 import router from "@/router/index.js";
 import ExpertCard from "@/views/search/ExpertCard.vue";
@@ -237,11 +240,17 @@ import EchartsArticle from "@/views/search/EchartsArticle.vue";
 import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
 import Institution from "@/views/search/Institution.vue";
 import Field from "@/views/search/Field.vue";
+
 const totalPaper = ref(0);
 const totalPaperPage = ref(0);
 const totalExpert = ref(0);
 const totalExpertPage = ref(0);
+const totalInsPage = ref(0);
+const totalIns = ref(0);
+const totalField = ref(0);
 const current = ref(1);
+const currentIns = ref(1);
+const currentField = ref(1);
 const currentArticle = ref(1);
 const contentStyle = {
   paddingleft:'200px',
@@ -271,13 +280,11 @@ const arResult = ref();
 const arFilter = ref({});
 const arSort = ref({});
 
-import { AntDesignOutlined } from '@ant-design/icons-vue';
-
 const activeKey = ref('1');
 const pageCurrent = ref(1);
-const paperList = ref();
+const paperList = ref([]);
 const paperListPerPage = ref();
-const expertList = ref();
+const expertList = ref([]);
 const institutionList = ref();
 const fieldList = ref([]);
 const update = ref(true);
@@ -487,7 +494,7 @@ async function getPapers(){//获取论文列表
   paperList.value = arResult.value.data.data.result;
   ifLoading.value = false;
   totalPaper.value = arResult.value.data.data.total;
-  totalPaperPage.value = totalPaper.value/25;
+  // totalPaperPage.value = totalPaper.value/25;
   console.log("total",arResult.value.data.data.total);
   setArticlesFilterContent();
 }
@@ -746,7 +753,7 @@ async function searchArticleWithAll(){
   console.log("arResult......",arResult.value);
   paperList.value = arResult.value.data.data.result;
   totalPaper.value = arResult.value.data.data.total;
-  totalPaperPage.value = totalPaper.value/25;
+  // totalPaperPage.value = totalPaper.value/25;
   setArticlesFilterContent();
   return res;
 }
@@ -809,6 +816,10 @@ watch (current, async (newValue, oldValue) => {
 	await getExpertsWithPage(newValue);
 	console.log("value",newValue);
 })
+watch (currentIns, async (newValue, oldValue) => {
+	await getInstitution(newValue)
+	paperListPerPage.value = tmp;
+})
 // watch (pageCurrent, async (newValue, oldValue) => {
 //   const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
 //   paperListPerPage.value = tmp;
@@ -816,7 +827,9 @@ watch (current, async (newValue, oldValue) => {
 watch(currentArticle, async (newValue, oldValue) => {
   await getArticlesWithPage(newValue);
 })
-
+watch(currentField, async (newValue, oldValue) => {
+	await getField(newValue);
+})
 const ExFilterClick = async menuInfo => {
 	if(LastKeyPath === menuInfo.keyPath){
 		state.selectedKeys = [];
@@ -850,17 +863,21 @@ async function getExperts(){
   ifLoading.value = false;
 	totalExpert.value = exResult.value.data.data.total;
 	totalExpertPage.value = totalExpert.value/25;
+  console.log("expertList",expertList.value);
 	console.log("total",exResult.value.data.data.total);
 	setExpertFilterContent();
 }
-async function getInstitution(){
-	let res = await SearchAPI.search_institution(searchContent.value);
+async function getInstitution(page){
+	let res = await SearchAPI.search_institution(searchContent.value,page);
 	institutionList.value = res.data.data.result;
+	totalIns.value = res.data.data.total;
+	console.log("totalInst",totalInsPage.value);
 }
-async function getField(){
-	let res = await SearchAPI.search_concept(searchContent.value);
-	console.log("concept",res.data.data.result);
+async function getField(page){
+	let res = await SearchAPI.search_concept(searchContent.value,page);
 	fieldList.value = res.data.data.result;
+	totalField.value = res.data.data.total;
+	console.log(fieldList.value);
 }
 async function getExpertsWithPage(page){
 	let res = await SearchAPI.searchExpertWithAll(searchContent.value,page,ExFilter.value,ExSort.value);
@@ -913,16 +930,6 @@ function setExpertFilterContent(){
 		institutionItem.children = ExpertArea.slice(0, 10).map(type => getItem(type, type,() => h(ExperimentOutlined)));
 	}
 }
-
-// async function getArticlesFiltered(filter){//获取带有筛选条件的论文
-//   const result = await SearchAPI.searchWithFilter(searchContent.value,filter)
-//   console.log("paper_result:", result)
-//   paperList.value = result.data.data.result;
-//   console.log("paperList:", paperList.value);
-//   setArticlesFilterContent();
-//   initArticlePage();
-// }
-
 
 const authorRank = ref([]);
 function setArticlesFilterContent(){//设置论文过滤条件
@@ -1047,7 +1054,7 @@ function setArticlesFilterContent(){//设置论文过滤条件
 
 const ifLoading = ref(false)
 onMounted(async ()=>{//初始渲染论文列表
-  
+	searchContent.value = route.query.content;
   console.log("route",route.name);
   if(route.name === "SearchArticle"){
 	  console.log("art")
@@ -1057,12 +1064,11 @@ onMounted(async ()=>{//初始渲染论文列表
 	  currentArticle.value = 1;
 	  let res = await searchArticleWithAll();
 	  console.log("res-on",res);
-	  searchContent.value = route.query.content;
 	  arResult.value = res;
 	  paperList.value = arResult.value.data.data.result;
 	  console.log("paperList-mou",paperList.value);
 	  totalPaper.value = arResult.value.data.data.total;
-	  totalPaperPage.value = totalPaper.value/25;
+	  // totalPaperPage.value = totalPaper.value/25;
 	  console.log("total",arResult.value.data.data.total);
 	  ifLoading.value = false;
 	  console.log("paperlist:", paperList.value);
@@ -1073,10 +1079,11 @@ onMounted(async ()=>{//初始渲染论文列表
 	  console.log("expert")
 	  activeKey.value = '2';
   }else if(route.name === "SearchInstitution"){
-	  await getInstitution();
+	  await getInstitution(1);
+	  console.log("total");
 	  activeKey.value = '3';
   }else if(route.name === "SearchField"){
-	  await getField();
+	  await getField(1);
 	  activeKey.value = '4';
   }
   // ifLoading.value = true;
@@ -1094,23 +1101,24 @@ onMounted(async ()=>{//初始渲染论文列表
   // ifLoading.value = false;
   // console.log("paperlist:", paperList.value);
   // setArticlesFilterContent();
-  await getExperts();
-  await getField();
-  await getInstitution();
+
+  // await getExperts();
+  // await getField();
+  // await getInstitution();
 })
 watch(route, async (newVal, oldVal) => {//监视输入框
+	searchContent.value = route.query.content;
 	if(route.name === "SearchArticle"){
 		ifLoading.value = true;
 		console.log("route",route.query.content)
 		currentArticle.value = 1;
 		let res = await searchArticleWithAll();
 		console.log("res-on",res);
-		searchContent.value = route.query.content;
 		arResult.value = res;
 		paperList.value = arResult.value.data.data.result;
 		console.log("paperList-mou",paperList.value);
 		totalPaper.value = arResult.value.data.data.total;
-		totalPaperPage.value = totalPaper.value/25;
+		// totalPaperPage.value = totalPaper.value/25;
 		console.log("total",arResult.value.data.data.total);
 		ifLoading.value = false;
 		console.log("paperlist:", paperList.value);
@@ -1122,10 +1130,12 @@ watch(route, async (newVal, oldVal) => {//监视输入框
 		console.log("expert")
 		activeKey.value = '2';
 	}else if(route.name === "SearchInstitution"){
-		await getInstitution();
+		await getInstitution(1);
+		console.log("total");
 		activeKey.value = '3';
 	}else if(route.name === "SearchField"){
-		await getField();
+		await getField(1);
+		console.log("field")
 		activeKey.value = '4';
 	}
 })
@@ -1133,8 +1143,8 @@ watch(activeKey, async (newVal, oldVal) => {//监视输入框
 	const hash = {
 		1 : "article",
 		2 : "expert",
-		3: "institution",
-		4: "field",
+		3 : "institution",
+		4 : "field",
 	}
 	let n = parseInt(activeKey.value)
 	const parts = route.path.split('/');
@@ -1158,14 +1168,12 @@ watch(searchContent, async (newVal, oldVal) => {//监视输入框
   console.log("oldVal:",oldVal);
   await getPapers();
 })
-watch (current, async (newValue, oldValue) => {
-	await getExpertsWithPage(newValue);
-	console.log("value",newValue);
-})
+
 watch (pageCurrent, async (newValue, oldValue) => {
 	const tmp = paperList.value.slice((pageCurrent.value-1)*10,pageCurrent.value*10);
 	paperListPerPage.value = tmp;
 })
+
 function getFullPaper(item){//进入论文详情
   const url = item.id;
   const parts = url.split('/');
@@ -1296,6 +1304,7 @@ body{
   margin: 0 auto; /* 这会使整个布局居中 */
   gap: 0px; /* 根据需要在组件之间添加空隙 */
 }
+
 
 .menu-container {
   width: 90%; /* 或者你想要的宽度百分比 */
