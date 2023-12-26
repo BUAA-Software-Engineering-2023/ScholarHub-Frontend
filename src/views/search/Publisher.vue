@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<a-card hoverable style="width: 20%; margin: 40px 40px" v-for="pub in PublishList" v-bind:key="pub.id" >
-			<PublisherCard :publishContent="pub" @click="jumpToInsDetail(pub)"/>
+			<PublisherCard :publishContent="pub" @click="jumpPublisherl(pub)"/>
 		</a-card>
 	</div>
 </template>
@@ -11,6 +11,7 @@
 import {ref} from "vue";
 import InsCard from "@/views/search/InsCard.vue";
 import PublisherCard from "@/views/search/PublisherCard.vue";
+import router from "@/router/index.js";
 const props = defineProps(['modelValue']);
 const emit = defineEmits(['update:modelValue'])
 const ifLoading = ref(false)
@@ -33,8 +34,13 @@ watch(
 	{ immediate: true } // 立即触发，以处理初始值
 );
 
-function jumpToInsDetail(){
-
+function jumpPublisherl(url){//进入科研人员详情页
+	// const parts = url.split('/');
+	// const authorId = parts[parts.length - 1]; // 获取最后一个部分
+	// console.log(authorId);
+	// router.push({
+	// 	path:`/client/author/${authorId}`
+	// })
 }
 </script>
 <style scoped>
