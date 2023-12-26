@@ -445,36 +445,36 @@ const getPosition2 = async (value) => {
 }
 const getPosition3 = async (value) => {
   positionType3.value = value;
-  arPosition.value = positionType3.value
+  SourceInsPosition.value = positionType3.value
   console.log("positionType3", positionType3.value);
-  await getPapers();
+  await getSource();
 }
 
 const getPosition4 = async (value) => {
   positionType4.value = value;
-  arPosition.value = positionType4.value
+  InsPosition.value = positionType4.value
   console.log("positionType4", positionType4.value);
-  await getPapers();
+  await getInstitution();
 }
 
 const getPosition5 = async (value) => {
   positionType5.value = value;
-  arPosition.value = positionType5.value
+  FieldPosition.value = positionType5.value
   console.log("positionType5", positionType5.value);
-  await getPapers();
+  await getField();
 }
 const getPosition6 = async (value) => {
   positionType6.value = value;
-  arPosition.value = positionType6.value
+  PublisherInsPosition.value = positionType6.value
   console.log("positionType6", positionType6.value);
-  await getPapers();
+  await getPublisher();
 }
 
 const getPosition7 = async (value) => {
   positionType7.value = value;
-  arPosition.value = positionType7.value
+  FunderInsPosition.value = positionType7.value
   console.log("positionType7", positionType7.value);
-  await getPapers();
+  await getFunder();
 }
 
 watch(positionType, async ()=>{
@@ -970,7 +970,7 @@ async function getExperts(){
 }
 async function getInstitution(page){
   ifLoading.value = true;
-	let res = await SearchAPI.search_institution(searchContent.value,page);
+	let res = await SearchAPI.search_institution(searchContent.value,page, InsPosition.value);
 	institutionList.value = res.data.data.result;
   ifLoading.value = false;
 	totalIns.value = res.data.data.total;
@@ -979,7 +979,7 @@ async function getInstitution(page){
 async function getField(page){
   ifLoading.value = true;
   console.log("field-ifLoading1",ifLoading.value);
-	let res = await SearchAPI.search_concept(searchContent.value,page);
+	let res = await SearchAPI.search_concept(searchContent.value,page, FieldPosition.value);
 	fieldList.value = res.data.data.result;
   ifLoading.value = false;
   console.log("field-ifLoading2",ifLoading.value);
@@ -987,19 +987,19 @@ async function getField(page){
 	console.log(fieldList.value);
 }
 async function getPublisher(page){
-	let res = await SearchAPI.search_publisher(searchContent.value,page);
+	let res = await SearchAPI.search_publisher(searchContent.value,page, PublisherInsPosition.value);
 	publisherList.value = res.data.data.result;
 	totalPublisher.value = res.data.data.total;
 	console.log("publish",publisherList.value);
 }
 async function getFunder(page){
-	let res = await SearchAPI.search_funder(searchContent.value,page);
+	let res = await SearchAPI.search_funder(searchContent.value,page, FunderInsPosition.value);
 	funderList.value = res.data.data.result;
 	totalFunder.value = res.data.data.total;
 	console.log(funderList.value);
 }
 async function getSource(page){
-	let res = await SearchAPI.search_source(searchContent.value,page);
+	let res = await SearchAPI.search_source(searchContent.value,page, SourceInsPosition.value);
 	sourceList.value = res.data.data.result;
 	totalSource.value = res.data.data.total;
 	console.log(sourceList.value);
