@@ -163,11 +163,6 @@ onMounted( async () => {
       }
 
     }
-  }else {
-    let promise = Swal.fire({
-      icon: 'error',
-      title:'该作者不存在'
-    })
   }
   Mounted.value = true;
   console.log(result)
@@ -201,7 +196,7 @@ const buttonItemLayout = computed(() => {
     <div class="sidebar">
       <SideBar select-keys="4"></SideBar>
     </div>
-    <div v-if="!is_Author" class="content">
+    <div v-if="is_Author" class="content">
       <div v-if="Mounted">
         <div class="header">
           <div class="avatar">
@@ -244,7 +239,7 @@ const buttonItemLayout = computed(() => {
       </div>
     </div>
     <div class="empty" v-else>
-        <a-empty description="暂无作者信息"></a-empty>
+        <a-empty description="暂无作者信息，快去认领作者吧！"></a-empty>
     </div>
   </div>
 

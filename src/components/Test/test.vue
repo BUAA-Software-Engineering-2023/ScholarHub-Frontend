@@ -64,37 +64,48 @@ const changePage = () => {
 
 <style scoped>
 .outer {
-  width: 100% !important;
-}
-.paper-list-wrap {
-  width: 100%;
-  position: relative;
-  margin: 0 auto;
+  width: 90%; /* 调整外层宽度，留出边距 */
+  margin: 20px auto; /* 居中并添加上下边距 */
 }
 
-.pagination-wrap {
-  margin-top: 5%;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 36px;
+.paper-list-wrap {
+  position: relative;
+  margin-top: 20px; /* 添加顶部边距 */
 }
 
 .search-result__list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin-top: 20px; /* 添加列表顶部边距 */
 }
 
-.search-result__list .result-item {
-  width: 100%;
-  display: inline-block;
-  font-size: 0.875rem;
+.result-item {
+  margin-bottom: 15px; /* 每个项目之间的间距 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影效果 */
+  transition: box-shadow 0.3s; /* 平滑过渡效果 */
 }
 
-.hint {
-  margin: 20px;
-  font-style: italic;
+.result-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬停时的阴影效果 */
+}
+
+.el-menu-demo {
+  background-color: #f2f2f2; /* 菜单背景色 */
+  border-radius: 5px; /* 边框圆角 */
+  margin-bottom: 20px; /* 菜单与列表之间的间距 */
+}
+
+.el-menu-item {
+  color: #333; /* 菜单项字体颜色 */
+  font-weight: bold; /* 字体加粗 */
+}
+
+.pagination-wrap {
+  margin-top: 20px; /* 分页组件顶部边距 */
+  padding-bottom: 20px; /* 分页组件底部边距 */
+}
+
+.el-pagination {
+  font-size: 14px; /* 分页组件字体大小 */
 }
 </style>

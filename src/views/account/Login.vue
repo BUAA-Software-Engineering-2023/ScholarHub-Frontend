@@ -27,6 +27,8 @@ import LoginNavBar from "@/components/NavBar/LoginNavBar.vue";
 
 .login-container {
   .login-box {
+    min-width: 900px;
+    min-height: 600px;
     z-index: 2;
     position: absolute;
     width: 60%;

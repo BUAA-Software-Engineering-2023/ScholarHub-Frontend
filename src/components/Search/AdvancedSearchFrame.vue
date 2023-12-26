@@ -68,7 +68,7 @@
           </a-space>
           <a-input
               v-model:value="domain.value"
-              placeholder="please input domain"
+              placeholder="请输入..."
               style="margin-left: 20px; width: 100%;"
           />
           <MinusCircleOutlined
@@ -369,9 +369,10 @@ button{
   min-width: 400px;
 }
 .adv-search-item{
-  margin-left: 20px;
+  margin-left: 10%;
   width: 100%;
   display: flex;
+
 
 }
 .adv-search-class{

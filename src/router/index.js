@@ -95,8 +95,8 @@ const router = createRouter({
             name: 'EchartsArticle',
             component: () => import('@/views/search/EchartsArticle.vue')
         },{
-            path: '/test',
-            name: 'Test',
+            path: '/admin',
+            name: 'Admin',
             component: () => import('@/views/admin/Home.vue')
         }
 ]

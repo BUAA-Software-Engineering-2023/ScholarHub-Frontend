@@ -97,7 +97,7 @@ import Notification from "@/components/NavBar/Message.vue";
     router.push('/client/user/information')
   }
   function  gotoAdmin(){
-    router.push('/test')
+    router.push('/admin')
   }
   function gotoScholar(){
     router.push('/client/user/scholar')
