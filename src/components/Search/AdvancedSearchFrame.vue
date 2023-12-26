@@ -359,7 +359,7 @@ const options_7 = ref([
   }
 ])
 
-const value1 = ref("论文")
+const value1 = ref(useSearchStore().searchType)
 const options1 = ref([
   {
     value: '论文',
