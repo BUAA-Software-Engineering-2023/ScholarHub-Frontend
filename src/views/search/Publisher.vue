@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<a-card hoverable style="width: 20%; margin: 40px 40px" v-for="pub in PublishList" v-bind:key="pub.id" >
-			<PublisherCard :publishContent="pub" @click="jumpPublisherl(pub)"/>
+			<PublisherCard :publishContent="pub" @click="jumpPublisher(pub.id)"/>
 		</a-card>
 	</div>
 </template>
@@ -34,13 +34,13 @@ watch(
 	{ immediate: true } // 立即触发，以处理初始值
 );
 
-function jumpPublisherl(url){//进入科研人员详情页
-	// const parts = url.split('/');
-	// const authorId = parts[parts.length - 1]; // 获取最后一个部分
-	// console.log(authorId);
-	// router.push({
-	// 	path:`/client/author/${authorId}`
-	// })
+function jumpPublisher(url){//进入科研人员详情页
+	const parts = url.split('/');
+	const InsId = parts[parts.length - 1]; // 获取最后一个部分
+	console.log(url);
+	router.push({
+		path:`/client/publisher/${InsId}`
+	})
 }
 </script>
 <style scoped>
