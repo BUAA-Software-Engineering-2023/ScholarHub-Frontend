@@ -37,7 +37,7 @@
           :name="['domains', index, 'value']"
           :rules="{
         required: true,
-        message: 'domain can not be null',
+        message: '该表不能为空',
         trigger: 'change',
       }" style="width: 100%"
       >
@@ -68,8 +68,8 @@
           </a-space>
           <a-input
               v-model:value="domain.value"
-              placeholder="please input domain"
-              style="width: 100%;"
+              placeholder="请输入..."
+              style="margin-left: 20px; width: 100%;"
           />
           <MinusCircleOutlined
               v-if="dynamicValidateForm.domains.length > 1"
@@ -369,9 +369,10 @@ button{
   min-width: 400px;
 }
 .adv-search-item{
-  margin-left: 20px;
+  margin-left: 10%;
   width: 100%;
   display: flex;
+
 
 }
 .adv-search-class{

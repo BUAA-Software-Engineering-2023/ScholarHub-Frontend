@@ -396,4 +396,59 @@ function  jump_to_author(id){
   text-decoration: none; /* 取消实线下划线 */
   border-bottom: 1px dashed #75a468; /* 添加虚线下划线 */
 }
+.recommendation {
+  border: 1px solid #5a5a5a;
+  background-color: #f8f9fa; // 浅色背景
+  width: 80%;
+  border-radius: 10px;
+  text-align: left;
+  color: #363c50;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // 轻微阴影
+  margin-top: 20px;
+}
+
+.recommendation h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.recommendation-item {
+  font-size: 16px;
+  padding: 10px;
+  border-bottom: 1px solid #eaecef; // 项之间的分隔线
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.recommendation-title {
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  color: #007bff; // 标题颜色
+  &:hover {
+    color: #0056b3; // 鼠标悬停时的颜色
+  }
+}
+
+.recommendation-abstract {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d; // 摘要文字颜色
+  line-height: 1.5;
+}
+
+.recommendation-stats {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d; // 统计信息颜色
+}
+
+.count {
+  color: #28a745; // 数字高亮颜色
+}
+
 </style>
