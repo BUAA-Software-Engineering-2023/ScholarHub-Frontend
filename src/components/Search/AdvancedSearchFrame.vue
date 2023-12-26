@@ -269,7 +269,7 @@ const SearchTypeOptions = ref([
   }
 ])
 
-const value_1 = ref("综合搜索");
+const value_1 = ref("default");
 const options_1 = ref([
   {
     value: 'default',
@@ -288,7 +288,7 @@ const options_1 = ref([
     label: '全文',
   },
 ])
-const value_2 = ref("综合搜索");
+const value_2 = ref("default");
 const options_2 = ref([
   {
     value: 'default',
@@ -296,10 +296,10 @@ const options_2 = ref([
   },
   {
     value: 'display_name',
-    label: '标题',
+    label: '名称',
   },
 ])
-const value_3 = ref("综合搜索");
+const value_3 = ref("default");
 const options_3 = ref([
   {
     value: 'default',
@@ -307,10 +307,10 @@ const options_3 = ref([
   },
   {
     value: 'display_name',
-    label: '标题',
+    label: '名称',
   },
 ])
-const value_4 = ref("综合搜索");
+const value_4 = ref("default");
 const options_4 = ref([
   {
     value: 'default',
@@ -318,10 +318,10 @@ const options_4 = ref([
   },
   {
     value: 'display_name',
-    label: '标题',
+    label: '名称',
   },
 ])
-const value_5 = ref("综合搜索");
+const value_5 = ref("default");
 const options_5 = ref([
   {
     value: 'default',
@@ -329,10 +329,10 @@ const options_5 = ref([
   },
   {
     value: 'display_name',
-    label: '标题',
+    label: '名称',
   },
 ])
-const value_6 = ref("综合搜索");
+const value_6 = ref("default");
 const options_6 = ref([
   {
     value: 'default',
@@ -340,10 +340,10 @@ const options_6 = ref([
   },
   {
     value: 'display_name',
-    label: '标题',
+    label: '名称',
   },
 ])
-const value_7 = ref("综合搜索");
+const value_7 = ref("default");
 const options_7 = ref([
   {
     value: 'default',
@@ -351,7 +351,7 @@ const options_7 = ref([
   },
   {
     value: 'display_name',
-    label: '标题',
+    label: '名称',
   },
   {
     value: 'description',
