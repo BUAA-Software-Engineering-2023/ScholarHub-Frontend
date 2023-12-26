@@ -1,12 +1,12 @@
 <template>
   <NavBar></NavBar>
     <a-layout style="height: 100%">
-      <a-layout-sider style="margin-top: 10px;height: 100%" v-model:collapsed="state.collapsed" collapsible>
-        <a-menu v-model:selectedKeys="state.selectedKeys" theme="dark" mode="inline" :inline-collapsed="state.collapsed" :items="items"></a-menu>
-        <div class="sider-footer">
-          <menu-unfold-outlined v-if="state.collapsed" @click="toggleCollapsed" class="trigger" />
-          <menu-fold-outlined v-else @click="toggleCollapsed" class="trigger" />
-        </div>
+      <a-layout-sider style="margin-top: 10px;height: 100%;background-color: black" v-model:collapsed="state.collapsed"  collapsible>
+        <a-menu v-model:selectedKeys="state.selectedKeys" theme="dark" style="background-color: black;color: #ddddee" mode="inline" :inline-collapsed="state.collapsed" :items="items"></a-menu>
+<!--        <div class="sider-footer">-->
+<!--          <menu-unfold-outlined v-if="state.collapsed" @click="toggleCollapsed" class="trigger" />-->
+<!--          <menu-fold-outlined v-else @click="toggleCollapsed" class="trigger" />-->
+<!--        </div>-->
       </a-layout-sider>
       <a-layout>
         <a-layout-content :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '680px' }">
@@ -102,5 +102,8 @@ watch(
 }
 .container{
   height: 100%;
+}
+a-menu:hover{
+  color: #4B70E2;
 }
 </style>
