@@ -111,6 +111,7 @@
 import {Close, Search} from "@element-plus/icons-vue";
 import { useVModel, onClickOutside } from '@vueuse/core';
 import { reactive, ref } from 'vue';
+import {useSearchStore} from "@/stores/search.js";
 const formRef = ref();
 const formItemLayout = {
   labelCol: {
@@ -263,7 +264,7 @@ const search = () =>{
   emits(SEARCH,searchValue.value,value1.value)
 }
 const handleChange = value => {
-  console.log(`selected ${value}`);
+  useSearchStore().setSearchType(value)
 };
 </script>
 
