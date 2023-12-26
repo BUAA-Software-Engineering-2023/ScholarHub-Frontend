@@ -48,7 +48,6 @@ async function handleSearch(InputValue){
       ifSearch.value = InputValue;
       emit('getInput', ifSearch.value);
       searchStore.addHistory(InputValue);
-      searchStore.setSearchInput(InputValue)
     }
 }
 const handleClear = () => {

@@ -30,5 +30,23 @@ export default {
                 comment_id
             }
         })
+    },
+    top_comments(comment_id){
+        return requests({
+            url: '/comment/top',
+            method: 'PATCH',
+            data:{
+                comment_id
+            }
+        })
+    },
+    untop_comments(comment_id){
+        return requests({
+            url: '/comment/untop',
+            method: 'PATCH',
+            data:{
+                comment_id
+            }
+        })
     }
 }
