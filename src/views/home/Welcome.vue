@@ -1,7 +1,7 @@
 <template>
   <Background></Background>
   <LoginNavBar></LoginNavBar>
-  <AdvancedSearchBar class="search"></AdvancedSearchBar>
+  <SearchBar class="search"></SearchBar>
   <div class="main">
     <div class="slogen">
       <div class="slogen-title">Explore Whatever You Want</div>
@@ -94,7 +94,7 @@ import AdvancedSearchBar from "@/components/Search/AdvancedSearchBar.vue";
         margin-top: 5vh;
         font-size: 20px;
         font-weight: 200;
-        color: #aab1b9;
+        color: white;
         line-height: 30px;
     }
 }

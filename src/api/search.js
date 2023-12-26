@@ -20,12 +20,13 @@ export default {
         })
     },
 
-    search_institution(search) {
+    search_institution(search,page) {
         return requests({
             url: '/institution/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page,
             }
         })
     },
@@ -40,12 +41,13 @@ export default {
         })
     },
 
-    search_concept(search) {
+    search_concept(search,page) {
         return requests({
             url: '/concept/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page
             }
         })
     },
@@ -141,6 +143,19 @@ export default {
             method: 'POST',
             data:{
                 search,filter
+            },
+            showLoading:true,
+        })
+    },
+    searchArticleWithAll(search,page,filter,sort){
+        return requests({
+            url:"/work/search",
+            method: 'POST',
+            data:{
+                search,
+                page,
+                sort,
+                filter,
             },
             showLoading:true,
         })

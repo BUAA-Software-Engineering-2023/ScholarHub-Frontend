@@ -78,12 +78,25 @@ const router = createRouter({
             name: 'SearchArticle',
             component: () => import('@/views/search/SearchArticle.vue')
         },{
+            path: '/search/expert',
+            name: 'SearchExpert',
+            component: () => import('@/views/search/SearchArticle.vue')
+        },{
+            path: '/search/field',
+            name: 'SearchField',
+            component: () => import('@/views/search/SearchArticle.vue')
+        },{
+            path: '/search/institution',
+            name: 'SearchInstitution',
+            component: () => import('@/views/search/SearchArticle.vue')
+        }
+        ,{
             path: '/search/te',
             name: 'EchartsArticle',
             component: () => import('@/views/search/EchartsArticle.vue')
         },{
-            path: '/test',
-            name: 'Test',
+            path: '/admin',
+            name: 'Admin',
             component: () => import('@/views/admin/Home.vue')
         }
 ]

@@ -4,7 +4,7 @@
     <!-- <template #info>用户信息卡槽</template> -->
     <!-- <template #card>用户信息卡片卡槽</template> -->
     <template #operate="scope" v-if="useAccountStore().userInfo.is_admin">
-      <Operate :comment="scope" @remove="remove" />
+      <Operate :comment="scope" @remove="remove" @report="report" @un_report="un_report" />
     </template>
   </u-comment>
 </template>
@@ -29,34 +29,48 @@ import {
 import CommentSAPI from "@/api/comments"
 import {useRoute} from "vue-router";
 import {useAccountStore} from "@/stores/account"
+import router from "@/router/index.js";
 import {throttle} from "echarts";
 const route = useRoute()
 const paperId = ref("https://openalex.org/"+route.params.paperId)
 const props = defineProps(['comments'])
 const comments = props.comments
 const user = ref(useAccountStore())
+
 const config = reactive<ConfigApi>({
   user: {
     id: user.value.userInfo.id,
     username: user.value.userInfo.nickname,
     avatar: user.value.userInfo.avatar,
     // 评论id数组 建议:存储方式用户uid和评论id组成关系,根据用户uid来获取对应点赞评论id,然后加入到数组中返回
-    likeIds: [1, 2, 3]
+    likeIds: []
   },
   emoji: emoji,
   comments: [],
   total: 10
 })
 const commentRef = ref<CommentInstance>()
+const report = async (comment: CommentApi) =>{
+  comment.is_top = true;
+  const result = await CommentSAPI.top_comments(comment.id)
+  console.log(result)
+}
+const un_report = async (comment: CommentApi) =>{
+  comment.is_top = false;
+  const result = await CommentSAPI.untop_comments(comment.id)
+  router.go(0)
+}
 const  remove = async (comment: CommentApi) => {
   console.log(comment.id)
+
   const result = await CommentSAPI.delete_comments(comment.id)
   if (result.data.success){
-
-  }
-  setTimeout(() => {
+    setTimeout(() => {
       commentRef.value.remove(comment)
-  }, 200)
+    }, 200)
+    UToast({ message: '删除成功!', type: 'success' })
+  }
+
 }
 const _throttle = throttle((type: string, comment: CommentApi, finish: Function) => {
   switch (type) {
@@ -64,8 +78,8 @@ const _throttle = throttle((type: string, comment: CommentApi, finish: Function)
       alert(`删除成功: ${comment.id}`)
       finish()
       break
-    case '举报':
-      alert(`举报成功: ${comment.id}`)
+    case '置顶':
+      alert(`置顶成功: ${comment.id}`)
       break
   }
 })
@@ -81,10 +95,7 @@ const sorted = (latest: boolean) => {
 let temp_id = props.comments[props.comments.length-1]
 // 提交评论事件
 const submit = async ({ content, parentId, files, finish }: SubmitParamApi) => {
-  console.log(props.comments)
-  console.log('提交评论: ' + content, parentId, files)
-  console.log(commentRef.value)
-  /**
+  /*
    * 上传文件后端返回图片访问地址，格式以'||'为分割; 如:  '/static/img/program.gif||/static/img/normal.webp'
    */
   let contentImg = files?.map(e => createObjectURL(e)).join('||')
@@ -111,6 +122,9 @@ const submit = async ({ content, parentId, files, finish }: SubmitParamApi) => {
     finish(comment)
     UToast({ message: '评论成功!', type: 'success' })
   }, 200)
+  if (useAccountStore().userInfo.is_admin){
+    router.go(0)
+  }
 }
 // 点赞按钮事件 将评论id返回后端判断是否点赞，然后在处理点赞状态
 const like = (id: string, finish: () => void) => {

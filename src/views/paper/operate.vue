@@ -12,9 +12,9 @@
     </div>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item command="report">举报</el-dropdown-item>
         <el-dropdown-item command="remove">删除</el-dropdown-item>
-        <el-dropdown-item divided command="copy">复制</el-dropdown-item>
+        <el-dropdown-item v-if="props.comment.is_top&&!props.comment.parentId" divided command="un_report">取消置顶</el-dropdown-item>
+        <el-dropdown-item v-if="!props.comment.is_top&&!props.comment.parentId" divided command="report">置顶</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
@@ -31,6 +31,8 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'remove', comment: CommentApi): void
+  (e: 'report', comment: CommentApi): void
+  (e: 'un_report', comment: CommentApi): void
 }>()
 
 const { copy } = useClipboard()
@@ -42,11 +44,12 @@ const onCommand = (command: any) => {
       emit('remove', props.comment)
       break
     case 'report':
-      UToast({type: 'info', message: '举报成功: ' + props.comment.id})
+      emit("report",props.comment);
+      UToast({type: 'success', message: '置顶成功:'})
       break
-    case 'copy':
-      copy(props.comment.content)
-      UToast({type: 'info', message: '复制成功'})
+    case 'un_report':
+      emit("un_report",props.comment);
+      UToast({type: 'success', message: '取消置顶成功'})
   }
 }
 

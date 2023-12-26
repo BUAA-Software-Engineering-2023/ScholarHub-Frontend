@@ -1,78 +1,109 @@
 <template>
-	<NavBar></NavBar>
-	<a-layout>
-		<a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-			<div class="logo" />
-			<a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" class="sideBar">
-				<a-menu-item key="1" @click="handleClick(1)">
-					<user-outlined />
-					<span style="font-size: 20px">审批论文</span>
-				</a-menu-item>
-				<a-menu-item key="2" @click="handleClick(2)">
-					<video-camera-outlined />
-					<span style="font-size: 20px">审批个人门户</span>
-				</a-menu-item>
-			</a-menu>
-		</a-layout-sider>
-		<a-layout>
-			<a-layout-header style="background: #fff; padding: 0 ">
-				<menu-unfold-outlined
-					v-if="collapsed"
-					class="trigger"
-					@click="() => (collapsed = !collapsed)"
-					style="margin-right: 90%"
-				/>
-				<menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" style="margin-right: 90%" />
-			</a-layout-header>
-			<a-layout-content
-				:style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '680px' }"
-			>
-				<PaperApproval v-if="page===1" />
-				<PortalApproval v-if="page===2" />
-			</a-layout-content>
-		</a-layout>
-	</a-layout>
+  <NavBar></NavBar>
+    <a-layout style="height: 100%">
+      <a-layout-sider style="margin-top: 10px;height: 100%;background-color: black" v-model:collapsed="state.collapsed"  collapsible>
+        <a-menu v-model:selectedKeys="state.selectedKeys" theme="dark" style="background-color: black;color: #ddddee" mode="inline" :inline-collapsed="state.collapsed" :items="items"></a-menu>
+<!--        <div class="sider-footer">-->
+<!--          <menu-unfold-outlined v-if="state.collapsed" @click="toggleCollapsed" class="trigger" />-->
+<!--          <menu-fold-outlined v-else @click="toggleCollapsed" class="trigger" />-->
+<!--        </div>-->
+      </a-layout-sider>
+      <a-layout>
+        <a-layout-content :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '680px' }">
+          <PaperApproval v-if="page === '1'" />
+          <PortalApproval v-if="page === '2'" />
+        </a-layout-content>
+      </a-layout>
+    </a-layout>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { reactive, h } from 'vue';
 import NavBar from "@/components/NavBar/NavBar.vue";
 import PaperApproval from "@/views/admin/PaperApproval.vue";
-import { LinkOutlined, ReadOutlined, BankOutlined,ExperimentOutlined,PieChartOutlined } from '@ant-design/icons-vue';
 import PortalApproval from "@/views/admin/PortalApproval.vue";
-const selectedKeys = ref(['1']);
-const collapsed = ref(false);
-let page = ref('1');
-function handleClick(n){
-	if(n==1){
-		page.value=1;
-	}else{
-		page.value=2;
-	}
-}
+import { PieChartOutlined, DesktopOutlined } from '@ant-design/icons-vue';
+const page = ref('1');
+const state = reactive({
+  collapsed: false,
+  selectedKeys: ['1'],
+  openKeys: [],
+  preOpenKeys: [],
+});
+
+const items = reactive([
+  {
+    key: '1',
+    icon: () => h(PieChartOutlined),
+    label: '审批论文',
+    title: '审批论文',
+    onClick: () => handleClick('1')
+  },
+  {
+    key: '2',
+    icon: () => h(DesktopOutlined),
+    label: '审批个人门户',
+    title: '审批个人门户',
+    onClick: () => handleClick('2')
+  }
+]);
+
+
+const handleClick = (key) => {
+  page.value = key;
+  state.selectedKeys = [key];
+};
+
+const toggleCollapsed = () => {
+  state.collapsed = !state.collapsed;
+  state.openKeys = state.collapsed ? [] : state.preOpenKeys;
+};
+
+
+watch(
+    () => state.selectedKeys,
+    (newVal) => {
+      page.value = newVal[0];
+    }
+);
 </script>
 <style scoped>
-#components-layout-demo-custom-trigger .trigger {
-	font-size: 18px;
-	line-height: 64px;
-	padding: 0 24px;
-	cursor: pointer;
-	transition: color 0.3s;
+/* ... 其他样式 ... */
+
+/* 自定义带图标的菜单项样式 */
+.a-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-#components-layout-demo-custom-trigger .trigger:hover {
-	color: #1890ff;
+.a-menu-item .anticon {
+  margin-bottom: 4px; /* 调整图标与文字之间的间距 */
 }
 
-#components-layout-demo-custom-trigger .logo {
-	height: 32px;
-	background: rgba(255, 255, 255, 0.3);
-	margin: 16px;
+/* 自定义菜单项标签（文字）样式 */
+.a-menu-item-label {
+  display: block;
+  text-align: center;
+}
+.sider-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 0; /* 这会将容器推到底部 */
 }
 
-.site-layout .site-layout-background {
-	background: #fff;
+.trigger {
+  font-size: 18px;
+  cursor: pointer;
+  color: white;
+  /* 调整颜色和悬停样式 */
 }
-.sideBar{
-	margin-top: 40px;
+.container{
+  height: 100%;
+}
+a-menu:hover{
+  color: #4B70E2;
 }
 </style>
