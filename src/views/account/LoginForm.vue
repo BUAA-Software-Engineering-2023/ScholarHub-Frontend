@@ -282,6 +282,7 @@ async function login (){
 }
 
 </script>
+
 <style scoped>
 * {
   margin: 0;
@@ -293,10 +294,9 @@ async function login (){
 
 
 .shell {
-  min-width: 900px;
-  min-height: 400px;
   position: relative;
   height: 100%;
+  width: 100%;
   padding: 25px;
   background-color: #ecf0f3;
   opacity: 0.9;
@@ -310,7 +310,7 @@ async function login (){
   align-items: center;
   position: absolute;
   top: 0;
-  width: 600px;
+  width: 55%;
   height: 100%;
   padding: 25px;
   background-color: #ecf0f3;
@@ -343,7 +343,6 @@ async function login (){
 }
 .form_input {
   width: 350px;
-
   height: 40px;
   margin: 4px 0;
   font-size: 13px;
@@ -408,7 +407,7 @@ async function login (){
 
 .a-container {
   z-index: 100;
-  left: calc(100% - 600px);
+  left: 45%;
 }
 
 .b-container {

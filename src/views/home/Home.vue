@@ -17,8 +17,13 @@
       <h2>个性推荐</h2>
     </div>
     <div class="recommendation">
-      <div v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
-        <div  @click="jump_to_article(recommendation.id)"> <span class="recommendation-title">{{ recommendation.display_name }}</span> </div>
+      <div v-if="ifLoading===true">
+        <a-card v-for="item in 10">
+          <a-skeleton active/>
+        </a-card>
+      </div>
+      <div v-else v-for="(recommendation, index) in recommendations" :key="index" class="recommendation-item">
+        <div  @click="jump_to_article(recommendation.id)"> <span class="recommendation-title" v-html="recommendation.display_name"></span> </div>
         <div  class="author" v-for="(author,index1) in recommendation.authorships" :key="index1">
           <div class="recommendation-details">
             <div   @mouseover="showAuthorInfo(author.author,recommendation.id)"
@@ -75,12 +80,15 @@ const showSearch = ref(false); // 根据你的需求将其设置为 true 或 fal
 const authorInfo = ref(null);
 const userName = ref('')
 const selectedRecommendation = ref('')
+const ifLoading = ref(false)
 onMounted( async () => {
   window.addEventListener('scroll', handleScroll);
+  ifLoading.value = true;
   const result =  await HomeAPI.get_recommendation();
   userName.value = getName();
     // 在异步操作成功时处理数据
   recommendations.value = result.data.data
+  ifLoading.value = false;
   console.log(recommendations.value)
 });
 function showAuthorInfo(author,recommendation) {
@@ -176,7 +184,7 @@ function  jump_to_author(id){
     margin-top: 5vh;
     font-size: 20px;
     font-weight: 200;
-    color: #aab1b9;
+    color: white;
     line-height: 30px;
   }
 }
@@ -388,4 +396,59 @@ function  jump_to_author(id){
   text-decoration: none; /* 取消实线下划线 */
   border-bottom: 1px dashed #75a468; /* 添加虚线下划线 */
 }
+.recommendation {
+  border: 1px solid #5a5a5a;
+  background-color: #f8f9fa; // 浅色背景
+  width: 80%;
+  border-radius: 10px;
+  text-align: left;
+  color: #363c50;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // 轻微阴影
+  margin-top: 20px;
+}
+
+.recommendation h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.recommendation-item {
+  font-size: 16px;
+  padding: 10px;
+  border-bottom: 1px solid #eaecef; // 项之间的分隔线
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.recommendation-title {
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  color: #007bff; // 标题颜色
+  &:hover {
+    color: #0056b3; // 鼠标悬停时的颜色
+  }
+}
+
+.recommendation-abstract {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d; // 摘要文字颜色
+  line-height: 1.5;
+}
+
+.recommendation-stats {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d; // 统计信息颜色
+}
+
+.count {
+  color: #28a745; // 数字高亮颜色
+}
+
 </style>

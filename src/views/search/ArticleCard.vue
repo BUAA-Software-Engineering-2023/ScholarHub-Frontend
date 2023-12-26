@@ -1,12 +1,21 @@
 <template>
   <div>
     <a-typography>
-      <h3 v-html="paper.display_name" class="title-style" style="margin-bottom: 0px;text-align: justify; text-justify: auto; color:darkblue">
+      <h3 v-if="paper.display_name!==' '" v-html="paper.display_name" class="title-style" style="margin-bottom: 0px;text-align: justify; text-justify: auto; color:darkblue">
+      </h3>
+      <h3 v-else class="title-style" style="margin-bottom: 0px;text-align: justify; text-justify: auto; color:darkblue">
+        NO TITLE!
       </h3>
 
-      <div class="authorGrid">
+      <div class="authorGrid" v-if="paper.authorships.length !== 0">
         <h5 class="authorGrid--item" v-for="(author, index) in paper.authorships" :key="author.author.display_name">
-          {{ author.author.display_name }},&nbsp;
+          {{ author.author.display_name }}
+          <span v-if="index !== paper.authorships.length-1">,&nbsp;</span>
+        </h5>
+      </div>
+      <div class="authorGrid" v-else>
+        <h5 class="authorGrid--item">
+          NO AUTHOR!&nbsp;
         </h5>
       </div>
 

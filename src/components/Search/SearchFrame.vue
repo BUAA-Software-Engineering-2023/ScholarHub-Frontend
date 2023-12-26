@@ -92,7 +92,7 @@ const clearSearchValue = () =>{
   emits(CLEAR,'')
 }
 const search = () =>{
-  emits(SEARCH,searchValue.value)
+  emits(SEARCH,searchValue.value,value1.value)
 }
 const handleChange = value => {
   console.log(`selected ${value}`);
@@ -112,7 +112,7 @@ const handleChange = value => {
 }
 
 .search-container:hover{
-  box-shadow: 10px 10px #4B70E2;
+  box-shadow: 2px 2px #5a5a5a;
 }
 
 .search-type {

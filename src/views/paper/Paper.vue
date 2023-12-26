@@ -123,7 +123,6 @@ onMounted(async () => {
               uid: tem.sender_id,
               address: '来自北京',
               content: tem.content,
-              likes: 233,
               createTime: tem.created_at,
               user: {
                 username: tem.sender_nickname,
@@ -144,18 +143,18 @@ onMounted(async () => {
           uid: tmp.sender_id,
           address: '来自北京',
           content: tmp.content,
-          likes: 233,
           createTime: tmp.created_at,
+          is_top:tmp.is_top,
           user: {
             username: tmp.sender_nickname,
             avatar: tmp.sender_avatar,
-            level: 6,
             homeLink: '/1'
           },
-          reply:null,
+          reply:reply,
         })
       }
     }
+    console.log(comments.value)
   }
 
   Mounted.value = true

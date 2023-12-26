@@ -43,16 +43,11 @@ const emit = defineEmits(["getInput"])
 
 async function handleSearch(InputValue){
     searchValue.value = InputValue;
-    console.log("input:"+searchValue.value)
-
     if (InputValue)
     {
-      // const result = await Search.search(InputValue);
       ifSearch.value = InputValue;
       emit('getInput', ifSearch.value);
-      console.log("!!!!!");
       searchStore.addHistory(InputValue);
-      searchStore.setSearchInput(InputValue)
     }
 }
 const handleClear = () => {
