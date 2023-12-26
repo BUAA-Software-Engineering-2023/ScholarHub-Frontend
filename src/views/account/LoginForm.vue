@@ -266,7 +266,6 @@ async function login (){
     const result1 = await SearchAPI.history();
     const HistoryList = []
     let index;
-    console.log(result1)
     for (index in result1.data.data){
       console.log(result1.data.data)
       HistoryList.push(result1.data.data[index].title)
