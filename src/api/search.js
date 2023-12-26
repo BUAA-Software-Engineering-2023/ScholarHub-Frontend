@@ -20,12 +20,13 @@ export default {
         })
     },
 
-    search_institution(search) {
+    search_institution(search,page) {
         return requests({
             url: '/institution/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page,
             }
         })
     },
@@ -40,12 +41,13 @@ export default {
         })
     },
 
-    search_concept(search) {
+    search_concept(search,page) {
         return requests({
             url: '/concept/search',
             method: 'POST',
             data: {
-                search
+                search,
+                page
             }
         })
     },
