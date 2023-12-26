@@ -212,24 +212,54 @@
 	        </a-layout>
         </a-tab-pane>
       <a-tab-pane key="3" tab="机构" force-render>
-	      <Institution :ifLoading="ifLoading" :institute="institutionList"></Institution>
-	      <a-pagination v-model:current="currentIns" :total="totalIns" :pageSize="25" :showSizeChanger="false"/>
+	      <Institution v-if="institutionList.length !== 0" :ifLoading="ifLoading" :institute="institutionList"></Institution>
+	      <a-pagination v-if="institutionList.length !== 0" v-model:current="currentIns" :total="totalIns" :pageSize="25" :showSizeChanger="false"/>
+        <div v-else>
+          <a-empty
+              image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+              :image-style="{height: '60px',}"
+          />
+        </div>
       </a-tab-pane>
       <a-tab-pane key="4" tab="领域" force-render>
-	      <Field :ifLoading="ifLoading" v-model="fieldList"></Field>
-	      <a-pagination v-model:current="currentField" :total="totalField" :pageSize="25" :showSizeChanger="false"/>
+	      <Field v-if="fieldList.length !== 0" :ifLoading="ifLoading" v-model="fieldList"></Field>
+	      <a-pagination v-if="fieldList.length !== 0" v-model:current="currentField" :total="totalField" :pageSize="25" :showSizeChanger="false"/>
+        <div v-else>
+          <a-empty
+              image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+              :image-style="{height: '60px',}"
+          />
+        </div>
       </a-tab-pane>
       <a-tab-pane key="5" tab="出版社" force-render>
-	      <Publisher v-model="publisherList"></Publisher>
-	      <a-pagination v-model:current="currentPublisher" :total="totalPublisher" :pageSize="25" :showSizeChanger="false"/>
+	      <Publisher v-if="publisherList.length !== 0" v-model="publisherList"></Publisher>
+	      <a-pagination v-if="publisherList.length !== 0" v-model:current="currentPublisher" :total="totalPublisher" :pageSize="25" :showSizeChanger="false"/>
+        <div v-else>
+          <a-empty
+              image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+              :image-style="{height: '60px',}"
+          />
+        </div>
       </a-tab-pane>
       <a-tab-pane key="6" tab="基金" force-render>
-	      <Funder v-model="funderList"></Funder>
-	      <a-pagination v-model:current="currentFunder" :total="totalFunder" :pageSize="25" :showSizeChanger="false"/>
+	      <Funder v-if="funderList.length !== 0" v-model="funderList"></Funder>
+	      <a-pagination v-if="funderList.length !== 0" v-model:current="currentFunder" :total="totalFunder" :pageSize="25" :showSizeChanger="false"/>
+        <div v-else>
+          <a-empty
+              image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+              :image-style="{height: '60px',}"
+          />
+        </div>
       </a-tab-pane>
       <a-tab-pane key="7" tab="来源" force-render>
-	      <Sour v-model="sourceList"></Sour>
-	      <a-pagination v-model:current="currentSource" :total="totalSource" :pageSize="25" :showSizeChanger="false"/>
+	      <Sour v-if="sourceList.length !== 0" v-model="sourceList"></Sour>
+	      <a-pagination v-if="sourceList.length !== 0" v-model:current="currentSource" :total="totalSource" :pageSize="25" :showSizeChanger="false"/>
+        <div v-else>
+          <a-empty
+              image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+              :image-style="{height: '60px',}"
+          />
+        </div>
       </a-tab-pane>
       </a-tabs>
     </div>
@@ -319,7 +349,7 @@ const activeKey = ref('1');
 const paperList = ref([]);
 const paperListPerPage = ref();
 const expertList = ref([]);
-const institutionList = ref();
+const institutionList = ref([]);
 const fieldList = ref([]);
 const publisherList = ref([]);
 const funderList = ref([]);
@@ -484,6 +514,26 @@ watch(positionType, async ()=>{
 watch(positionType2, async ()=>{
   exPosition.value = positionType2.value
   await getExperts();
+})
+watch(positionType3, async ()=>{
+  SourceInsPosition.value = positionType3.value
+  await getSource();
+})
+watch(positionType4, async ()=>{
+  InsPosition.value = positionType4.value
+  await getInstitution();
+})
+watch(positionType5, async ()=>{
+  FieldPosition.value = positionType5.value
+  await getField();
+})
+watch(positionType6, async ()=>{
+  PublisherInsPosition.value = positionType6.value
+  await getPublisher();
+})
+watch(positionType7, async ()=>{
+  FunderInsPosition.value = positionType7.value
+  await getFunder();
 })
 
 watch(advDomains, async ()=>{

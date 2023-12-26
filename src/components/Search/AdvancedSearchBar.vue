@@ -67,7 +67,7 @@ async function handleSearch(InputValue, type, position, value2, value3, value4, 
     emit('getPosition4', value4);
     emit('getPosition5', value5);
     emit('getPosition6', value6);
-    emit('getPosition1', value7);
+    emit('getPosition7', value7);
     console.log("!!!!!");
     const result = await Search.search(InputValue);
     searchStore.addHistory(InputValue);
