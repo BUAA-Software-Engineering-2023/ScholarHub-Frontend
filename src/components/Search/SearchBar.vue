@@ -8,7 +8,7 @@
     >
       <template #dropdown>
         <SearchHistory
-            v-show="!searchValue"
+            v-if="tmp === '论文' && !searchValue"
             @select="handleSearch"
         />
         <SearchHint
@@ -37,11 +37,14 @@ const searchStore = useSearchStore();
 const SearchType = ref(searchStore.searchType)
 const searchValue = ref(searchStore.searchInput);
 const router = useRouter();
-
+const tmp = ref()
 const ifSearch = ref();
+const is_works = ref()
 defineExpose({ifSearch})
 const emit = defineEmits(["getInput"])
-
+onMounted(()=>{
+  tmp.value = searchStore.searchType
+})
 async function handleSearch(InputValue,type="article"){
   searchValue.value = InputValue;
   console.log("input:"+searchValue.value)
@@ -78,8 +81,9 @@ const handleClear = () => {
   searchStore.setSearchInput("");
 }
 const handleSearchType = (searchType) => {
-  SearchType.value = SearchType
-  searchStore.setSearchType(searchType);
+  console.log(searchStore.searchType)
+  tmp.value =searchType
+  console.log(tmp.value)
 }
 const handleRemoveHistory = (history) =>{
   searchStore.deleteHistory(history);
@@ -88,13 +92,6 @@ const handleClearHistory = async () => {
 
 }
 
-// const emit = defineEmits(['inputSearch'])
-// const inputSearch = () =>{
-//   let param = {
-//     content:'x'
-//   }
-//   emit('inputSearch', param)
-// }
 
 </script>
 
