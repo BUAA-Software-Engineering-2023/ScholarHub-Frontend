@@ -9,7 +9,8 @@
 
       <div class="authorGrid" v-if="paper.authorships.length !== 0">
         <h5 class="authorGrid--item" v-for="(author, index) in paper.authorships" :key="author.author.display_name">
-          {{ author.author.display_name }},&nbsp;
+          {{ author.author.display_name }}
+          <span v-if="index !== paper.authorships.length-1">,&nbsp;</span>
         </h5>
       </div>
       <div class="authorGrid" v-else>

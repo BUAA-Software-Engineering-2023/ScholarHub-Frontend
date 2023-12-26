@@ -145,8 +145,8 @@
           </a-layout>
         </a-tab-pane>
         <a-tab-pane key="2" tab="专家" force-render>
-	        <a-layout>
-		        <a-layout-sider :style="siderStyle" width="500" >
+	        <a-layout class="a-layout-container">
+		        <a-layout-sider :style="siderStyle" width="250" >
 			        <div class = "slideSearch">
 				        <a-menu
 					        v-model:selectedKeys="state.selectedKeys"
@@ -161,39 +161,41 @@
 			        </div>
 		        </a-layout-sider>
 		        <a-layout-content :style="contentStyle" v-if="update">
-			        <el-menu :default-active="activeIndex" class="result-item_1" mode="horizontal">
-					        <el-menu-item index="1" class="parent-container" @click="switchExpertOrder(1)">
-						        <span class="left-span">姓名</span>
-						        <div class="right-icons">
-							        <CaretUpOutlined v-show="Exarrow1 % 3 === 1" class="control-icon"/>
-							        <CaretDownOutlined v-show="Exarrow1 % 3 === 2" class="control-icon"/>
-						        </div>
-					        </el-menu-item>
-					        <el-menu-item index="2" class="parent-container" @click="switchExpertOrder(2)">
-						        <span class="left-span">引用量</span>
-						        <div class="right-icons">
-							        <CaretUpOutlined v-show="Exarrow2 % 3 === 1" class="control-icon"/>
-							        <CaretDownOutlined v-show="Exarrow2 % 3 === 2" class="control-icon"/>
-						        </div>
-					        </el-menu-item>
-					        <el-menu-item index="3" class="parent-container" @click="switchExpertOrder(3)">
-						        <span class="left-span">论文数量</span>
-						        <div class="right-icons">
-							        <CaretUpOutlined v-show="Exarrow3 % 3 === 1" class="control-icon"/>
-							        <CaretDownOutlined v-show="Exarrow3 % 3 === 2" class="control-icon"/>
-						        </div>
-					        </el-menu-item>
-				        </el-menu>
-			        <li class = "ExpertRes" v-for="item in expertList" v-bind:key="item.id">
+              <div class="menu-container">
+                <el-menu :default-active="activeIndex" class="border-style" mode="horizontal">
+                    <el-menu-item index="1" class="parent-container" @click="switchExpertOrder(1)">
+                      <span class="left-span">姓名</span>
+                      <div class="right-icons">
+                        <CaretUpOutlined v-show="Exarrow1 % 3 === 1" class="control-icon"/>
+                        <CaretDownOutlined v-show="Exarrow1 % 3 === 2" class="control-icon"/>
+                      </div>
+                    </el-menu-item>
+                    <el-menu-item index="2" class="parent-container" @click="switchExpertOrder(2)">
+                      <span class="left-span">引用量</span>
+                      <div class="right-icons">
+                        <CaretUpOutlined v-show="Exarrow2 % 3 === 1" class="control-icon"/>
+                        <CaretDownOutlined v-show="Exarrow2 % 3 === 2" class="control-icon"/>
+                      </div>
+                    </el-menu-item>
+                    <el-menu-item index="3" class="parent-container" @click="switchExpertOrder(3)">
+                      <span class="left-span">论文数量</span>
+                      <div class="right-icons">
+                        <CaretUpOutlined v-show="Exarrow3 % 3 === 1" class="control-icon"/>
+                        <CaretDownOutlined v-show="Exarrow3 % 3 === 2" class="control-icon"/>
+                      </div>
+                    </el-menu-item>
+                  </el-menu>
+              </div>
+			        <div class="search-result__list">
                 <div v-if="ifLoading===true">
                   <a-card v-for="item in 9">
-                    <a-skeleton active/>
+                    <a-skeleton active avatar/>
                   </a-card>
                 </div>
                 <div v-else>
-                  <div v-if="expertList!=null && expertList.length !== 0">
+                  <div v-if="expertList.length !== 0">
                     <li class="result-item" v-for="(item, index) in expertList" v-bind:key="item.id">
-                      <a-card hoverable style="width: 80%;">
+                      <a-card hoverable style="width: 100%;">
                         <ExpertCard :paper="item" @click="jumpToExDetail(item)"/>
                       </a-card>
                     </li>
@@ -205,7 +207,8 @@
                     />
                   </div>
                 </div>
-			        <a-pagination v-model:current="current" :total=totalExpert pageSize="25" :showSizeChanger="false" />
+				    </div>
+			        <a-pagination v-if="expertList!=null && expertList.length !== 0" v-model:current="current" :total=totalExpert pageSize="25" :showSizeChanger="false" />
 		        </a-layout-content>
 	        </a-layout>
         </a-tab-pane>
@@ -279,9 +282,9 @@ const arSort = ref({});
 
 const activeKey = ref('1');
 const pageCurrent = ref(1);
-const paperList = ref();
+const paperList = ref([]);
 const paperListPerPage = ref();
-const expertList = ref();
+const expertList = ref([]);
 const institutionList = ref();
 const fieldList = ref([]);
 const update = ref(true);
@@ -491,7 +494,8 @@ async function getPapers(){//获取论文列表
   paperList.value = arResult.value.data.data.result;
   ifLoading.value = false;
   totalPaper.value = arResult.value.data.data.total;
-  totalPaperPage.value = totalPaper.value/25;
+  // totalPaperPage.value = totalPaper.value/25;
+  console.log("total",arResult.value.data.data.total);
   setArticlesFilterContent();
 }
 
@@ -749,7 +753,7 @@ async function searchArticleWithAll(){
   console.log("arResult......",arResult.value);
   paperList.value = arResult.value.data.data.result;
   totalPaper.value = arResult.value.data.data.total;
-  totalPaperPage.value = totalPaper.value/25;
+  // totalPaperPage.value = totalPaper.value/25;
   setArticlesFilterContent();
   return res;
 }
@@ -859,6 +863,7 @@ async function getExperts(){
   ifLoading.value = false;
 	totalExpert.value = exResult.value.data.data.total;
 	totalExpertPage.value = totalExpert.value/25;
+  console.log("expertList",expertList.value);
 	console.log("total",exResult.value.data.data.total);
 	setExpertFilterContent();
 }
@@ -1063,7 +1068,7 @@ onMounted(async ()=>{//初始渲染论文列表
 	  paperList.value = arResult.value.data.data.result;
 	  console.log("paperList-mou",paperList.value);
 	  totalPaper.value = arResult.value.data.data.total;
-	  totalPaperPage.value = totalPaper.value/25;
+	  // totalPaperPage.value = totalPaper.value/25;
 	  console.log("total",arResult.value.data.data.total);
 	  ifLoading.value = false;
 	  console.log("paperlist:", paperList.value);
@@ -1096,6 +1101,7 @@ onMounted(async ()=>{//初始渲染论文列表
   // ifLoading.value = false;
   // console.log("paperlist:", paperList.value);
   // setArticlesFilterContent();
+
   // await getExperts();
   // await getField();
   // await getInstitution();
@@ -1112,7 +1118,7 @@ watch(route, async (newVal, oldVal) => {//监视输入框
 		paperList.value = arResult.value.data.data.result;
 		console.log("paperList-mou",paperList.value);
 		totalPaper.value = arResult.value.data.data.total;
-		totalPaperPage.value = totalPaper.value/25;
+		// totalPaperPage.value = totalPaper.value/25;
 		console.log("total",arResult.value.data.data.total);
 		ifLoading.value = false;
 		console.log("paperlist:", paperList.value);
@@ -1298,6 +1304,7 @@ body{
   margin: 0 auto; /* 这会使整个布局居中 */
   gap: 0px; /* 根据需要在组件之间添加空隙 */
 }
+
 
 .menu-container {
   width: 90%; /* 或者你想要的宽度百分比 */
