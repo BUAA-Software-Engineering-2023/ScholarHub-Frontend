@@ -5,7 +5,7 @@ export const useSearchStore = defineStore({
     id: "search",
     state:()=>{
         return{
-            searchType:useLocalStorage(("searchType"),"works"),
+            searchType:useLocalStorage(("searchType"),"论文"),
             searchInput: useLocalStorage("searchInput",""),
             historyList: useLocalStorage("historyList",[]),
         }
