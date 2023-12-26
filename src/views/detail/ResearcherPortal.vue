@@ -1,5 +1,4 @@
 <template>
-
     <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
       <a-layout>
         <a-layout style="min-width: 1200px" >
@@ -12,9 +11,9 @@
                     <div style="font-size: 25px;font-weight: 800">
                       {{authorName}}
                     </div>
-                    <div style="font-size: 20px;margin-top: 10px;font-weight: 200">
+                    <a style="font-size: 20px;margin-top: 10px;font-weight: 200" :href="hrefins">
                       {{last_known_institution}}
-                    </div>
+                    </a>
                   </div >
 
                  <div style="margin-left: 50px;cursor: pointer" href="#" id="button-claim" @click="showModal " >认领</div>
@@ -122,10 +121,7 @@
                       <div class="research-title">研究成果</div>
                       <div class="research-details">
                         <div class="research-authors">
-                          <div class="author-container" v-for="(author, index) in researchAuthors" :key="index">
-                            <span class="author-name">{{ author }}</span>
-                            <span v-if="index !== researchAuthors.length - 1">, </span>
-                          </div>
+
                         </div>
                         <div class="research-stats">
                           <p>引用量: {{ cited_by_count }}&nbsp; | &nbsp; 论文数: {{works_count}}</p >
@@ -139,24 +135,27 @@
 
                         </template>
                         <template #renderItem="{ item }">
-                          <a-list-item key="item.title">
+                          <a-list-item :key="item.title">
                             <template #actions>
-                              <span v-for="{ icon, text } in item.actions" :key="icon">
-                              <component :is="icon" style="margin-right: 8px" />
-                              {{ text }}
-                            </span>
+      <span v-for="{ icon, text } in item.actions" :key="text">
+        <component :is="icon" style="margin-right: 8px" />
+        {{ text }}
+      </span>
                             </template>
                             <template #extra>
-
                             </template>
-                            <a-list-item-meta :description="item.description">
+                            <a-list-item-meta>
                               <template #title>
                                 <a :href="item.href">{{ item.title }}</a>
+                              </template>
+                              <template #description>
+                                <router-link :to="item.descriptionUrl">{{ item.description }}</router-link>
                               </template>
                             </a-list-item-meta>
                             {{ item.content }}
                           </a-list-item>
                         </template>
+
                       </a-list>
                     </div>
                   </div>
@@ -214,6 +213,7 @@ const years = ref([])
 const cooperations =ref([])
 const coauthors = ref([]);
 const pflag = ref(false)
+const hrefins = ref()
 const pagination = {
   onChange: page => {
     console.log(page);
@@ -277,18 +277,16 @@ const handleClaim = async () => {
 };
 
 
-
 // const AuthorId = "https://openalex.org/A5067833651"
 const AuthorId ="https://openalex.org/"+route.params.authorId
-onMounted(async () => {
-  pflag.value = false;
+onBeforeMount(async () => {
   const result =  await Search.author_detail(AuthorId)
   if (result.data.success){
     const response = result.data.data
     console.log(response)
     author.value = result.data.data
-    last_known_institution.value = author.value.last_known_institution.display_name
-    h_index.value = author.value.summary_stats.h_index
+    last_known_institution.value = author.value.last_known_institution?.display_name
+    h_index.value = author.value.summary_stats?.h_index
     authorName.value = author.value.display_name
     works_count.value = author.value.works_count
     cited_by_count.value = author.value.cited_by_count
@@ -299,7 +297,10 @@ onMounted(async () => {
     let cited_by_counts = [];
     let yearArr = [];
     let cooperationArr = [];
-
+    const urlins = author.value.last_known_institution?.id
+    const parts = urlins.split('/');
+    const insId = parts[parts.length - 1];
+    hrefins.value = "/client/institution/"+ insId;
     for (let i = 0;i<(response.collaborators.length>=10?10:response.collaborators.length);i++){
       numberCollaborate.push(response.collaborators[i].cooperation_times);
       cooperationArr.push(response.collaborators[i].display_name)
@@ -349,7 +350,6 @@ onMounted(async () => {
           },
           data: numberCollaborate
         });
-    pflag.value = true;
     for (let i = 0; i < listData.length; i++) {
       const url = listData[i].id
       const parts = url.split('/');
@@ -360,8 +360,12 @@ onMounted(async () => {
         { icon: CalendarOutlined, text: listData[i].publication_date.toString() },
       ];
       let string = '';
+      let authorid ;
       for (let j = 0; j < authorships.length; j++){
         const authorname = authorships[j].author.display_name
+        let url = authorships[j].author.id;
+        let parts = url.split('/');
+        authorid = parts[parts.length - 1];
         if (j!==authorships.length-1)
           string = string+authorname+',';
         else
@@ -374,6 +378,7 @@ onMounted(async () => {
           title: listData[i].display_name,
           avatar: listData[i].avatar,
           description: authorlist.value[i],
+          descriptionUrl: "/client/author/" + authorid,
           content: listData[i].abstract.slice(0, 300) + "...",
           actions: paperActions
         });
@@ -390,13 +395,14 @@ onMounted(async () => {
       }
 
     }
+    pflag.value = true;
   }else {
     let promise = Swal.fire({
       icon: 'error',
       title:'该作者不存在'
     })
+    pflag.value = true;
   }
-
 })
 const headerStyle = {
   marginLeft: '12%',
@@ -519,24 +525,14 @@ img{
   color: #555;
 }
 
-.author-container {
-  display: inline-block;
-}
 
-.author-name {
-  font-weight: bold;
-}
 
 .research-stats {
   font-size: 14px;
   color: #777;
 }
 
-.research-abstract {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #444;
-}
+
 .research-container{
   text-align: left;
 }
@@ -576,6 +572,7 @@ img{
   text-transform: uppercase;
   transition: 0.5s;
   overflow: hidden;
+
 }
 #button-claim::before {
   content: '';

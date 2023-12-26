@@ -1,14 +1,30 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 //  按需引入 echarts
 import * as echarts from "echarts";
-const props = defineProps(["series","years"]);
+const props = defineProps({
+  series: {
+    type: Array,
+    required: true,
+  },
+  years: {
+    type: Array,
+    required: true,
+  }
+});
 const main = ref() // 使用ref创建虚拟DOM引用，使用时用main.value
-onMounted(
-    async () => {
-      init()
-    }
-)
+let myChart = null;
+onMounted(() => {
+  window.addEventListener('resize', resizeChart);
+  init();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeChart);
+  if (myChart != null) {
+    myChart.dispose();
+  }
+});
 function init() {
   // 基于准备好的dom，初始化echarts实例
   const myChart = echarts.init(main.value);
@@ -56,6 +72,12 @@ function init() {
 
   // 使用刚指定的配置项和数据显示图表。
   myChart.setOption(option);
+
+}
+function resizeChart() {
+  if (myChart != null) {
+    myChart.resize();
+  }
 }
 </script>
 

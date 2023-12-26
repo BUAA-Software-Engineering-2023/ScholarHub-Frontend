@@ -11,6 +11,13 @@ onMounted(
 function init() {
   // 基于准备好的dom，初始化echarts实例
   const myChart = echarts.init(main.value);
+
+
+  const percentFormatter = (params) => {
+    const total = props.data.reduce((sum, item) => sum + item.value, 0);
+    const percent = ((params.data.value / total) * 100).toFixed(2);
+    return `${params.marker}${params.data.name}: ${percent}%`;
+  };
   // 指定图表的配置项和数据
   const option = {
     title: {
@@ -18,16 +25,20 @@ function init() {
       left: 'center'
     },
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: percentFormatter
     },
     legend: {
       show: false // 设置图例不显示
     },
+
+
     series: [
       {
+
         name: '领域比例',
         type: 'pie',
-        radius: '50%',
+        radius: '60%',
         data: props.data,
         emphasis: {
           itemStyle: {
